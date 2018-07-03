@@ -1,0 +1,14 @@
+2a862e70fa1afc08f1f3e7a8cc5cda14  GRCh37_to_GRCh38.chain.gz
+23ed49c63c8bc0a5dc5188c4a7d5f260  GRCh37_to_NCBI34.chain.gz
+6e8b1ffe43b6897a676adf0ae98a42e1  GRCh37_to_NCBI35.chain.gz
+12c8e655797d25c996812b1460a2783b  GRCh37_to_NCBI36.chain.gz
+9573fe0b0a4715f0dd4fa62d5bd7810d  GRCh38_to_GRCh37.chain.gz
+6e4e723c19c550d7ff96296213bbbb52  GRCh38_to_NCBI34.chain.gz
+fee141b5d66c1ef65d55a6221bc9055a  GRCh38_to_NCBI35.chain.gz
+90f56805a1394d2247c24a524ed8a883  GRCh38_to_NCBI36.chain.gz
+c41cf2834074c482328491c552bb65af  NCBI34_to_GRCh37.chain.gz
+77e581ed9359305e8f2bf6f11cf1cd91  NCBI34_to_GRCh38.chain.gz
+61eccab98782b35b37a7a2dcb2bf1bd0  NCBI35_to_GRCh37.chain.gz
+fabc0790ef2d7881aa45df66f49c157e  NCBI35_to_GRCh38.chain.gz
+f8fc02b168fa915854a5f1c2ac1ddc6c  NCBI36_to_GRCh37.chain.gz
+62cfcf8385f66ea43fd9f4e64f0d03d7  NCBI36_to_GRCh38.chain.gz

@@ -1,0 +1,22 @@
+Metadata-Version: 1.1
+Name: CrossMap
+Version: 0.2.8
+Summary:  Lift over genomics coordinates between assemblies
+Home-page: http://crossmap.sourceforge.net/
+Author: Liguo Wang
+Author-email: wangliguo78@gmail.com
+License: UNKNOWN
+Description-Content-Type: UNKNOWN
+Description: UNKNOWN
+Keywords: Genome coordinates lift over
+Platform: Linux
+Platform: MacOS
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Environment :: Console
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: GNU General Public License v2 (GPLv2)
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: POSIX
+Classifier: Programming Language :: Python
+Classifier: Topic :: Scientific/Engineering :: Bio-Informatics
+Requires: cython (>=0.17)

@@ -1,0 +1,3 @@
+cython>=0.17
+pysam
+bx-python

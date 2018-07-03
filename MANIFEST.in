@@ -1,0 +1,14 @@
+include MANIFEST.in
+include README.txt
+include PKG-INFO
+include LICENSE.txt
+
+include distribute_setup.py
+recursive-include lib *.pyx
+recursive-include lib *.pxd
+recursive-include lib *.py
+recursive-include scripts *
+recursive-include bin *
+recursive-include data *
+recursive-include test *
+recursive-include doc *

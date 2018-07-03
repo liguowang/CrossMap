@@ -1,0 +1,5 @@
+[console_scripts]
+cython = Cython.Compiler.Main:setuptools_main
+cygdb = Cython.Debugger.Cygdb:main
+cythonize = Cython.Build.Cythonize:main
+

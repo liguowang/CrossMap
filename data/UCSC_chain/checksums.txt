@@ -1,0 +1,14 @@
+39909d0aec3e1149a7514c984314d50a	GRCh37ToHg19.over.chain.gz
+7f8cd967b8ad75dab9da311f6355c4c2	hg17ToHg18.over.chain.gz
+16d1fd95e660b4d619183ed3a43c75a2	hg17ToHg19.over.chain.gz
+ff4611f228e31fd071c44b01e8346565	hg18ToHg17.over.chain.gz
+34e6ad1eaeb83af301617f2460641933	hg18ToHg19.over.chain.gz
+cb4ba08996a10b0ded40fae00987d1c8	hg18ToHg38.over.chain.gz
+2abfc51b6bdd1aefc5c234868d9067a0	hg19ToGRCh37.over.chain.gz
+b062fbdc16aeff256c38c6807c0eaf08	hg19ToHg17.over.chain.gz
+be13baed73d5ab9623b6e95be5d76401	hg19ToHg18.over.chain.gz
+35887f73fe5e2231656504d1f6430900	hg19ToHg38.over.chain.gz
+ff3031d93792f4cbb86af44055efd903	hg38ToHg19.over.chain.gz
+bf8e920089baf158def3da382ddeaf2a	mm10ToMm9.over.chain.gz
+7d5e52098f06420a5fb6c0ef9e08673c	mm9ToMm10.over.chain.gz
+094fcc4457c6cc196c792a2311d89c70	mm9ToMm8.over.chain.gz
