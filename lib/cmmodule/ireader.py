@@ -24,5 +24,5 @@ def nopen(f, mode="rb"):
  
 def reader(fname):
 	for l in nopen(fname):
-		yield l.strip()
+		yield l.strip().replace("\r", "")
 	

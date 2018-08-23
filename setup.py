@@ -13,7 +13,7 @@ if sys.version_info[0] != 2 or sys.version_info[1] < 7:
 
 def main():
 	setup(  name = "CrossMap",
-			version = "0.2.8",
+			version = "0.2.9",
 			py_modules = [ 'psyco_full' ],
 			packages = find_packages( 'lib' ),
 			package_dir = { '': 'lib' },

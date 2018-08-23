@@ -36,7 +36,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.2.8"
+__version__="0.2.9"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -376,52 +376,79 @@ def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
 	
 	total = 0
 	fail = 0
-	withChr = False
-	contig_field = False
+	withChr = False	# check if the VCF data lines use 'chr1' or '1'
 	
 	for line in ireader.reader(infile):
 		if not line.strip():
 			continue
 		line=line.strip()
-		if line.startswith('##'):
-			if 'contig=' not in line:
-				print >>FILE_OUT,line
-				print >>UNMAP, line
-			else:
-				print >>UNMAP, line
-				contig_field = True
-				if 'chr' in line:
-					withchr = True		
 		
-		elif line.startswith('#CHROM'):
-			if contig_field is True:
-				printlog(["Updating contig field ... "])
-				target_gsize = dict(zip(refFasta.references, refFasta.lengths))
-				for chr_id in sorted(target_gsize):
-					if chr_id.startswith('chr'):
-						if withChr is True:
-							print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome))
-						else:
-							print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id.replace('chr',''), target_gsize[chr_id], os.path.basename(refgenome))
+		#deal with meta-information lines.
+		
+		#meta-information lines needed in both mapped and unmapped files
+		if line.startswith('##fileformat'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		elif line.startswith('##INFO'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		elif line.startswith('##FILTER'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		elif line.startswith('##FORMAT'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		elif line.startswith('##ALT'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		elif line.startswith('##SAMPLE'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		elif line.startswith('##PEDIGREE'):
+			print >>FILE_OUT,line
+			print >>UNMAP, line
+		
+		#meta-information lines needed in unmapped files
+		elif line.startswith('##assembly'):
+			print >>UNMAP, line
+		elif line.startswith('##contig'):
+			print >>UNMAP, line
+			if 'ID=chr' in line:
+				withChr = True
+		
+		#update contig information
+		elif line.startswith('#CHROM'):			
+			printlog(["Updating contig field ... "])
+			target_gsize = dict(zip(refFasta.references, refFasta.lengths))
+			for chr_id in sorted(target_gsize):
+				if chr_id.startswith('chr'):
+					if withChr is True:
+						print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome))
 					else:
-						if withChr is True:
-							print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % ('chr' + chr_id, target_gsize[chr_id], os.path.basename(refgenome))
-						else:
-							print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome))
+						print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id.replace('chr',''), target_gsize[chr_id], os.path.basename(refgenome))
+				else:
+					if withChr is True:
+						print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % ('chr' + chr_id, target_gsize[chr_id], os.path.basename(refgenome))
+					else:
+						print >>FILE_OUT, "##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome))
 						
 			print >>FILE_OUT, "##liftOverProgram=CrossMap(https://sourceforge.net/projects/crossmap/)"
 			print >>FILE_OUT, "##liftOverFile=" + liftoverfile
 			print >>FILE_OUT, "##new_reference_genome=" + refgenome
-			print >>FILE_OUT, "##liftOverTime=" + datetime.date.today().strftime("%B%d,%Y")
+			print >>FILE_OUT, "##liftOverTime=" + datetime.date.today().strftime("%B%d,%Y")		
 			print >>FILE_OUT,line
 			print >>UNMAP, line
+
 		else:
+			if line.startswith('#'):continue
 			fields = string.split(line,maxsplit=7)
 			total += 1
-			if withChr is True:
+			
+			if fields[0].startswith('chr'):
 				chrom = fields[0]
 			else:
 				chrom = 'chr' + fields[0]
+			
 			start = int(fields[1])-1	# 0 based
 			end = start + len(fields[3])
 			a = map_coordinates(mapping, chrom, start, end,'+')
@@ -432,19 +459,28 @@ def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
 			
 			if len(a) == 2:
 				# update chrom
+				target_chr = str(a[1][0])	#target_chr is from chain file, could be 'chr1' or '1'
+				target_start = a[1][1]
+				target_end = a[1][2]
 				if withChr is False:
-					fields[0] = str(a[1][0]).replace('chr','')
+					fields[0] = target_chr.replace('chr','')
 				else:
-					fields[0] = str(a[1][0])
+					fields[0] = target_chr
 				
 				# update start coordinate
-				fields[1] = a[1][1] + 1
+				fields[1] = target_start + 1
 				
-				# update ref allele
-				#tmp = pysam.faidx(refgenome,str(a[1][0]) + ':' + str(a[1][1]+1) + '-' + str(a[1][2]))
-				#fields[3] =tmp[-1].rstrip('\n\r').upper()
-				
-				fields[3] = refFasta.fetch(str(a[1][0]),a[1][1],a[1][2]).upper()
+				if refFasta.references[0].startswith('chr'):
+					if target_chr.startswith('chr'):
+						fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+					else:
+						fields[3] = refFasta.fetch('chr'+target_chr,target_start,target_end).upper()
+				else:
+					if target_chr.startswith('chr'):
+						fields[3] = refFasta.fetch(target_chr.replace('chr',''),target_start,target_end).upper()
+					else:
+						fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+						
 				
 				
 				if fields[3] != fields[4]:
