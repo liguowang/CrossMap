@@ -12,3 +12,5 @@ python2.7 ../bin/CrossMap.py wig  ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_
 python2.7 ../bin/CrossMap.py wig  ../data/UCSC_chain/hg19ToHg38.over.chain.gz 5_hg19.fixedStep.wig 5_hg38.fixedStep.wig
 
 python2.7 ../bin/CrossMap.py wig  ../data/UCSC_chain/hg19ToHg38.over.chain.gz 6_hg19.variableStep.wig 6_hg38.variableStep.wig 
+
+python2.7 ../bin/CrossMap.py gff  ../data/UCSC_chain/hg19ToHg38.over.chain.gz 7_hg19.gtf 7_hg38.gtf

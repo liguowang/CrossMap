@@ -4,7 +4,7 @@
    
 
 .. CrossMap documentation master file, created by
-   sphinx-quickstart on Thu Oct 10 13:45:49 2013.
+   sphinx-quickstart on Thu Nov 06,  2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -45,7 +45,7 @@ Several useful conversion tools have been developed:
 * `pyliftover <https://pypi.python.org/pypi/pyliftover>`_ "only does conversion of point
   coordinates, that is, unlike liftOver, it does not convert ranges, nor does it provide any
   special facilities to work with BED files".
-
+    
 But none have the functionality to convert files in BAM/SAM or BigWig format. This is a significant
 gap in computational genomics tools, since these formats are the ones most widely used
 for representing high-throughput sequencing data such as RNA-seq, ChIP-seq, DNA-seq, etc.
@@ -102,6 +102,8 @@ In practical, the time CrossMap takes increases linearly to the size of input fi
 
 Release history
 ===================
+* 12/14/18: Release version 0.3.2: Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
+ 
 * 11/05/18: Release version 0.3.0:
 
  * v0.3.0 or newer will Support Python3. Previous versions support Python2.7.*

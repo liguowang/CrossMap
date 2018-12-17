@@ -4,7 +4,7 @@
    
 
 .. CrossMap documentation master file, created by
-   sphinx-quickstart on Thu Oct 10 13:45:49 2013.
+   sphinx-quickstart on Thu Nov 06,  2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -45,7 +45,7 @@ Several useful conversion tools have been developed:
 * `pyliftover <https://pypi.python.org/pypi/pyliftover>`_ "only does conversion of point
   coordinates, that is, unlike liftOver, it does not convert ranges, nor does it provide any
   special facilities to work with BED files".
-
+    
 But none have the functionality to convert files in BAM/SAM or BigWig format. This is a significant
 gap in computational genomics tools, since these formats are the ones most widely used
 for representing high-throughput sequencing data such as RNA-seq, ChIP-seq, DNA-seq, etc.
@@ -102,6 +102,14 @@ In practical, the time CrossMap takes increases linearly to the size of input fi
 
 Release history
 ===================
+* 12/14/18: Release version 0.3.2: Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
+ 
+* 11/05/18: Release version 0.3.0:
+
+ * v0.3.0 or newer will Support Python3. Previous versions support Python2.7.*
+ * add `pyBigWig <https://github.com/deeptools/pyBigWig>`_ as dependency.  
+
+
 * 09/06/17: Release version 0.2.8:
 
  * In Bam file lift over: fixed the bug "CrossMap does not set the unmapped read flag for the first read in pair when it is unmapped".
@@ -132,6 +140,7 @@ Release history
  * In the output VCF file, if the reference allele field is empty:
  
   * Use CrossMap v0.2.4. Update pysam to the latest version. And make sure chromosome IDs in the reference genome file are in the form of "chr1", "chr2", ..., "chrX","chrY" (but not "1", "2", ..., "X","Y", in this case, pysam cannot index your reference genome file for some unknown reasons.). 
+ 
  * to upgrade, run: **pip install CrossMap --upgrade**
  
 * 04/13/16: Release version 0.2.3:
@@ -140,7 +149,7 @@ Release history
  * Two dependency packages bx-python and pysam do not shipped with CrossMap starting from v0.2.3 .
  * Users could install CrossMap using pip: **pip install CrossMap**. Note: bx-python and pysam will be installed automatically if they haven’t been installed before.
 
-* 11/10/15: Release version 0.2.2: Generate *.unmap files (regions that cannot be unambiguously converted) when converting BED, GTF, GFF files. This version also supports genePred (bed12+8) format. (Thanks for Andrew Yates from EMBL-EBI) 
+* 11/10/15: Release version 0.2.2: Generate \*.unmap files (regions that cannot be unambiguously converted) when converting BED, GTF, GFF files. This version also supports genePred (bed12+8) format. (Thanks for Andrew Yates from EMBL-EBI) 
 * 08/26/15: Release version 0.2.1: Very minor change, same as 0.2.
 * 08/11/15: Release version 0.2: Fixed the bug that CrossMap will not convert wiggle format files due to name collision with bx python.
 * 07/27/15: Release version 0.1.9. For VCF file conversion in v0.1.9:
@@ -152,7 +161,7 @@ Release history
 * 05/15/15: Release version 0.1.8: Fixed the bug that CrossMap will output invalid VCF file when the input VCF file contains a INFO field with whitespace.
 * 05/04/15: Release version 0.1.7: Address the problem that CrossMap does not convert strand in inversions when input file is BED6 or BED12 format.
 * 11/06/14: Release version 0.1.6: Fixed "negative coordinates" bug.
-* 08/05/14: Release version 0.1.5: Support compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) wiggle file as input. 
+* 08/05/14: Release version 0.1.5: Support compressed (\*.gz, \*.Z, \*.z, \*.bz, \*.bz2, \*.bzip2) wiggle file as input. 
 * 05/19/14: add chain files for hg38->hg19, hg19->hg38, hg18->hg38, hg19->GRCh37, GRCh37->hg19. In CrossMap v0.1.4, conversion results of BAM/SAM files can be directed to STDOUT to support piping.
 * 12/12/13: CrossMap was accepted by `Bioinformatics <http://bioinformatics.oxfordjournals.org/content/early/2013/12/18/bioinformatics.btt730.short?rss=1>`_
 * 10/23/13: CrossMap (0.1.3) was released
@@ -165,29 +174,41 @@ Use pip to install CrossMap
 
 ::
 
- pip install CrossMap
+ pip3 install CrossMap	#Install CrossMap supporting Python3
+ pip2 install CrossMap	#Install CrossMap supporting Python2.7.*
 
 Use pip to upgrade CrossMap
 -----------------------------
 
 ::
 
- pip install CrossMap --upgrade
+ pip3 install CrossMap --upgrade	#upgrade CrossMap supporting Python3
+ pip2 install CrossMap --upgrade	#upgrade CrossMap supporting Python2.7.*
  
 Install CrossMap from source code
 ----------------------------------
 
-* Source code `CrossMap <http://sourceforge.net/projects/crossmap/files>`_
+* `Source code <http://sourceforge.net/projects/crossmap/files>`_
 * `Test datsets <http://sourceforge.net/projects/crossmap/files/test.hg19.zip/download>`_
 
-Prerequisite:
+**Prerequisite**
 
-1. `gcc <http://gcc.gnu.org/>`_
-2. `python2.7.* <http://www.python.org/getit/releases/2.7/>`_
-3. `numpy <http://numpy.scipy.org/>`_
-4. `cython <http://cython.org/>`_
-5. `pysam <https://pypi.python.org/pypi/pysam>`_
-6. `bx-python <https://pypi.python.org/pypi/bx-python/0.7.3>`_
+* CrossMap (version <= 0.2.9)
+
+ 1. `python2.7.* <http://www.python.org/getit/releases/2.7/>`_
+ 2. `numpy <http://numpy.scipy.org/>`_
+ 3. `cython <http://cython.org/>`_
+ 4. `pysam <https://pypi.python.org/pypi/pysam>`_
+ 5. `bx-python <https://pypi.python.org/pypi/bx-python/0.7.3>`_
+
+* CrossMap (version >=  0.3.0)
+
+ 1. `python3 <https://www.python.org/downloads/release/python-360/>`_
+ 2. `numpy <http://numpy.scipy.org/>`_
+ 3. `cython <http://cython.org/>`_
+ 4. `pysam <https://pypi.python.org/pypi/pysam>`_
+ 5. `bx-python <https://pypi.python.org/pypi/bx-python/0.7.3>`_
+ 6. `pyBigWig <https://github.com/deeptools/pyBigWig>`_
 
 ::
 
@@ -279,24 +300,37 @@ Example of `chain <http://genome.ucsc.edu/goldenPath/help/chain.html>`_ file::
 **Ensembl built chain files (Human, Homo sapiens)**
 
 * NCBI34 <=> GRCh38 
+
  * `NCBI34_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI34_to_GRCh38.chain.gz/download>`_
  * `GRCh38_to_NCBI34.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI34.chain.gz/download>`_
+
 * NCBI35 <=> GRCh38 
+
  * `NCBI35_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI35_to_GRCh38.chain.gz/download>`_
  * `GRCh38_to_NCBI35.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI35.chain.gz/download>`_
+
 * NCBI36 <=> GRCh38 
+
  * `NCBI36_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI36_to_GRCh38.chain.gz/download>`_
  * `GRCh38_to_NCBI36.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI36.chain.gz/download>`_
+
 * GRCh37 <=> GRCh38 
+
  * `GRCh37_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_GRCh38.chain.gz/download>`_
  * `GRCh38_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_GRCh37.chain.gz/download>`_
+
 * NCBI34 <=> GRCh37
+
  * `NCBI34_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI34_to_GRCh37.chain.gz/download>`_
  * `GRCh37_to_NCBI34.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI34.chain.gz/download>`_
+
 * NCBI35 <=> GRCh37 
+
  * `NCBI35_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI35_to_GRCh37.chain.gz/download>`_
  * `GRCh37_to_NCBI35.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI35.chain.gz/download>`_
+
 * NCBI36 <=> GRCh37
+
  * `NCBI36_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI36_to_GRCh37.chain.gz/download>`_
  * `GRCh37_to_NCBI36.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI36.chain.gz/download>`_
   
@@ -327,7 +361,7 @@ User Input file
 Output file
 ----------------
 
-Format of Output files depends on the input format
+Format of Output files depends on the input format (version <= 0.2.9)
 
 ==============  =========================================================================================
 Input_format        Output_format         
@@ -343,6 +377,23 @@ GFF		        GFF (Genome coordinates will be updated to the target assembly)
 GTF             GTF (Genome coordinates will be updated to the target assembly)
 VCF             VCF (Genome coordinates and reference alleles will be updated to the target assembly)
 ==============  =========================================================================================
+
+
+Format of Output files depends on the input format (version >= 0.3.0)
+
+==============  =========================================================================================
+Input_format        Output_format         
+==============  =========================================================================================
+BED             BED (Genome coordinates will be updated to the target assembly)
+BAM             BAM (Genome coordinates, header section, all SAM flags, insert size will be updated accordingly)
+SAM             SAM (Genome coordinates, header section, all SAM flags, insert size will be updated accordingly)
+Wiggle          BigWig
+BigWig          BigWig
+GFF		        GFF (Genome coordinates will be updated to the target assembly)
+GTF             GTF (Genome coordinates will be updated to the target assembly)
+VCF             VCF (Genome coordinates and reference alleles will be updated to the target assembly)
+==============  =========================================================================================
+
 
 Usage
 =============
@@ -432,7 +483,7 @@ NOTE:
 7. "input_chain_file" and "input_bed_file" can be regular or compressed (.gz, .Z, .z, .bz, .bz2, .bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file.
 8. If output_file was not specified, results will be printed to screen (console). In this case, the original bed entries (include items failed to convert) were also printed out.
 9. If input region cannot be consecutively mapped target assembly, it will be split.
-10. *.unmap file contains regions that cannot be unambiguously converted. 
+10. \*.unmap file contains regions that cannot be unambiguously converted. 
 
 Example (run CrossMap with **no** *output_file* specified)::
 
@@ -486,6 +537,27 @@ Example (one input region was split because it cannot be consecutively mapped ta
  chr10	81371363	81371365	+	->	chr10	62961832	62961834	+
  chr10	81371412	81371432	+	(split.1:chr10:81371412:81371422:+)	chr10	62961775	62961785	+
  chr10	81371412	81371432	+	(split.2:chr10:81371422:81371432:+)	chrX	63278348	63278358	+
+
+
+Example (Use **bed** command to convert a bedGraph file, output another bedGraph file. If Use **wig** command to convert a bedGraph file, output a **bigWig** file. )::
+
+ $ python3 ../bin/CrossMap.py bed ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_hg19.bgr
+ 
+ chrX	5873316	5873391	2.0	->	chrX	5955275	5955350	2.0
+ chrX	5873673	5873710	0.8	->	chrX	5955632	5955669	0.8
+ chrX	5873710	5873785	1.4	->	chrX	5955669	5955744	1.4
+ chrX	5873896	5873929	0.9	->	chrX	5955855	5955888	0.9
+ chrX	5873929	5874004	1.5	->	chrX	5955888	5955963	1.5
+ chrX	5874230	5874471	0.3	->	chrX	5956189	5956430	0.3
+ chrX	5874471	5874518	0.9	->	chrX	5956430	5956477	0.9
+
+ $ python3 ../bin/CrossMap.py wig ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
+ @ 2018-11-06 00:09:11: Read chain_file:  ../data/UCSC_chain/hg19ToHg38.over.chain.gz
+ @ 2018-11-06 00:09:12: Liftover wiggle file: 4_hg19.bgr ==> output_hg38.bgr
+ @ 2018-11-06 00:09:12: Merging overlapped entries in bedGraph file ...
+ @ 2018-11-06 00:09:12: Sorting bedGraph file:output_hg38.bgr
+ @ 2018-11-06 00:09:12: Writing header to "output_hg38.bw" ...
+ @ 2018-11-06 00:09:12: Writing entries to "output_hg38.bw" ...
 
 
 .. _bam_conversion:

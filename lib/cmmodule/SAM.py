@@ -27,9 +27,6 @@ from cmmodule import cigar
 from cmmodule import BED
 #changes to the paths
 
-#changing history to this module
-#05/26/2011: suppport multiple spliced mapped reads
-#10/13/2011: saturation test for RNAs-eq data
 
 __author__ = "Liguo Wang"
 __copyright__ = "Copyright 2010, Wei Li's Lab"

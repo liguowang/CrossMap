@@ -9,7 +9,7 @@ import gzip
 import urllib
 
 def nopen(f, mode="rb"):
-	if not isinstance(f, basestring):
+	if not isinstance(f, str):
 		return f
 	if f.startswith("|"):
 		p = Popen(f[1:], stdout=PIPE, stdin=PIPE, shell=True)
@@ -24,5 +24,5 @@ def nopen(f, mode="rb"):
  
 def reader(fname):
 	for l in nopen(fname):
-		yield l.strip().replace("\r", "")
+		yield l.decode('utf8').strip().replace("\r", "")
 	

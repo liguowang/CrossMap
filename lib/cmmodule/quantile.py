@@ -54,6 +54,6 @@ def quantile(x, q,  qtype = 7, issorted = False):
 def Test():
 	x = [11.4, 17.3, 21.3, 25.9, 40.1, 50.5, 60.0, 70.0, 75]
 	for qtype in range(1,10):
-		print qtype, quantile(x, 0.35, qtype)
+		print(qtype, quantile(x, 0.35, qtype))
 if __name__ == "__main__":
 	Test()

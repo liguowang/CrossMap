@@ -1,5 +1,0 @@
-Hi, 
-
-No, of course it is, it can be done with a variety of command line tools, or tools specifically design for the purpose. It was only surprising to see Haplotype Caller fail with vcf lift-over-ed with CrossMap for contigs in vcf header not matching those in fasta, similar thing happens for tools like Manta (SV calling), or Sentieon TNScope. I just thought to recommend this to be automatically done by Crossmap to make further analysis easier, and remove one step for workflows which utilize CrossMap.
-
-If this is something you are not planning to implement, no problem, it just came as an useful addition for your tool.

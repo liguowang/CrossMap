@@ -51,11 +51,11 @@ def getUTRExonFromFile(bedfile,utr=35):
 		txEnd=int(fields[2])
 		cdsStart=int(fields[6])
 		cdsEnd=int(fields[7])		
-		exon_start=map(int,fields[11].rstrip(',').split(','))
-		exon_start=map((lambda x: x + txStart),exon_start)
+		exon_start=list(map(int,fields[11].rstrip(',').split(',')))
+		exon_start=list(map((lambda x: x + txStart),exon_start))
 			
-		exon_end=map(int,fields[10].rstrip(',').split(','))
-		exon_end=map((lambda x,y:x+y),exon_start,exon_end)
+		exon_end=list(map(int,fields[10].rstrip(',').split(',')))
+		exon_end=list(map((lambda x,y:x+y),exon_start,exon_end))
 			   
 		chrom = chrom + ':' + strand
 		if (utr==35 or utr==5):
@@ -89,12 +89,12 @@ def getExonFromFile(bedfile):
 			strand=fields[5]
 			geneName=fields[3]
 			score=fields[4]
-			exon_start=map(int,fields[11].rstrip(',').split(','))
-			exon_start=map((lambda x: x + txStart),exon_start)
-			exon_end=map(int,fields[10].rstrip(',').split(','))
-			exon_end=map((lambda x,y:x+y),exon_start,exon_end)
+			exon_start=list(map(int,fields[11].rstrip(',').split(',')))
+			exon_start=list(map((lambda x: x + txStart),exon_start))
+			exon_end=list(map(int,fields[10].rstrip(',').split(',')))
+			exon_end=list(map((lambda x,y:x+y),exon_start,exon_end))
 		except:
-			print >>sys.stderr,"[NOTE:input bed must be 12-column] skipped this line: " + line,
+			print("[NOTE:input bed must be 12-column] skipped this line: " + line, end=' ', file=sys.stderr)
 			continue
 		chrom = chrom + ':' + strand
 		for st,end in zip(exon_start,exon_end):
@@ -118,13 +118,13 @@ def getExonFromFile2(bedfile):
 			strand=fields[5]
 			geneName=fields[3]
 			score=fields[4]
-			exon_start=map(int,fields[11].rstrip(',').split(','))
-			exon_start=map((lambda x: x + txStart),exon_start)
-			exon_end=map(int,fields[10].rstrip(',').split(','))
-			exon_end=map((lambda x,y:x+y),exon_start,exon_end)
+			exon_start=list(map(int,fields[11].rstrip(',').split(',')))
+			exon_start=list(map((lambda x: x + txStart),exon_start))
+			exon_end=list(map(int,fields[10].rstrip(',').split(',')))
+			exon_end=list(map((lambda x,y:x+y),exon_start,exon_end))
 			key = chrom + ":" + txstart + "-" + txEnd + ":" + strand + ':' + geneName
 		except:
-			print >>sys.stderr,"[NOTE:input bed must be 12-column] skipped this line: " + line,
+			print("[NOTE:input bed must be 12-column] skipped this line: " + line, end=' ', file=sys.stderr)
 			continue
 		for st,end in zip(exon_start,exon_end):
 			tmp.append(exon_start,exon_end)
@@ -151,11 +151,11 @@ def getUTRExonFromLine(bedline,utr=35):
 	txEnd=int(fields[2])
 	cdsStart=int(fields[6])
 	cdsEnd=int(fields[7])		
-	exon_start=map(int,fields[11].rstrip(',').split(','))
-	exon_start=map((lambda x: x + txStart),exon_start)
+	exon_start=list(map(int,fields[11].rstrip(',').split(',')))
+	exon_start=list(map((lambda x: x + txStart),exon_start))
 		
-	exon_end=map(int,fields[10].rstrip(',').split(','))
-	exon_end=map((lambda x,y:x+y),exon_start,exon_end)
+	exon_end=list(map(int,fields[10].rstrip(',').split(',')))
+	exon_end=list(map((lambda x,y:x+y),exon_start,exon_end))
 	
 	chrom = chromm + ':' + strand
 	if (utr==35 or utr==5):
@@ -220,10 +220,10 @@ def getExonFromLine(bedline):
 	strand=fields[5]
 	geneName=fields[3]
 	score=fields[4]
-	exon_start=map(int,fields[11].rstrip(',').split(','))
-	exon_start=map((lambda x: x + txStart),exon_start)
-	exon_end=map(int,fields[10].rstrip(',').split(','))
-	exon_end=map((lambda x,y:x+y),exon_start,exon_end)
+	exon_start=list(map(int,fields[11].rstrip(',').split(',')))
+	exon_start=list(map((lambda x: x + txStart),exon_start))
+	exon_end=list(map(int,fields[10].rstrip(',').split(',')))
+	exon_end=list(map((lambda x,y:x+y),exon_start,exon_end))
 	#chrom = chrom + ':' + strand
 	for st,end in zip(exon_start,exon_end):
 		ret_lst.append([chrom, st, end])
@@ -275,7 +275,7 @@ def annotateBed(inputbed,refbed,outfile):
 		key = chrom + ":" +strand
 		if key in ref_exon_ranges:
 			if  len(ref_exon_ranges[key].find(tx_start,tx_end))==0:	#input gene does NOT overlap with any known exons
-				print line + '\t' + 'novel(intergenic)'
+				print(line + '\t' + 'novel(intergenic)')
 			else:
 				input_exon_chain=getExonFromLine(line)
 				#print line + '\t' + 'overlap'
@@ -283,7 +283,7 @@ def annotateBed(inputbed,refbed,outfile):
 				#utr_5_exons = getUTRExon(line,utr=5)
 				#cds_exons = getCDSExon(line)
 		else:
-			print line + '\t' + 'unknownChrom'
+			print(line + '\t' + 'unknownChrom')
 		
 		
 		#for utr3 in utr_3_exons:

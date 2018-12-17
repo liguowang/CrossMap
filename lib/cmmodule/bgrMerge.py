@@ -15,7 +15,7 @@ from cmmodule  import wig_reader
 from cmmodule  import myutils
 
 def randomword(length):
-	return ''.join(random.choice(string.lowercase) for i in range(length))
+	return ''.join(random.choice(string.ascii_uppercase) for _ in range(length))
 
 def printlog (mesg_lst):
 	'''print progress into stderr'''
@@ -23,7 +23,7 @@ def printlog (mesg_lst):
 		msg = "@ " + strftime("%Y-%m-%d %H:%M:%S") + ": " +  mesg_lst[0]
 	else:
 		msg = "@ " + strftime("%Y-%m-%d %H:%M:%S") + ": " + ' '.join(mesg_lst)
-	print >>sys.stderr,msg
+	print(msg, file=sys.stderr)
 
 def read_bed_by_chr(f):
 	'''input bed file'''
@@ -68,7 +68,7 @@ def merge(infile):
 	for lines in line_iter:
 		top_marker = 0
 		overlap_pos2val = {}
-		for i in xrange(0, len(lines)-1):
+		for i in range(0, len(lines)-1):
 			(chr, start, end, score) = lines[i].split()
 			start = int(start)
 			end = int(end)
@@ -84,7 +84,7 @@ def merge(infile):
 				overlap_pos2val = {}
 			else:
 				for ind in range(start+1, end +1):
-					if overlap_pos2val.has_key(ind):
+					if ind in overlap_pos2val:
 						overlap_pos2val[ind] += score
 					else:
 						overlap_pos2val[ind] = score
@@ -98,7 +98,7 @@ def merge(infile):
 				last_end = int(last_end)
 				last_score = float(last_score)
 			except:
-				print last_chr, last_start,last_end
+				print(last_chr, last_start,last_end)
 				pass
 	
 			if last_start >= top_marker:
@@ -109,7 +109,7 @@ def merge(infile):
 				overlap_pos2val = {}
 			else:
 				for ind in range(last_start+1, last_end +1):
-					if overlap_pos2val.has_key(ind):
+					if ind in overlap_pos2val:
 						overlap_pos2val[ind] += last_score
 					else:
 						overlap_pos2val[ind] = last_score
@@ -118,5 +118,3 @@ def merge(infile):
 				for m,n,p in wig_reader.wig_to_bgr2(overlap_pos2val):
 					yield((last_chr, m, n, p))
 			
-if __name__=='__main__':
-	merge_bedgraph('a')		
