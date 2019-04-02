@@ -2,7 +2,7 @@
 '''
 ---------------------------------------------------------------------------------------
 CrossMap: lift over genomic coordinates between genome assemblies.
-Supports BED/BedGraph, GFF/GTF, BAM/SAM, BigWig/Wig, VCF format files.
+Supports BED/BedGraph, GFF/GTF, BAM/SAM/CRAM, BigWig/Wig, VCF format files.
 ------------------------------------------------------------------------------------------
 '''
 
@@ -31,14 +31,28 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.3.2"
+__version__="0.3.4"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
 
 def printlog (mesg_lst):
     '''
-    print progress into stderr
+    Print messages into stderr.
+    
+    Parameters
+    ----------
+    mesg_lst : list of str
+        List of message strings
+    
+    Examples
+    --------
+    >>>printlog(['How','are', 'you!'])
+    @ 2019-03-30 10:13:07: How are you!
+    
+    >>>printlog(['Hello!'])
+    @ 2019-03-30 10:14:17: Hello!
+    
     '''
     if len(mesg_lst)==1:
         msg = "@ " + strftime("%Y-%m-%d %H:%M:%S") + ": " +  mesg_lst[0]
@@ -49,19 +63,44 @@ def printlog (mesg_lst):
 def parse_header( line ):
         return dict( [ field.split( '=' ) for field in line.split()[1:] ] )
 
-def revcomp_DNA(dna):
+def revcomp_DNA(dna, extended=False):
     '''
-    reverse complement of input DNA sequence.
+    Reverse complement of input DNA sequence.
+    
+    Parameters
+    ----------
+    dna : str
+        DNA sequences made of 'A', 'C', 'G', 'T', 'N' or 'X'
+    
+    extended : bool
+        Support full IUPAC nucleotides.
+        
+    Examples
+    --------
+    >>> revcomp_DNA('AACGTG')
+    'CACGTT'
     '''
-    complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A','N':'N','X':'X'}
+    if extended:
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'Y': 'R', 'R': 'Y', 'S': 'W', 'W': 'S', 'K': 'M', 'M': 'K', 'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D', 'N': 'N' }
+    else:
+        complement = {'A':'T','C':'G','G':'C','T':'A','N':'N','X':'X'}
     seq = dna.upper()
     return ''.join(complement[base] for base in reversed(seq))
         
 def wiggleReader( f ):
     '''
-    Iterator yielding chrom, start, end, strand, value.
-    Values are zero-based, half-open.
-    Regions which lack scores are ignored.
+    Read wiggle (http://genome.ucsc.edu/goldenPath/help/wiggle) file of different styles. 
+        
+    Parameters
+    ----------
+    f : file 
+        file in wiggle format. Can be fixedStep, variableStep, or bed4
+    
+    Yields
+    ------
+    chrom, start, end, strand, score
+    
+    
     '''
     current_chrom = None
     current_pos = None
@@ -109,9 +148,20 @@ def wiggleReader( f ):
 
 def bigwigReader(infile, bin_size = 2000):
     '''
-    infile: bigwig format file
-    chromsize: chrom_name: size.
-    return: chrom, position (0-based), value
+    Read bigwig (https://genome.ucsc.edu/goldenPath/help/bigWig.html) files.
+    
+    Parameters
+    ----------
+    infile: file
+        Bigwig format file
+   
+    bin_size: int, optional
+        Window size to read in each step
+    
+    Yields
+    ------
+    chrom, start, end, strand, score
+    
     '''
 
     bw = pyBigWig.open(infile)
@@ -144,7 +194,13 @@ def bigwigReader(infile, bin_size = 2000):
             
 def check_bed12(bedline):
     '''
-    check if bed12 format is correct or not
+    Check if bed12 format is correct or not.
+    
+    Parameters
+    ----------
+    bedline : str
+        line in BED format.
+    
     '''
     fields = bedline.strip().split()
     if len(fields) !=12:
@@ -177,12 +233,28 @@ def check_bed12(bedline):
         if i < 0: return False
     return True
 
-def intersectBed(xxx_todo_changeme, xxx_todo_changeme1):
+def intersectBed(lst1, lst2):
     '''
-    return intersection of two bed regions
+    Return intersection of two bed regions.
+    
+    Parameters
+    ----------
+    lst1 : list
+        List of chrom, start, end. Example: ['chr1',10, 100]
+    
+    lst2 : list
+    	 List of chrom, start, end. Example: ['chr1',50, 120]
+    	 
+    Examples
+    --------
+    >>> intersectBed(['chr1',10, 100],['chr1',50, 120])
+    ('chr1', 50, 100)
+    >>> intersectBed(['chr1',10, 100],['chr1',20, 30])
+    ('chr1', 20, 30)
+    
     '''
-    (chr1, st1, end1) = xxx_todo_changeme
-    (chr2, st2, end2) = xxx_todo_changeme1
+    (chr1, st1, end1) = lst1
+    (chr2, st2, end2) = lst2
     if int(st1) > int(end1) or int(st2) > int(end2):
         raise Exception ("Start cannot be larger than end")
     if chr1 != chr2:
@@ -193,8 +265,30 @@ def intersectBed(xxx_todo_changeme, xxx_todo_changeme1):
 
 def read_chain_file (chain_file, print_table=False):
     '''
-    input chain_file could be either plain text, compressed file (".gz", ".Z", ".z", ".bz", ".bz2", ".bzip2"),
-    or a URL pointing to the chain file ("http://", "https://", "ftp://"). If url was used, chain file must be plain text
+    Read chain file.  
+    
+    Parameters
+    ----------
+    chain_file : file
+        Chain format file. Input chain_file could be either plain text, compressed file
+        (".gz",".Z", ".z", ".bz", ".bz2", ".bzip2"), or a URL pointing to the chain file
+        ("http://","https://", "ftp://"). If url was used, chain file must be plain text.
+    
+    print_table : bool, optional
+        Print mappings in human readable table.
+        
+    Returns
+    -------
+    maps : dict
+        Dictionary with source chrom name as key, IntervalTree object as value. An
+        IntervalTree contains many intervals. An interval is a start and end position
+        and a value
+        
+    target_chromSize : dict
+        Chromosome sizes of target genome
+    
+    source_chromSize : dict
+        Chromosome sizes of source genome
     '''
     
     printlog(["Read chain_file: ", chain_file]),
@@ -270,7 +364,7 @@ def read_chain_file (chain_file, print_table=False):
             elif target_strand == '-':
                 maps[source_name].add_interval( Interval(sfrom, sfrom+size,(target_name,target_size - (tfrom+size), target_size - tfrom, target_strand)))
         else:
-                raise Exception("Invalid chain format. (%s)" % line)
+            raise Exception("Invalid chain format. (%s)" % line)
     if (sfrom + size) != source_end  or (tfrom + size) != target_end:
         raise Exception("Alignment blocks do not match specified block sizes. (%s)" % header)       
     
@@ -283,7 +377,27 @@ def read_chain_file (chain_file, print_table=False):
 
 def map_coordinates(mapping, q_chr, q_start, q_end, q_strand='+', print_match=False):
     '''
-    Map coordinates from source assembly to target assembly
+    Map coordinates from source assembly to target assembly.
+    
+    Parameters
+    ----------
+    mapping : dict
+        Dictionary with source chrom name as key, IntervalTree object as value.
+    
+    q_chr : str
+        Chromosome ID of query interval
+    
+    q_start : int
+        Start position of query interval. 
+    
+    q_end : int
+        End position of query interval.
+        
+    q_strand : str
+        Strand of query interval. 
+        
+    print_match : bool
+        Print match table.
     '''
     
     matches=[]
@@ -362,9 +476,30 @@ def map_coordinates(mapping, q_chr, q_start, q_end, q_strand='+', print_match=Fa
     
     return matches
     
-def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
+def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
     '''
     Convert genome coordinates in VCF format.
+    
+    Parameters
+    ----------
+    mapping : dict
+        Dictionary with source chrom name as key, IntervalTree object as value.
+    
+    infile : file
+        Input file in VCF format. Can be a regular or compressed (*.gz, *.Z,*.z, *.bz,
+        *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to
+        remote file.
+        
+    outfile : str
+        prefix of output files.
+    
+    liftoverfile : file
+        Chain (https://genome.ucsc.edu/goldenPath/help/chain.html) format file. Can be a
+        regular or compressed (*.gz, *.Z,*.z, *.bz, *.bz2, *.bzip2) file, local file or
+        URL (http://, https://, ftp://) pointing to remote file.
+    
+    refgenome : file
+        The genome sequence file of 'target' assembly in FASTA format.
     '''
     
     #index refegenome file if it hasn't been done
@@ -441,20 +576,30 @@ def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
             print("##liftOverTime=" + datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)     
             print(line, file=FILE_OUT)
             print(line, file=UNMAP)
+            printlog(["Lifting over ... "])
 
         else:
             if line.startswith('#'):continue
             fields = str.split(line,maxsplit=7)
             total += 1
             
-            if fields[0].startswith('chr'):
-                chrom = fields[0]
-            else:
-                chrom = 'chr' + fields[0]
-            
+            chrom = fields[0]
             start = int(fields[1])-1    # 0 based
             end = start + len(fields[3])
-            a = map_coordinates(mapping, chrom, start, end,'+')
+            
+            #VCF has "chr" prefix
+            if withChr:
+                if chrom in mapping:
+            	    a = map_coordinates(mapping, chrom, start, end,'+')
+                else:
+            	    a = map_coordinates(mapping, chrom.replace('chr',''), start, end,'+')
+            #VCF has no "chr" prefix
+            else:
+                if chrom in mapping:
+            	    a = map_coordinates(mapping, chrom, start, end,'+')
+                else:
+            	    a = map_coordinates(mapping, 'chr' + chrom, start, end,'+')            
+            
             if a is None:
                 print(line, file=UNMAP)
                 fail += 1
@@ -473,6 +618,7 @@ def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
                 # update start coordinate
                 fields[1] = target_start + 1
                 
+                # update ref allele
                 if refFasta.references[0].startswith('chr'):
                     if target_chr.startswith('chr'):
                         try:
@@ -496,13 +642,14 @@ def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
                         except:
                              print(line, file=UNMAP)
                         
-                
+                if a[1][3] == '-':
+                    fields[4] = revcomp_DNA(fields[4], True)
                 
                 if fields[3] != fields[4]:
                     print('\t'.join(map(str, fields)), file=FILE_OUT)
                 else:
-                    print(line, file=UNMAP)
-                    fail += 1
+                   print(line, file=UNMAP)
+                   fail += 1
             else:
                 print(line, file=UNMAP)
                 fail += 1
@@ -513,10 +660,22 @@ def crossmap_vcf_file(mapping, infile,outfile, liftoverfile, refgenome):
     printlog (["Failed to map:", str(fail)])
                 
             
-def crossmap_bed_file(mapping, inbed,outfile=None):
+def crossmap_bed_file(mapping, inbed, outfile=None):
     '''
     Convert genome coordinates (in bed format) between assemblies.
     BED format: http://genome.ucsc.edu/FAQ/FAQformat.html#format1
+
+    Parameters
+    ----------
+    mapping : dict
+        Dictionary with source chrom name as key, IntervalTree object as value.
+    
+    inbed : file
+        Input BED file. 
+    
+    outfile : str, optional
+        Prefix of output files. 
+
     '''
     
     # check if 'outfile' was set. If not set, print to screen, if set, print to file
@@ -571,8 +730,15 @@ def crossmap_bed_file(mapping, inbed,outfile=None):
                         strand = f
             except:
                 pass
-                
-            a = map_coordinates(mapping, fields[0], int(fields[1]),int(fields[2]),strand)
+            
+            chrom = fields[0]
+            start = int(fields[1])
+            end = int(fields[2])
+            
+            if chrom in mapping:
+                a = map_coordinates(mapping, chrom, start, end, strand)
+            else:
+                a = map_coordinates(mapping, chrom.replace('chr',''), start, end, strand)
             # example of a: [('chr1', 246974830, 246974833,'+'), ('chr1', 248908207, 248908210,'+')]
 
             try:
@@ -628,7 +794,10 @@ def crossmap_bed_file(mapping, inbed,outfile=None):
             #print exons_old_pos
             exons_new_pos = []
             for e_chr, e_start, e_end in exons_old_pos:
-                a = map_coordinates(mapping, e_chr, e_start, e_end, strand)
+                if e_chr in mapping:
+                    a = map_coordinates(mapping, e_chr, e_start, e_end, strand)
+                else:
+                    a = map_coordinates(mapping, e_chr.replace('chr',''), e_start, e_end, strand)
                 if a is None:
                     fail_flag =True
                     break
@@ -752,7 +921,10 @@ def crossmap_gff_file(mapping, ingff,outfile=None):
         strand = '-' if fields[6] == '-' else '+'
 
         chrom = fields[0]
-        a = map_coordinates(mapping, chrom,start,end,strand)
+        if chrom in mapping:
+            a = map_coordinates(mapping, chrom,start,end,strand)
+        else:
+            a = map_coordinates(mapping, chrom.replace('chr',''),start,end,strand)
         if a is None:
             if outfile is None:
                 print(line + '\tfail (no match to target assembly)')
@@ -817,25 +989,32 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
         
     '''
     
-    # determine the input file format (BAM or SAM)
-    try:
+    # determine the input file format (BAM, CRAM or SAM)
+    file_type = ''
+    if infile.lower().endswith('.bam'):
+        file_type = 'BAM'
+        comments=['Liftover from original BAM file: ' + infile]
         samfile = pysam.Samfile(infile,'rb')
         if len(samfile.header) == 0:
             print("BAM file has no header section. Exit!", file=sys.stderr)
+            sys.exit(1) 
+    elif infile.lower().endswith('.cram'):
+        file_type = 'CRAM'
+        comments=['Liftover from original CRAM file: ' + infile]
+        samfile = pysam.Samfile(infile,'rc')
+        if len(samfile.header) == 0:
+            print("CRAM file has no header section. Exit!", file=sys.stderr)
             sys.exit(1)
-        bam_format = True
-    except:
+    elif infile.lower().endswith('.sam'):
+        file_type = 'SAM'
+        comments=['Liftover from original SAM file: ' + infile]
         samfile = pysam.Samfile(infile,'r')
         if len(samfile.header) == 0:
             print("SAM file has no header section. Exit!", file=sys.stderr)
             sys.exit(1)
-        bam_format = False
-    
-    # add comments into BAM/SAM header section
-    if bam_format:
-        comments=['Liftover from original BAM file: ' + infile]
     else:
-        comments=['Liftover from original SAM file: ' + infile]
+        print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
+        sys.exit(1)
     comments.append('Liftover is based on the chain file: ' + chainfile)
     
     sam_ori_header = samfile.header
@@ -843,24 +1022,38 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
     
     # write to file
     if outfile_prefix is not None:
-        if bam_format:
+        if file_type == 'BAM':
             OUT_FILE = pysam.Samfile( outfile_prefix + '.bam', "wb", header = new_header )
             #OUT_FILE_UNMAP = pysam.Samfile( outfile_prefix + '.unmap.bam', "wb", template=samfile )
             printlog (["Liftover BAM file:", infile, '==>', outfile_prefix + '.bam'])
-        else:
+        elif file_type == 'CRAM':
+            OUT_FILE = pysam.Samfile( outfile_prefix + '.bam', "wb", header = new_header )
+            #OUT_FILE_UNMAP = pysam.Samfile( outfile_prefix + '.unmap.bam', "wb", template=samfile )
+            printlog (["Liftover CRAM file:", infile, '==>', outfile_prefix + '.bam'])
+        elif file_type == 'SAM':
             OUT_FILE = pysam.Samfile( outfile_prefix + '.sam', "wh", header = new_header )
             #OUT_FILE_UNMAP = pysam.Samfile( outfile_prefix + '.unmap.sam', "wh", template=samfile )
             printlog (["Liftover SAM file:", infile, '==>',  outfile_prefix + '.sam'])
+        else:
+            print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
+            sys.exit(1)        	
     # write to screen
     else:
-        if bam_format:
+        if file_type == 'BAM':
             OUT_FILE = pysam.Samfile( '-', "wb", header = new_header )
             #OUT_FILE_UNMAP = pysam.Samfile( infile.replace('.bam','') + '.unmap.bam', "wb", template=samfile )
             printlog (["Liftover BAM file:", infile])
-        else:
+        elif file_type == 'CRAM':
+            OUT_FILE = pysam.Samfile( '-', "wb", header = new_header )
+            #OUT_FILE_UNMAP = pysam.Samfile( infile.replace('.bam','') + '.unmap.bam', "wb", template=samfile )
+            printlog (["Liftover CRAM file:", infile])
+        elif file_type == 'SAM':
             OUT_FILE = pysam.Samfile( '-', "w", header = new_header )
             #OUT_FILE_UNMAP = pysam.Samfile( infile.replace('.sam','') + '.unmap.sam', "wh", template=samfile )
             printlog (["Liftover SAM file:", infile])
+        else:
+            print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
+            sys.exit(1)         
 
     QF = 0
     NN = 0
@@ -1427,7 +1620,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
     OUT_FILE.close()
     
     if outfile_prefix is not None:
-        if bam_format:
+        if file_type == "BAM" or file_type == "CRAM":
             try:
                 printlog (['Sort "%s" and save as "%s"' % (outfile_prefix + '.bam', outfile_prefix + '.sorted.bam')])
                 pysam.sort("-o",  outfile_prefix + '.sorted.bam', outfile_prefix + '.bam')
@@ -1440,9 +1633,9 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
                 printlog(["Warning: ","output BAM file was NOT indexed."]) 
                 
     print("Total alignments:" + str(total_item-1))
-    print("\tQC failed: " + str(QF))
+    print("  QC failed: " + str(QF))
     if max(NN,NU, NM, UN, UU, UM, MN, MU, MM) > 0:
-
+        print("  Paired-end reads:")
         print("\tR1 unique, R2 unique (UU): " + str(UU))
         print("\tR1 unique, R2 unmapp (UN): " + str(UN))
         print("\tR1 unique, R2 multiple (UM): " + str(UM))
@@ -1455,6 +1648,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
         print("\tR1 unmap, R2 unique (NU): " + str(NU))
         print("\tR1 unmap, R2 multiple (NM): " + str(NM))   
     if max(SN,SU,SM) > 0:
+        print("  Single-end reads:")
         print("\tUniquley mapped (SU): " +  str(SU))
         print("\tMultiple mapped (SM): " +  str(SM))
         print("\tUnmapped (SN): " + str(SN))
@@ -1465,6 +1659,28 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
     Convert genome coordinates (in wiggle/bigwig format) between assemblies.
     wiggle format: http://genome.ucsc.edu/goldenPath/help/wiggle.html
     bigwig format: http://genome.ucsc.edu/goldenPath/help/bigWig.html
+    
+    Parameters
+    ----------
+    mapping : dict
+        Dictionary with source chrom name as key, IntervalTree object as value.
+    
+    in_file : file
+        Input file in wig or bigwig format. Both "variableStep" and "fixedStep" wiggle
+        lines are supported.
+    
+    out_prefix : str
+        Prefix of output files.
+        
+    taget_chrom_size : dict
+        Chromosome size of target genome. Key is chromsome ID, value is the length of the
+        chromosome.
+    
+    in_format : str
+        Either "wiggle" or "bigwig"
+    
+    binSize : int
+        The chunk size when reading bigwig file in each iteration.   
     '''
 
     OUT_FILE1 = open(out_prefix + '.bgr','w')   # original bgr file
@@ -1475,9 +1691,11 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
         printlog (["Liftover wiggle file:", in_file, '==>', out_prefix + '.bgr'])
         
         for chr, start, end, strand, score in wiggleReader (in_file):
-            #print chr,start,end,score
-            # map_coordinates(mapping, q_chr, q_start, q_end, q_strand = '+', print_match=False):
-            maps = map_coordinates(mapping, chr, start, end, '+')
+            if chr in mapping:
+                maps = map_coordinates(mapping, chr, start, end, '+')
+            else:
+                maps = map_coordinates(mapping.replace('chr',''), chr, start, end, '+')
+            
             if maps is None:
                 continue
             if len(maps) == 2:
@@ -1511,7 +1729,10 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
         
         printlog (["Liftover bigwig file:", in_file, '==>', out_prefix + '.bgr'])
         for chr, start, end, score in bigwigReader(in_file, bin_size = binSize ):
-            maps = map_coordinates(mapping, chr, start, end, '+')
+            if chr in mapping:
+                maps = map_coordinates(mapping, chr, start, end, '+')
+            else:
+                maps = map_coordinates(mapping.replace('chr',''), chr, start, end, '+')
             try:
                 if maps is None: continue
                 if len(maps) == 2:
@@ -1546,9 +1767,8 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
     
 
 def general_help():
-    desc="""CrossMap is a program for convenient conversion of genome coordinates and genome \
-annotation files between assemblies (eg. lift from human hg18 to hg19 or vice versa). \
-It supports file in BAM, SAM, BED, Wiggle, BigWig, GFF, GTF and VCF format."""
+    desc="""CrossMap is a program for convenient conversion of genome coordinates between assembly versions (e.g. from human hg18 to hg19 or vice versa). \
+It supports file in BAM, CRAM, SAM, BED, Wiggle, BigWig, GFF, GTF and VCF format."""
     
     print("Program: %s (v%s)" % ("CrossMap", __version__), file=sys.stderr)
     print("\nDescription: \n%s" % '\n'.join('  '+i for i in wrap(desc,width=80)), file=sys.stderr)
@@ -1559,54 +1779,55 @@ It supports file in BAM, SAM, BED, Wiggle, BigWig, GFF, GTF and VCF format."""
 
 def bed_help():
     msg =[
-    ('Usage:', "CrossMap.py bed input_chain_file input_bed_file [output_file]"),
-    ('Description:', "\"input_chain_file\" and \"input_bed_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. BED format file must have at least 3 columns (chrom, start, end) and no more than 12 columns. If  no \"output_file\" is specified, output will be directed to the screen (console). BED format: http://genome.ucsc.edu/FAQ/FAQformat.html#format1"),
-    ('Example:', "CrossMapy.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed  # write output to \"test.hg19.bed\""),
-    ('Example:', "CrossMapy.py bed hg18ToHg19.over.chain.gz test.hg18.bed                # write output to screen"),
+    ('Usage', "CrossMap.py bed chain_file input_bed_file [output_file]"),
+    ('Description', "Convert BED format file. The \"chain_file\" and \"input_bed_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. BED format file must have at least 3 columns (chrom, start, end). If  no \"output_file\" is specified, output will be directed to the screen (console)."),
+    ('Example1 (write output to file)', "CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed"),
+    ('Example2 (write output to screen)', "CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed"),
     ]
     for i,j in msg:
-        print('\n' + i + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+        print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
     
 def gff_help():
     msg =[
-    ('Usage:', "CrossMap.py gff input_chain_file input_gff_file output_file"),
-    ('Description:', "\"input_chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. Input file must be in GFF or GTF format. GFF format: http://genome.ucsc.edu/FAQ/FAQformat.html#format3 GTF format: http://genome.ucsc.edu/FAQ/FAQformat.html#format4"),
-    ('Example:', "CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf  # write output to \"test.hg18.gff\""),
-    ('Example:', "CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf  # write output to screen"),
+    ('Usage', "CrossMap.py gff chain_file input_gff_file output_file"),
+    ('Description', "Convert GFF or GTF format file. The\"chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. Input file must be in GFF or GTF format. GFF format: http://genome.ucsc.edu/FAQ/FAQformat.html#format3 GTF format: http://genome.ucsc.edu/FAQ/FAQformat.html#format4"),
+    ('Example1 (write output to file)', "CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf"),
+    ('Example2 (write output to screen)', "CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf"),
     ]
     for i,j in msg:
-        print('\n' + i + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+        print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
 def wig_help():
     msg =[
-    ('Usage:', "CrossMap.py wig input_chain_file input_wig_file output_prefix"),
-    ('Description:', "\"input_chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file.  Both \"variableStep\" and \"fixedStep\" wiggle lines are supported. Wiggle format: http://genome.ucsc.edu/goldenPath/help/wiggle.html"),
-    ('Example:', "CrossMapy.py wig hg18ToHg19.over.chain.gz test.hg18.wig test.hg19"),
+    ('Usage', "CrossMap.py wig chain_file input_wig_file output_prefix"),
+    ('Description', "Convert wiggle format file. The \"chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file.  Both \"variableStep\" and \"fixedStep\" wiggle lines are supported. Wiggle format: http://genome.ucsc.edu/goldenPath/help/wiggle.html"),
+    ('Example', "CrossMap.py wig hg18ToHg19.over.chain.gz test.hg18.wig test.hg19"),
     ]
     for i,j in msg:
-        print('\n' + i + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+        print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+
 def bigwig_help():
     msg =[
-    ('Usage:', "CrossMap.py bigwig input_chain_file input_bigwig_file output_prefix"),
-    ('Description:', "\"input_chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. Bigwig format: http://genome.ucsc.edu/goldenPath/help/bigWig.html"),
-    ('Example:', "CrossMapy.py bigwig hg18ToHg19.over.chain.gz test.hg18.bw test.hg19"),
+    ('Usage', "CrossMap.py bigwig chain_file input_bigwig_file output_prefix"),
+    ('Description', "Convert BigWig format file. The \"chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. Bigwig format: http://genome.ucsc.edu/goldenPath/help/bigWig.html"),
+    ('Example', "CrossMap.py bigwig hg18ToHg19.over.chain.gz test.hg18.bw test.hg19"),
     ]
     for i,j in msg:
-        print('\n' + i + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+         print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
 def bam_help():
-    usage="CrossMap.py bam -a input_chain_file input_bam_file output_file [options] "
+    usage="CrossMap.py bam -a chain_file input_file output_file [options] "
     import optparse
     parser.print_help()
 
 def vcf_help():
     msg =[
-    ("usage:","CrossMap.py vcf input_chain_file input_VCF_file ref_genome_file output_file"),
-    ("Description:", "\"input_chain_file\" and \"input_VCF_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"ref_genome_file\" is genome sequence file of 'target assembly' in FASTA format."),
-    ("Example:", " CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf"),
+    ("usage","CrossMap.py vcf chain_file input_VCF_file ref_genome_file output_file"),
+    ("Description", "Convert VCF format file. The \"chain_file\" and \"input_VCF_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"ref_genome_file\" is genome sequence file of 'target assembly' in FASTA format."),
+    ("Example", " CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf"),
     ]
     for i,j in msg:
-        print('\n' + i + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+         print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
     
 if __name__=='__main__':
@@ -1645,9 +1866,9 @@ if __name__=='__main__':
     
     
     commands = {
-    'bed':'convert genome cooridnate or annotation file in BED, bedGraph or other BED-like format.',
-    'bam':'convert alignment file in BAM or SAM format.',
-    'gff':'convert genome cooridnate or annotation file in GFF or GTF format.',
+    'bed':'convert genome coordinate or annotation file in BED, bedGraph or other BED-like format.',
+    'bam':'convert alignment file in BAM, CRAM or SAM format.',
+    'gff':'convert genome coordinate or annotation file in GFF or GTF format.',
     'wig':'convert genome coordinate file in Wiggle, or bedGraph format.',
     'bigwig':'convert genome coordinate file in BigWig format.',
     'vcf':'convert genome coordinate file in VCF format.'
@@ -1721,7 +1942,7 @@ if __name__=='__main__':
                 sys.exit(0)
         elif sys.argv[1].lower() == 'bam':
         #def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, IS_size=200, IS_std=30, fold=3):    
-            usage="CrossMap.py bam input_chain_file input_bam_file output_file [options]\nNote: If output_file == STDOUT or -, CrossMap will write BAM file to the screen"
+            usage="CrossMap.py bam chain_file input_file output_file [options]\nNote: If output_file == STDOUT or -, CrossMap will write BAM file to the screen"
             parser = optparse.OptionParser(usage, add_help_option=False)
             parser.add_option("-m", "--mean", action="store",type="float",dest="insert_size", default=200.0, help="Average insert size of pair-end sequencing (bp). [default=%default]")
             parser.add_option("-s", "--stdev", action="store",type="float",dest="insert_size_stdev", default=30.0, help="Stanadard deviation of insert size. [default=%default]" )
@@ -1764,8 +1985,4 @@ if __name__=='__main__':
         else:
             general_help()
             sys.exit(0)
-    
-    
-        
-    
-    
+  

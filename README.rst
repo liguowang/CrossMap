@@ -102,6 +102,7 @@ In practical, the time CrossMap takes increases linearly to the size of input fi
 
 Release history
 ===================
+* 01/07/2019: Release version 0.3.3. Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
 * 12/14/18: Release version 0.3.2: Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
  
 * 11/05/18: Release version 0.3.0:
