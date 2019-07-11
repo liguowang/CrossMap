@@ -1,0 +1,20 @@
+\BOOKMARK [0][-]{chapter.1}{Why CrossMap ?}{}% 1
+\BOOKMARK [0][-]{chapter.2}{How CrossMap works?}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Algorithm}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{Time complexity}{chapter.2}% 4
+\BOOKMARK [0][-]{chapter.3}{News}{}% 5
+\BOOKMARK [0][-]{chapter.4}{Download}{}% 6
+\BOOKMARK [0][-]{chapter.5}{Installation}{}% 7
+\BOOKMARK [0][-]{chapter.6}{Input and Output}{}% 8
+\BOOKMARK [1][-]{section.6.1}{Chain file}{chapter.6}% 9
+\BOOKMARK [1][-]{section.6.2}{User Input file}{chapter.6}% 10
+\BOOKMARK [1][-]{section.6.3}{Output file}{chapter.6}% 11
+\BOOKMARK [0][-]{chapter.7}{Usage}{}% 12
+\BOOKMARK [1][-]{section.7.1}{Convert BED format files}{chapter.7}% 13
+\BOOKMARK [1][-]{section.7.2}{Convert BAM/SAM format files}{chapter.7}% 14
+\BOOKMARK [1][-]{section.7.3}{Convert Wiggle/BigWig format files}{chapter.7}% 15
+\BOOKMARK [1][-]{section.7.4}{Convert GFF/GTF format files}{chapter.7}% 16
+\BOOKMARK [1][-]{section.7.5}{Convert VCF format files}{chapter.7}% 17
+\BOOKMARK [0][-]{chapter.8}{Compare to UCSC liftover tool}{}% 18
+\BOOKMARK [0][-]{chapter.9}{LICENSE}{}% 19
+\BOOKMARK [0][-]{chapter.10}{Contact}{}% 20

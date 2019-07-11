@@ -1,0 +1,2 @@
+chr9	hg19_refGene	CDS	65503519	65507251	0.000000	-	1	gene_id "NM_001113541"; transcript_id "NM_001113541_dup2";
+chr15	hg19_refGene	exon	99645286	99646214	0.000000	+	.	gene_id "NM_145728"; transcript_id "NM_145728";

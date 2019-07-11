@@ -1,0 +1,21 @@
+\select@language {english}
+\contentsline {chapter}{\numberline {1}Why CrossMap ?}{3}{chapter.1}
+\contentsline {chapter}{\numberline {2}How CrossMap works?}{5}{chapter.2}
+\contentsline {section}{\numberline {2.1}Algorithm}{5}{section.2.1}
+\contentsline {section}{\numberline {2.2}Time complexity}{5}{section.2.2}
+\contentsline {chapter}{\numberline {3}News}{7}{chapter.3}
+\contentsline {chapter}{\numberline {4}Download}{9}{chapter.4}
+\contentsline {chapter}{\numberline {5}Installation}{11}{chapter.5}
+\contentsline {chapter}{\numberline {6}Input and Output}{13}{chapter.6}
+\contentsline {section}{\numberline {6.1}Chain file}{13}{section.6.1}
+\contentsline {section}{\numberline {6.2}User Input file}{14}{section.6.2}
+\contentsline {section}{\numberline {6.3}Output file}{14}{section.6.3}
+\contentsline {chapter}{\numberline {7}Usage}{15}{chapter.7}
+\contentsline {section}{\numberline {7.1}Convert BED format files}{16}{section.7.1}
+\contentsline {section}{\numberline {7.2}Convert BAM/SAM format files}{17}{section.7.2}
+\contentsline {section}{\numberline {7.3}Convert Wiggle/BigWig format files}{20}{section.7.3}
+\contentsline {section}{\numberline {7.4}Convert GFF/GTF format files}{21}{section.7.4}
+\contentsline {section}{\numberline {7.5}Convert VCF format files}{22}{section.7.5}
+\contentsline {chapter}{\numberline {8}Compare to UCSC liftover tool}{25}{chapter.8}
+\contentsline {chapter}{\numberline {9}LICENSE}{27}{chapter.9}
+\contentsline {chapter}{\numberline {10}Contact}{29}{chapter.10}

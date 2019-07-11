@@ -31,7 +31,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.3.4"
+__version__="0.3.5"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -943,8 +943,8 @@ def crossmap_gff_file(mapping, ingff,outfile=None):
                 else:
                     print(line, file=UNMAP)
             fields[0] = a[1][0]         # chrom
-            fields[3] = a[1][1] + 1     # start, 1-based 
-            fields[4] = a[1][2]
+            fields[3] = int(a[1][1]) + 1     # start, 1-based 
+            fields[4] = int(a[1][2])
             fields[6] = a[1][3]
             
             if outfile is None:
