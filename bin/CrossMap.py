@@ -644,7 +644,9 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                              print(line, file=UNMAP)
                         
                 if a[1][3] == '-':
-                    fields[4] = revcomp_DNA(fields[4], True)
+                    # reverse complement ALT allele, but only if it's not missing
+                    if fields[4] != '.':
+                        fields[4] = revcomp_DNA(fields[4], True)
                 
                 if fields[3] != fields[4]:
                     print('\t'.join(map(str, fields)), file=FILE_OUT)
