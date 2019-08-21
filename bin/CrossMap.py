@@ -31,7 +31,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.3.6"
+__version__="0.3.7"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -82,7 +82,7 @@ def revcomp_DNA(dna, extended=False):
     '''
     
     if extended:
-        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'Y': 'R', 'R': 'Y', 'S': 'W', 'W': 'S', 'K': 'M', 'M': 'K', 'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D', 'N': 'N' }
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'Y': 'R', 'R': 'Y', 'S': 'W', 'W': 'S', 'K': 'M', 'M': 'K', 'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D', 'N': 'N', '.':'.'}
     else:
         complement = {'A':'T','C':'G','G':'C','T':'A','N':'N','X':'X'}
     seq = dna.upper()
@@ -100,8 +100,6 @@ def wiggleReader( f ):
     Yields
     ------
     chrom, start, end, strand, score
-    
-    
     '''
     current_chrom = None
     current_pos = None
@@ -602,7 +600,8 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                     a = map_coordinates(mapping, 'chr' + chrom, start, end,'+')            
             
             if a is None:
-                print(line, file=UNMAP)
+                print (line + "\tFail(Unmap)", file=UNMAP)
+                #print(line, file=UNMAP)
                 fail += 1
                 continue
             
@@ -622,26 +621,26 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                 # update ref allele
                 if refFasta.references[0].startswith('chr'):
                     if target_chr.startswith('chr'):
-                        try:
-                            fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                     else:
-                        try:
-                            fields[3] = refFasta.fetch('chr'+target_chr,target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch('chr'+target_chr,target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                 else:
                     if target_chr.startswith('chr'):
-                        try:
-                            fields[3] = refFasta.fetch(target_chr.replace('chr',''),target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch(target_chr.replace('chr',''),target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                     else:
-                        try:
-                            fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                         
                 if a[1][3] == '-':
                     fields[4] = revcomp_DNA(fields[4], True)
@@ -649,10 +648,13 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                 if fields[3] != fields[4]:
                     print('\t'.join(map(str, fields)), file=FILE_OUT)
                 else:
-                   print(line, file=UNMAP)
+                   print (line + "\tFail(REF==ALT)", file=UNMAP)
+                   #print(line, file=UNMAP)
                    fail += 1
             else:
-                print(line, file=UNMAP)
+                print (a)
+                print (line + "\tFail(Multiple_hits)", file=UNMAP)
+                #print(line, file=UNMAP)
                 fail += 1
                 continue
     FILE_OUT.close()
