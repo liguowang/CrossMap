@@ -75,7 +75,7 @@ In practical, the time CrossMap takes increases linearly to the size of input fi
 Release history
 ===================
 
-* 07/22/2019: Release version 0.3.7.
+* 08/21/2019: Release version 0.3.7.
   
   * Fix bug when the alternative allele is missing from VCF file. 
   * Append additional column to "*.vcf.unmap" to explain why the liftover was failed. 
