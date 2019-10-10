@@ -84,11 +84,55 @@ time to convert one query. The time complexity is O(logN*M) to convert M queries
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<ul>
+<li><p>08/21/2019: Release version 0.3.7.</p>
 <ul class="simple">
-<li><p>07/11/2019: Release version 0.3.5. Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.</p></li>
-<li><p>04/01/2019: Release version 0.3.4. Fix bugs when chromosome IDs (of the source genome) in chain file do not have ‘chr’ prefix (such as “GRCh37ToHg19.over.chain.gz”). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording.</p></li>
-<li><p>01/07/2019: Release version 0.3.3. Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.</p></li>
-<li><p>12/14/18: Release version 0.3.2: Fix the key error problem (e.g  <em>KeyError: “sequence ‘b‘7_KI270803v1_alt’’ not present”</em>). This error happens when a locus from the orignal assembly is mapped to a “alternative”, “unplaced” or “unlocalized” contig in the target assembly, and this “target contig” does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the “.unmap” file.</p></li>
+<li><p>Fix bug when the alternative allele is missing from VCF file.</p></li>
+<li><p>Append additional column to “<a href="#id2"><span class="problematic" id="id3">*</span></a>.vcf.unmap” to explain why the liftover was failed.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fail(Unmap) : The location of the variant is unmappable to the target assembly.</p></li>
+<li><p>Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.</p></li>
+<li><p>Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.</p></li>
+</ul>
+</div></blockquote>
+</li>
+<li><p>07/22/2019: Release version 0.3.6.</p>
+<ul class="simple">
+<li><p>Support MAF (mutation annotation format).</p></li>
+<li><p>Fix error “TypeError: AlignmentHeader does not support item assignment (use header.to_dict()” when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.</p></li>
+</ul>
+</li>
+<li><p>07/11/2019: Release version 0.3.5.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>04/01/2019: Release version 0.3.4.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fix bugs when chromosome IDs (of the source genome) in chain file do not have ‘chr’ prefix (such as “GRCh37ToHg19.over.chain.gz”). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>01/07/2019: Release version 0.3.3.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>12/14/18: Release version 0.3.2.</p>
+<ul>
+<li><p>Fix the key error problem (e.g  <em>KeyError: “sequence ‘b‘7_KI270803v1_alt’’ not present”</em>). This error happens when a locus from the orignal assembly is mapped to a “alternative”, “unplaced” or “unlocalized” contig in the target assembly, and this “target contig” does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the “.unmap” file.</p></li>
+</ul>
+</li>
 <li><p>11/05/18: Release version 0.3.0:</p></li>
 </ul>
 <blockquote>
@@ -192,15 +236,17 @@ time to convert one query. The time complexity is O(logN*M) to convert M queries
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="use-pip-to-install-crossmap">
 <h2>Use pip to install CrossMap<a class="headerlink" href="#use-pip-to-install-crossmap" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python3</span>
-<span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python2.7.*</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">liguowang</span><span class="o">/</span><span class="n">CrossMap</span><span class="o">.</span><span class="n">git</span>
+
+<span class="ow">or</span>
+
+<span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python3</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-pip-to-upgrade-crossmap">
 <h2>Use pip to upgrade CrossMap<a class="headerlink" href="#use-pip-to-upgrade-crossmap" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python3</span>
-<span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python2.7.*</span>
 </pre></div>
 </div>
 </div>
@@ -959,6 +1005,33 @@ chr14  20086290        .       T       C       .       PASS    ADP=441;WT=0;HET=
 <li><p>In the output VCF file, whether the chromosome IDs contain “chr” or not depends on the format of the input VCF file.</p></li>
 </ol>
 </div>
+<div class="section" id="convert-maf-format-files">
+<h2>Convert MAF format files<a class="headerlink" href="#convert-maf-format-files" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format/">MAF</a>
+(mutation annotation format) files are tab-delimited
+files that contain somatic and/or germline mutation annotations. Please do not confused
+with <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format5">Multiple Alignment Format</a>.</p>
+<p>Typing command without any arguments will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  maf
+
+usage
+-----
+ CrossMap.py maf chain_file input_MAF_file ref_genome_file build_name output_file
+
+Description
+-----------
+ Convert MAF format file. The &quot;chain_file&quot; and &quot;input_MAF_file&quot; can be regular or
+ compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+ (http://, https://, ftp://) pointing to remote file. &quot;ref_genome_file&quot; is genome
+ sequence file of &#39;target assembly&#39; in FASTA format. &quot;build_name&quot; is the name of
+ the &#39;target_assembly&#39; (eg &quot;GRCh38&quot;)
+
+Example
+-------
+  CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38  test.hg38.maf
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="compare-to-ucsc-liftover-tool">
 <h1>Compare to UCSC liftover tool<a class="headerlink" href="#compare-to-ucsc-liftover-tool" title="Permalink to this headline">¶</a></h1>
@@ -1064,6 +1137,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 <li><a class="reference internal" href="#convert-bigwig-format-files">Convert BigWig format files</a></li>
 <li><a class="reference internal" href="#convert-gff-gtf-format-files">Convert GFF/GTF format files</a></li>
 <li><a class="reference internal" href="#convert-vcf-format-files">Convert VCF format files</a></li>
+<li><a class="reference internal" href="#convert-maf-format-files">Convert MAF format files</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compare-to-ucsc-liftover-tool">Compare to UCSC liftover tool</a></li>

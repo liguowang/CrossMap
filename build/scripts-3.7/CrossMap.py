@@ -2,7 +2,7 @@
 '''
 ---------------------------------------------------------------------------------------
 CrossMap: lift over genomic coordinates between genome assemblies.
-Supports BED/BedGraph, GFF/GTF, BAM/SAM/CRAM, BigWig/Wig, VCF format files.
+Supports BED/BedGraph, GFF/GTF, BAM/SAM/CRAM, BigWig/Wig, VCF, and MAF format files.
 ------------------------------------------------------------------------------------------
 '''
 
@@ -31,7 +31,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.3.5"
+__version__="0.3.7"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -80,8 +80,9 @@ def revcomp_DNA(dna, extended=False):
     >>> revcomp_DNA('AACGTG')
     'CACGTT'
     '''
+    
     if extended:
-        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'Y': 'R', 'R': 'Y', 'S': 'W', 'W': 'S', 'K': 'M', 'M': 'K', 'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D', 'N': 'N' }
+        complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'Y': 'R', 'R': 'Y', 'S': 'W', 'W': 'S', 'K': 'M', 'M': 'K', 'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D', 'N': 'N', '.':'.'}
     else:
         complement = {'A':'T','C':'G','G':'C','T':'A','N':'N','X':'X'}
     seq = dna.upper()
@@ -99,8 +100,6 @@ def wiggleReader( f ):
     Yields
     ------
     chrom, start, end, strand, score
-    
-    
     '''
     current_chrom = None
     current_pos = None
@@ -243,8 +242,8 @@ def intersectBed(lst1, lst2):
         List of chrom, start, end. Example: ['chr1',10, 100]
     
     lst2 : list
-    	 List of chrom, start, end. Example: ['chr1',50, 120]
-    	 
+         List of chrom, start, end. Example: ['chr1',50, 120]
+         
     Examples
     --------
     >>> intersectBed(['chr1',10, 100],['chr1',50, 120])
@@ -377,7 +376,7 @@ def read_chain_file (chain_file, print_table=False):
 
 def map_coordinates(mapping, q_chr, q_start, q_end, q_strand='+', print_match=False):
     '''
-    Map coordinates from source assembly to target assembly.
+    Map coordinates from source (i.e. original) assembly to target (i.e. new) assembly.
     
     Parameters
     ----------
@@ -590,18 +589,19 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
             #VCF has "chr" prefix
             if withChr:
                 if chrom in mapping:
-            	    a = map_coordinates(mapping, chrom, start, end,'+')
+                    a = map_coordinates(mapping, chrom, start, end,'+')
                 else:
-            	    a = map_coordinates(mapping, chrom.replace('chr',''), start, end,'+')
+                    a = map_coordinates(mapping, chrom.replace('chr',''), start, end,'+')
             #VCF has no "chr" prefix
             else:
                 if chrom in mapping:
-            	    a = map_coordinates(mapping, chrom, start, end,'+')
+                    a = map_coordinates(mapping, chrom, start, end,'+')
                 else:
-            	    a = map_coordinates(mapping, 'chr' + chrom, start, end,'+')            
+                    a = map_coordinates(mapping, 'chr' + chrom, start, end,'+')            
             
             if a is None:
-                print(line, file=UNMAP)
+                print (line + "\tFail(Unmap)", file=UNMAP)
+                #print(line, file=UNMAP)
                 fail += 1
                 continue
             
@@ -621,26 +621,26 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                 # update ref allele
                 if refFasta.references[0].startswith('chr'):
                     if target_chr.startswith('chr'):
-                        try:
-                            fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                     else:
-                        try:
-                            fields[3] = refFasta.fetch('chr'+target_chr,target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch('chr'+target_chr,target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                 else:
                     if target_chr.startswith('chr'):
-                        try:
-                            fields[3] = refFasta.fetch(target_chr.replace('chr',''),target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch(target_chr.replace('chr',''),target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                     else:
-                        try:
-                            fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
-                        except:
-                             print(line, file=UNMAP)
+                        #try:
+                        fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+                        #except:
+                        #    print(line, file=UNMAP)
                         
                 if a[1][3] == '-':
                     fields[4] = revcomp_DNA(fields[4], True)
@@ -648,8 +648,145 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                 if fields[3] != fields[4]:
                     print('\t'.join(map(str, fields)), file=FILE_OUT)
                 else:
-                   print(line, file=UNMAP)
+                   print (line + "\tFail(REF==ALT)", file=UNMAP)
+                   #print(line, file=UNMAP)
                    fail += 1
+            else:
+                print (a)
+                print (line + "\tFail(Multiple_hits)", file=UNMAP)
+                #print(line, file=UNMAP)
+                fail += 1
+                continue
+    FILE_OUT.close()
+    UNMAP.close()
+    printlog (["Total entries:", str(total)])
+    printlog (["Failed to map:", str(fail)])
+                
+def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_name):
+    '''
+    Convert genome coordinates in MAF (mutation annotation foramt) format.
+    
+    Parameters
+    ----------
+    mapping : dict
+        Dictionary with source chrom name as key, IntervalTree object as value.
+    
+    infile : file
+        Input file in VCF format. Can be a regular or compressed (*.gz, *.Z,*.z, *.bz,
+        *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to
+        remote file.
+        
+    outfile : str
+        prefix of output files.
+    
+    liftoverfile : file
+        Chain (https://genome.ucsc.edu/goldenPath/help/chain.html) format file. Can be a
+        regular or compressed (*.gz, *.Z,*.z, *.bz, *.bz2, *.bzip2) file, local file or
+        URL (http://, https://, ftp://) pointing to remote file.
+    
+    refgenome : file
+        The genome sequence file of 'target' assembly in FASTA format.
+    ref_name : str
+        The NCBI build name of the target assembly, for example, "GRCh37", "GRCh38".
+    '''
+    
+    #index refegenome file if it hasn't been done
+    if not os.path.exists(refgenome + '.fai'):
+        printlog(["Creating index for", refgenome])
+        pysam.faidx(refgenome)
+    
+    refFasta = pysam.Fastafile(refgenome)
+    
+    FILE_OUT = open(outfile ,'w')
+    UNMAP = open(outfile + '.unmap','w')
+    
+    total = 0
+    fail = 0
+    withChr = False # check if the MAF file use 'chr1' or '1'
+    
+    for line in ireader.reader(infile):
+        if not line.strip():
+            continue
+        line=line.strip()
+                
+        #meta-information lines needed in both mapped and unmapped files
+        if line.startswith('#'):
+            print(line, file=FILE_OUT)
+            print(line, file=UNMAP)
+            continue
+        elif line.startswith('Hugo_Symbol'):
+            print("#liftOver: Program=%sv%s, Time=%s, ChainFile=%s, NewRefGenome=%s" % ("CrossMap", __version__, datetime.date.today().strftime("%B%d,%Y"),liftoverfile,refgenome ), file=FILE_OUT)  
+            print(line, file=FILE_OUT)
+            print(line, file=UNMAP)
+            printlog(["Lifting over ... "])
+        else:
+            
+            fields = str.split(line)
+            total += 1
+            
+            fields[3] = ref_name
+            chrom = fields[4]
+            start = int(fields[5])-1    # 0 based
+            end = int(fields[6])
+            strand = fields[7]
+            
+            if chrom.startswith('chr'):
+                withChr = True
+            
+            if withChr: #MAF file use 'chr'
+                if chrom in mapping:
+                    a = map_coordinates(mapping, chrom, start, end,'+')
+                else:
+                    a = map_coordinates(mapping, chrom.replace('chr',''), start, end,'+')
+            else:   #MAF file does not use 'chr'
+                if chrom in mapping:
+                    a = map_coordinates(mapping, chrom, start, end,'+')
+                else:
+                    a = map_coordinates(mapping, 'chr' + chrom, start, end,'+')
+                        
+            if a is None:
+                print(line, file=UNMAP)
+                fail += 1
+                continue
+            
+            if len(a) == 2:
+            
+                # update chrom
+                target_chr = str(a[1][0])   #target_chr is from chain file, could be 'chr1' or '1'
+                target_start = a[1][1]
+                target_end = a[1][2]
+                if withChr is False:
+                    fields[4] = target_chr.replace('chr','')
+                else:
+                    if target_chr.startswith('chr'):
+                        fields[4] = target_chr
+                    else:
+                        fields[4] = 'chr' + target_chr
+                
+                # update start coordinate
+                fields[5] = target_start + 1
+                
+                # update end
+                fields[6] = target_end
+                
+                
+                # update ref allele
+                if refFasta.references[0].startswith('chr'):
+                    if target_chr.startswith('chr'):
+                        fields[10] = refFasta.fetch(target_chr,target_start,target_end).upper()
+                    else:
+                        fields[10] = refFasta.fetch('chr'+target_chr,target_start,target_end).upper()
+                else:
+                    if target_chr.startswith('chr'):
+                        fields[10] = refFasta.fetch(target_chr.replace('chr',''),target_start,target_end).upper()
+                    else:
+                        fields[10] = refFasta.fetch(target_chr,target_start,target_end).upper()
+         
+                if a[1][3] == '-':
+                    fields[10] = revcomp_DNA(fields[10], True)
+                
+                print('\t'.join(map(str, fields)), file=FILE_OUT)
+            
             else:
                 print(line, file=UNMAP)
                 fail += 1
@@ -658,8 +795,8 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
     UNMAP.close()
     printlog (["Total entries:", str(total)])
     printlog (["Failed to map:", str(fail)])
+    
                 
-            
 def crossmap_bed_file(mapping, inbed, outfile=None):
     '''
     Convert genome coordinates (in bed format) between assemblies.
@@ -1017,7 +1154,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
         sys.exit(1)
     comments.append('Liftover is based on the chain file: ' + chainfile)
     
-    sam_ori_header = samfile.header
+    sam_ori_header = samfile.header.to_dict()
     (new_header, name_to_id) = sam_header.bam_header_generator(orig_header = sam_ori_header, chrom_size = chrom_size, prog_name="CrossMap",prog_ver = __version__, format_ver=1.0,sort_type = 'coordinate',co=comments)
     
     # write to file
@@ -1036,7 +1173,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
             printlog (["Liftover SAM file:", infile, '==>',  outfile_prefix + '.sam'])
         else:
             print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
-            sys.exit(1)        	
+            sys.exit(1)         
     # write to screen
     else:
         if file_type == 'BAM':
@@ -1829,6 +1966,16 @@ def vcf_help():
     for i,j in msg:
          print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
+
+def maf_help():
+    msg =[
+    ("usage","CrossMap.py maf chain_file input_MAF_file ref_genome_file build_name output_file"),
+    ("Description", "Convert MAF format file. The \"chain_file\" and \"input_MAF_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"ref_genome_file\" is genome sequence file of 'target assembly' in FASTA format. \"build_name\" is the name of the 'target_assembly' (eg \"GRCh38\")"),
+    ("Example", " CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38 test.hg38.maf"),
+    ]
+    for i,j in msg:
+         print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+
     
 if __name__=='__main__':
 
@@ -1871,7 +2018,8 @@ if __name__=='__main__':
     'gff':'convert genome coordinate or annotation file in GFF or GTF format.',
     'wig':'convert genome coordinate file in Wiggle, or bedGraph format.',
     'bigwig':'convert genome coordinate file in BigWig format.',
-    'vcf':'convert genome coordinate file in VCF format.'
+    'vcf':'convert genome coordinate file in VCF format.',
+    'maf':'convert genome coordinate file in MAF (mutation annotation format).'
     }   
     kwds = list(commands.keys())
 
@@ -1982,6 +2130,20 @@ if __name__=='__main__':
             else:
                 vcf_help()
                 sys.exit(0)         
+
+        elif sys.argv[1].lower() == 'maf':  #mapping, infile, outfile, liftoverfile, refgenome, ref_name
+            if len(sys.argv) == 7:
+                chain_file = sys.argv[2]
+                in_file = sys.argv[3]
+                genome_file = sys.argv[4]
+                build_name = sys.argv[5]
+                out_file = sys.argv[6]
+                (mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+                crossmap_maf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, ref_name = build_name)
+            else:
+                maf_help()
+                sys.exit(0)         
+
         else:
             general_help()
             sys.exit(0)

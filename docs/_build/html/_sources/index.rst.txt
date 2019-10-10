@@ -75,10 +75,36 @@ In practical, the time CrossMap takes increases linearly to the size of input fi
 Release history
 ===================
 
-* 07/11/2019: Release version 0.3.5. Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.
-* 04/01/2019: Release version 0.3.4. Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 
-* 01/07/2019: Release version 0.3.3. Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
-* 12/14/18: Release version 0.3.2: Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
+* 08/21/2019: Release version 0.3.7.
+  
+  * Fix bug when the alternative allele is missing from VCF file. 
+  * Append additional column to "*.vcf.unmap" to explain why the liftover was failed. 
+   * Fail(Unmap) : The location of the variant is unmappable to the target assembly.
+   * Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.
+   * Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.
+
+
+* 07/22/2019: Release version 0.3.6.
+  
+  * Support MAF (mutation annotation format). 
+  * Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files. 
+
+
+* 07/11/2019: Release version 0.3.5.
+
+ * Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.
+
+* 04/01/2019: Release version 0.3.4.
+ 
+ * Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 
+
+* 01/07/2019: Release version 0.3.3.
+ 
+ * Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
+
+* 12/14/18: Release version 0.3.2. 
+  
+  * Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
  
 * 11/05/18: Release version 0.3.0:
 
@@ -150,8 +176,12 @@ Use pip to install CrossMap
 
 ::
 
+ pip3 install git+https://github.com/liguowang/CrossMap.git
+ 
+ or 
+ 
  pip3 install CrossMap	#Install CrossMap supporting Python3
- pip2 install CrossMap	#Install CrossMap supporting Python2.7.*
+ 
 
 Use pip to upgrade CrossMap
 -----------------------------
@@ -159,7 +189,6 @@ Use pip to upgrade CrossMap
 ::
 
  pip3 install CrossMap --upgrade	#upgrade CrossMap supporting Python3
- pip2 install CrossMap --upgrade	#upgrade CrossMap supporting Python2.7.*
  
 Install CrossMap from source code
 ----------------------------------
@@ -879,6 +908,34 @@ NOTE:
 3. If the reference genome sequence file (../database/genome/hg18.fa) was not indexed, CrossMap will automatically indexed it (only the first time you run CrossMap). 
 4. Output files: *output_file* and *output_file.unmap*. 
 5. In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the format of the input VCF file. 
+
+Convert MAF format files
+-------------------------
+`MAF <https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format/>`_ 
+(mutation annotation format) files are tab-delimited
+files that contain somatic and/or germline mutation annotations. Please do not confused 
+with `Multiple Alignment Format <https://genome.ucsc.edu/FAQ/FAQformat.html#format5>`_.
+
+
+Typing command without any arguments will print help message::
+
+ $ python2.7 CrossMap.py  maf
+ 
+ usage
+ -----
+  CrossMap.py maf chain_file input_MAF_file ref_genome_file build_name output_file
+
+ Description
+ -----------
+  Convert MAF format file. The "chain_file" and "input_MAF_file" can be regular or
+  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+  (http://, https://, ftp://) pointing to remote file. "ref_genome_file" is genome
+  sequence file of 'target assembly' in FASTA format. "build_name" is the name of
+  the 'target_assembly' (eg "GRCh38")
+
+ Example
+ -------
+   CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38  test.hg38.maf 
 
 
 Compare to UCSC liftover tool

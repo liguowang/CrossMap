@@ -31,7 +31,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.3.7"
+__version__="0.3.8"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -769,7 +769,6 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
                 # update end
                 fields[6] = target_end
                 
-                
                 # update ref allele
                 if refFasta.references[0].startswith('chr'):
                     if target_chr.startswith('chr'):
@@ -784,7 +783,6 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
          
                 if a[1][3] == '-':
                     fields[10] = revcomp_DNA(fields[10], True)
-                
                 print('\t'.join(map(str, fields)), file=FILE_OUT)
             
             else:
