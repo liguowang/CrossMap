@@ -606,6 +606,7 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                 continue
             
             if len(a) == 2:
+                prev_ref = fields[3]
                 # update chrom
                 target_chr = str(a[1][0])   #target_chr is from chain file, could be 'chr1' or '1'
                 target_start = a[1][1]
@@ -643,14 +644,22 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
                         #    print(line, file=UNMAP)
                         
                 if a[1][3] == '-':
-                    fields[4] = revcomp_DNA(fields[4], True)
-                
-                if fields[3] != fields[4]:
-                    print('\t'.join(map(str, fields)), file=FILE_OUT)
+                    alts = fields[4].split(',')
+                    # indel if all alts share the same first base with the previous reference
+                    is_indel = all(prev_ref[0] == alt[0] for alt in alts)
+                    # removed shared first base before revcomp
+                    if (is_indel):
+                        alts = [alt[1:] for alt in alts]
+                    alts = [revcomp_DNA(alt, True) for alt in alts]
+                    # get first base from new reference and append it to front of new revcomplemented alts
+                    if (is_indel):
+                        alts = [fields[3][0] + alt for alt in alts]
+                    fields[4] = ','.join(alts)
+                if (fields[3] in fields[4].split(',')):
+                    print (line + "\tFail(REF==ALT)", file=UNMAP)
+                    fail += 1
                 else:
-                   print (line + "\tFail(REF==ALT)", file=UNMAP)
-                   #print(line, file=UNMAP)
-                   fail += 1
+                    print('\t'.join(map(str, fields)), file=FILE_OUT)
             else:
                 print (a)
                 print (line + "\tFail(Multiple_hits)", file=UNMAP)
