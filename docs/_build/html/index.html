@@ -39,79 +39,36 @@
 (such as <a class="reference external" href="http://www.ncbi.nlm.nih.gov/assembly/2928/">hg18 (NCBI36)</a>   &lt;=&gt; <a class="reference external" href="http://www.ncbi.nlm.nih.gov/assembly/2758/">hg19 (GRCh37)</a>).
 It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig, BED, GFF, GTF and VCF.</p>
 </div>
-<div class="section" id="who-is-using-crossmap">
-<h1>Who is using CrossMap ?<a class="headerlink" href="#who-is-using-crossmap" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference external" href="http://www.ensembl.org/Homo_sapiens/Tools/AssemblyConverter?db=core">Ensembl</a></p></li>
-<li><p><a class="reference external" href="https://basespace.illumina.com/apps/">Illumina BaseSpace</a></p></li>
-<li><p><a class="reference external" href="http://bcbio-nextgen.readthedocs.org/en/latest/contents/introduction.html">bcbio-nextgen</a></p></li>
-<li><p><a class="reference external" href="https://hpc.nih.gov/apps/crossmap.html">NIH Biowulf &amp; Helix</a></p></li>
-<li><p><a class="reference external" href="https://wiki.gacrc.uga.edu/wiki/CrossMap">Georgia Advanced Computing Resource Center</a></p></li>
-<li><p><a class="reference external" href="https://www.gnu.org/software/guix/packages/">GNU Guix</a></p></li>
-</ul>
-</div>
 <div class="section" id="how-crossmap-works">
 <h1>How CrossMap works?<a class="headerlink" href="#how-crossmap-works" title="Permalink to this headline">¶</a></h1>
 <a class="reference internal image-reference" href="_images/howitworks.png"><img alt="alternate text" src="_images/howitworks.png" style="width: 510.0px; height: 212.5px;" /></a>
-<div class="section" id="algorithm">
-<h2>Algorithm<a class="headerlink" href="#algorithm" title="Permalink to this headline">¶</a></h2>
-<p>CrossMap first determines the correspondence between genome assemblies from
-UCSC <a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/chain.html">chain</a> file (chain file
-describes the pair-wise alignments between two genomes). Genome intervals will be stored in
-<a class="reference external" href="http://en.wikipedia.org/wiki/Interval_tree">interval tree</a> data structure,
-which allows one to efficiently find all intervals that overlap with any given interval or point.
-Then CrossMap remaps each entry in BAM/SAM, BED, GFF/GTF, VCF file to the target assembly by querying the <a class="reference external" href="http://en.wikipedia.org/wiki/Interval_tree">interval tree</a>.
-Exon/intron structure in BED file; spliced alignments, paired alignments, insert size, header
-section, SAM flags in BAM/SAM file; reference alleles, indels in VCF file will be processed
-properly.</p>
-<p>For Wiggle/BigWig format files, line-by-line computation will be very slow. To increase speed,
-CrossMap groups consecutive coordinates with the same coverage score into bins (i.e., genomic regions),
-then remaps those regions one-by-one to the target assembly by querying the interval tree.  In other words, Wiggle/BigWig files will
-be converted into <a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/bedgraph.html">bedGraph</a> format
-internally, which will be converted into BigWig format (if UCSC’s ‘<a class="reference external" href="http://hgdownload.cse.ucsc.edu/admin/exe/">wigToBigWig</a>’
-executable exists and is callable).</p>
-</div>
-<div class="section" id="time-complexity">
-<h2>Time complexity<a class="headerlink" href="#time-complexity" title="Permalink to this headline">¶</a></h2>
-<p>Assume there are N lines in the chain file. CrossMap loads the chain file first and processes
-the query file line by line. Thus the space complexity is O(N). For each query region (s,t),
-it takes O(logN) time to locate which chain(s) overlap with s and t. Then it takes O(logN)
-time to search the sorted ungapped alignments in this chain that overlap with s and t and
-calculate the converted values for s and t in the target assembly. So in total it takes O(logN)
-time to convert one query. The time complexity is O(logN*M) to convert M queries.</p>
-<p>In practical, the time CrossMap takes increases linearly to the size of input file.</p>
-</div>
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<ul>
-<li><p>08/21/2019: Release version 0.3.7.</p>
 <ul class="simple">
-<li><p>Fix bug when the alternative allele is missing from VCF file.</p></li>
-<li><p>Append additional column to “<a href="#id2"><span class="problematic" id="id3">*</span></a>.vcf.unmap” to explain why the liftover was failed.</p></li>
+<li><p>14/11/2019: Release version 0.3.9.</p></li>
 </ul>
 <blockquote>
 <div><ul class="simple">
-<li><p>Fail(Unmap) : The location of the variant is unmappable to the target assembly.</p></li>
-<li><p>Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.</p></li>
-<li><p>Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.</p></li>
+<li><p>fix bug when the alternative allele field in VCF file contains “*” or multiple alleles are separated by “,”.</p></li>
+<li><p>rewrite ‘map_coordinates’ function to deal with chain file containing either full (eg “chr1”) or abbreviate (eg “1”) chromosome IDs.</p></li>
 </ul>
 </div></blockquote>
-</li>
-<li><p>07/22/2019: Release version 0.3.6.</p>
 <ul class="simple">
+<li><p>10/09/2019: Release version 0.3.8.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>07/22/2019: Release version 0.3.6.</p>
+<ul>
 <li><p>Support MAF (mutation annotation format).</p></li>
 <li><p>Fix error “TypeError: AlignmentHeader does not support item assignment (use header.to_dict()” when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.</p></li>
 </ul>
 </li>
-<li><p>07/11/2019: Release version 0.3.5.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
 <li><p>04/01/2019: Release version 0.3.4.</p></li>
 </ul>
 <blockquote>
@@ -128,11 +85,14 @@ time to convert one query. The time complexity is O(logN*M) to convert M queries
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>12/14/18: Release version 0.3.2.</p>
-<ul>
+<li><p>12/14/18: Release version 0.3.2.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
 <li><p>Fix the key error problem (e.g  <em>KeyError: “sequence ‘b‘7_KI270803v1_alt’’ not present”</em>). This error happens when a locus from the orignal assembly is mapped to a “alternative”, “unplaced” or “unlocalized” contig in the target assembly, and this “target contig” does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the “.unmap” file.</p></li>
 </ul>
-</li>
+</div></blockquote>
+<ul class="simple">
 <li><p>11/05/18: Release version 0.3.0:</p></li>
 </ul>
 <blockquote>
@@ -236,75 +196,17 @@ time to convert one query. The time complexity is O(logN*M) to convert M queries
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="use-pip-to-install-crossmap">
 <h2>Use pip to install CrossMap<a class="headerlink" href="#use-pip-to-install-crossmap" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">liguowang</span><span class="o">/</span><span class="n">CrossMap</span><span class="o">.</span><span class="n">git</span>
-
-<span class="ow">or</span>
-
-<span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python3</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python3</span>
+<span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python2.7.*</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="use-pip-to-upgrade-crossmap">
 <h2>Use pip to upgrade CrossMap<a class="headerlink" href="#use-pip-to-upgrade-crossmap" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python3</span>
+<span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python2.7.*</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="install-crossmap-from-source-code">
-<h2>Install CrossMap from source code<a class="headerlink" href="#install-crossmap-from-source-code" title="Permalink to this headline">¶</a></h2>
-<ul class="simple">
-<li><p><a class="reference external" href="http://sourceforge.net/projects/crossmap/files">Source code</a></p></li>
-<li><p><a class="reference external" href="http://sourceforge.net/projects/crossmap/files/test.hg19.zip/download">Test datsets</a></p></li>
-</ul>
-<p><strong>Prerequisite</strong></p>
-<ul class="simple">
-<li><p>CrossMap (version &lt;= 0.2.9)</p></li>
-</ul>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p><a class="reference external" href="http://www.python.org/getit/releases/2.7/">python2.7.*</a></p></li>
-<li><p><a class="reference external" href="http://numpy.scipy.org/">numpy</a></p></li>
-<li><p><a class="reference external" href="http://cython.org/">cython</a></p></li>
-<li><p><a class="reference external" href="https://pypi.python.org/pypi/pysam">pysam</a></p></li>
-<li><p><a class="reference external" href="https://pypi.python.org/pypi/bx-python/0.7.3">bx-python</a></p></li>
-</ol>
-</div></blockquote>
-<ul class="simple">
-<li><p>CrossMap (version &gt;=  0.3.0)</p></li>
-</ul>
-<blockquote>
-<div><ol class="arabic simple">
-<li><p><a class="reference external" href="https://www.python.org/downloads/release/python-360/">python3</a></p></li>
-<li><p><a class="reference external" href="http://numpy.scipy.org/">numpy</a></p></li>
-<li><p><a class="reference external" href="http://cython.org/">cython</a></p></li>
-<li><p><a class="reference external" href="https://pypi.python.org/pypi/pysam">pysam</a></p></li>
-<li><p><a class="reference external" href="https://pypi.python.org/pypi/bx-python/0.7.3">bx-python</a></p></li>
-<li><p><a class="reference external" href="https://github.com/deeptools/pyBigWig">pyBigWig</a></p></li>
-</ol>
-</div></blockquote>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ tar zxf CrossMap-VERSION.tar.gz
-
-$ cd CrossMap-VERSION
-
-# install CrossMap to default location. In Linux/Unix, this location is like:
-# /home/user/lib/python2.7/site-packages/
-$ python setup.py install
-
-# or you can install CrossMap to a specified location:
-$ python setup.py install --root=/home/user/CrossMap
-
-# setup PYTHONPATH. Skip this step if CrossMap was installed to default location.
-$ export PYTHONPATH=/home/user/CrossMap/usr/local/lib/python2.7/site-packages:$PYTHONPATH.
-
-# Skip this step if CrossMap was installed to default location.
-$ export PATH=/home/user/CrossMap/usr/local/bin:$PATH
-</pre></div>
-</div>
-<p>NOTE:</p>
-<ol class="arabic simple">
-<li><p>Mac users need to download and install <a class="reference external" href="https://developer.apple.com/xcode/">Xcode</a>
-command line tools.</p></li>
-</ol>
 </div>
 </div>
 <div class="section" id="input-and-output">
@@ -315,99 +217,7 @@ genome coordinates that you want to convert to different assembly. If input file
 format, a reference genome sequence file(in FASTA format) is needed.</p>
 <div class="section" id="chain-file">
 <h2>Chain file<a class="headerlink" href="#chain-file" title="Permalink to this headline">¶</a></h2>
-<p><strong>UCSC built chain files (Human, Homo sapiens)</strong></p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/hg38ToHg19.over.chain.gz">hg38ToHg19.over.chain.gz</a> (Chain file for hg38 to hg19 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz">hg19ToHg38.over.chain.gz</a> (Chain file for hg19 to hg38 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg18/liftOver/hg18ToHg38.over.chain.gz">hg18ToHg38.over.chain.gz</a> (Chain file for hg18 to hg38 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg18.over.chain.gz">hg19ToHg18.over.chain.gz</a> (Chain file for hg19 to hg18 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg17.over.chain.gz">hg19ToHg17.over.chain.gz</a> (Chain file for hg19 to hg17 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg18/liftOver/hg18ToHg19.over.chain.gz">hg18ToHg19.over.chain.gz</a> (Chain file for hg18 to hg19 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg18/liftOver/hg18ToHg17.over.chain.gz">hg18ToHg17.over.chain.gz</a> (Chain file for hg18 to hg17 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg17/liftOver/hg17ToHg19.over.chain.gz">hg17ToHg19.over.chain.gz</a> (Chain file for hg17 to hg19 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg17/liftOver/hg17ToHg18.over.chain.gz">hg17ToHg18.over.chain.gz</a> (Chain file for hg17 to hg18 conversion)</p></li>
-<li><p><a class="reference external" href="http://sourceforge.net/projects/crossmap/files/chain_files/GRCh37ToHg19.over.chain.gz/download">GRCh37ToHg19.over.chain.gz</a> (Chain file for GRCh37 to hg19 conversion)</p></li>
-<li><p><a class="reference external" href="http://sourceforge.net/projects/crossmap/files/chain_files/hg19ToGRCh37.over.chain.gz/download">hg19ToGRCh37.over.chain.gz</a> (Chain file for hg19 to GRCh37 conversion)</p></li>
-</ul>
-<p><strong>UCSC built chain files (Mouse, Mus musculus)</strong></p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/mm10ToMm9.over.chain.gz">mm10ToMm9.over.chain.gz</a>  (Chain file for mm10 to mm9 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm9/liftOver/mm9ToMm10.over.chain.gz">mm9ToMm10.over.chain.gz</a>  (Chain file for mm9 to mm10 conversion)</p></li>
-<li><p><a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm9/liftOver/mm9ToMm8.over.chain.gz">mm9ToMm8.over.chain.gz</a> (Chain file for mm9 to mm8 conversion)</p></li>
-<li><p>UCSC Chain file of other species can be downloaded from: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/downloads.html">http://hgdownload.soe.ucsc.edu/downloads.html</a></p></li>
-</ul>
-<p><strong>Ensembl built chain files (Human, Homo sapiens)</strong></p>
-<ul class="simple">
-<li><p>NCBI34 &lt;=&gt; GRCh38</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI34_to_GRCh38.chain.gz/download">NCBI34_to_GRCh38.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI34.chain.gz/download">GRCh38_to_NCBI34.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>NCBI35 &lt;=&gt; GRCh38</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI35_to_GRCh38.chain.gz/download">NCBI35_to_GRCh38.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI35.chain.gz/download">GRCh38_to_NCBI35.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>NCBI36 &lt;=&gt; GRCh38</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI36_to_GRCh38.chain.gz/download">NCBI36_to_GRCh38.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI36.chain.gz/download">GRCh38_to_NCBI36.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>GRCh37 &lt;=&gt; GRCh38</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_GRCh38.chain.gz/download">GRCh37_to_GRCh38.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_GRCh37.chain.gz/download">GRCh38_to_GRCh37.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>NCBI34 &lt;=&gt; GRCh37</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI34_to_GRCh37.chain.gz/download">NCBI34_to_GRCh37.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI34.chain.gz/download">GRCh37_to_NCBI34.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>NCBI35 &lt;=&gt; GRCh37</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI35_to_GRCh37.chain.gz/download">NCBI35_to_GRCh37.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI35.chain.gz/download">GRCh37_to_NCBI35.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>NCBI36 &lt;=&gt; GRCh37</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI36_to_GRCh37.chain.gz/download">NCBI36_to_GRCh37.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI36.chain.gz/download">GRCh37_to_NCBI36.chain.gz</a></p></li>
-</ul>
-</div></blockquote>
-<p><strong>Ensembl built chain files (Mouse, Mus musculus)</strong></p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/NCBIM37_to_GRCm38.chain.gz/download">NCBIM37_to_GRCm38.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/GRCm38_to_NCBIM36.chain.gz/download">GRCm38_to_NCBIM36.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/GRCm38_to_NCBIM37.chain.gz/download">GRCm38_to_NCBIM37.chain.gz</a></p></li>
-<li><p><a class="reference external" href="https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/NCBIM36_to_GRCm38.chain.gz/download">NCBIM36_to_GRCm38.chain.gz</a></p></li>
-</ul>
-<p><strong>Ensembl Chain file of other species can be downloaded from:</strong> <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p>
+<p><strong>Chain files generated from Ensembl can be downloaded from:</strong> <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p>
 </div>
 <div class="section" id="user-input-file">
 <h2>User Input file<a class="headerlink" href="#user-input-file" title="Permalink to this headline">¶</a></h2>
@@ -519,8 +329,8 @@ Example2 (write output to screen)
 <div class="section" id="convert-bed-format-files">
 <h2>Convert BED format files<a class="headerlink" href="#convert-bed-format-files" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a> (Browser Extensible Data) file
-is a tab-delimited text file describing genome regions or gene annotations. It is the standard
-file format used by UCSC. It consists of one line per feature, each containing 3-12 columns.
+is a tab-delimited text file describing genome regions or gene annotations.
+It consists of one line per feature, each containing 3-12 columns.
 CrossMap converts BED files with less than 12 columns to a different assembly by updating the
 chromosome and genome coordinates only; all other columns remain unchanged. Regions from old
 assembly mapping to multiple locations to the new assembly will be split.  For 12-columns BED
@@ -584,7 +394,7 @@ chr10  81371412        81371432        +       (split.2:chr10:81371422:81371432:
 </pre></div>
 </div>
 <p>Example (Use <strong>bed</strong> command to convert a bedGraph file, output another bedGraph file. If Use <strong>wig</strong> command to convert a bedGraph file, output a <strong>bigWig</strong> file. ):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 ../bin/CrossMap.py bed ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_hg19.bgr
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
 
 chrX   5873316 5873391 2.0     -&gt;      chrX    5955275 5955350 2.0
 chrX   5873673 5873710 0.8     -&gt;      chrX    5955632 5955669 0.8
@@ -594,8 +404,8 @@ chrX   5873929 5874004 1.5     -&gt;      chrX    5955888 5955963 1.5
 chrX   5874230 5874471 0.3     -&gt;      chrX    5956189 5956430 0.3
 chrX   5874471 5874518 0.9     -&gt;      chrX    5956430 5956477 0.9
 
-$ python3 ../bin/CrossMap.py wig ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
-@ 2018-11-06 00:09:11: Read chain_file:  ../data/UCSC_chain/hg19ToHg38.over.chain.gz
+$ python3 CrossMap.py wig hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
+@ 2018-11-06 00:09:11: Read chain_file:  hg19ToHg38.over.chain.gz
 @ 2018-11-06 00:09:12: Liftover wiggle file: 4_hg19.bgr ==&gt; output_hg38.bgr
 @ 2018-11-06 00:09:12: Merging overlapped entries in bedGraph file ...
 @ 2018-11-06 00:09:12: Sorting bedGraph file:output_hg38.bgr
@@ -789,13 +599,9 @@ $ samtools view -H  test.hg18.bam
 <p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a> (WIG) format is useful for
 displaying continuous data such as GC content and the reads intensity of high-throughput sequencing data.
 BigWig is a self-indexed binary-format Wiggle file, and has the advantage of supporting random access.
-This means only regions that need to be displayed are retrieved by genome browser, and it dramatically
-reduces the time needed for data transferring (<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/26/17/2204.long">Kent et al., 2010</a>).
 Input wiggle data can be in variableStep (for data with irregular intervals) or fixedStep
-(for data with regular intervals). Regardless of the input, the output will always in bedGraph
-format. bedGraph format is similar to wiggle format and can be converted into BigWig format
-using UCSC <a class="reference external" href="http://hgdownload.cse.ucsc.edu/admin/exe/">wigToBigWig</a> tool. We export files
-in bedGraph format because it’s more compact than wiggle format, and more importantly,
+(for data with regular intervals). Regardless of the input, the output files are always in bedGraph
+format. We export files in bedGraph format because it’s more compact than wiggle format, and more importantly,
 CrossMap internally transforms wiggle into bedGraph to increase running speed.</p>
 <p>Typing command without any arguments will print help message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  wig
@@ -828,7 +634,7 @@ If “sort” command does not exist, CrossMap will exit.</p></li>
 <p>If an input file is in BigWig format, the output is BigWig format if UCSC’s
 ‘<a class="reference external" href="http://hgdownload.cse.ucsc.edu/admin/exe/">wigToBigWig</a>’ executable can be found;
 otherwise, the output file will be in bedGraph format.</p>
-<p>After v0.3.0, UCSC’s ‘<a class="reference external" href="http://hgdownload.cse.ucsc.edu/admin/exe/">wigToBigWig</a>’ is no longer needed.</p>
+<p>After v0.3.0, UCSC’s wigToBigWig is no longer needed.</p>
 <p>Typing command without any arguments will print help message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  bigwig
 
@@ -840,8 +646,7 @@ Description
 -----------
   Convert BigWig format file. The &quot;chain_file&quot; can be regular or compressed (*.gz,
   *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://,
-  ftp://) pointing to remote file. Bigwig format:
-  http://genome.ucsc.edu/goldenPath/help/bigWig.html
+  ftp://) pointing to remote file.
 
 Example
 -------
@@ -1097,9 +902,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 <ul class="simple">
 <li><p>Wang.Liguo AT mayo.edu</p></li>
 </ul>
-<a class="reference internal image-reference" href="_images/mayo.jpg"><img alt="Mayo logo" src="_images/mayo.jpg" style="width: 80.0px; height: 80.0px;" /></a>
-<a class="reference internal image-reference" href="_images/mdacc.jpg"><img alt="MDACC logo" src="_images/mdacc.jpg" style="width: 150.0px; height: 80.0px;" /></a>
-<a class="reference internal image-reference" href="_images/sourceforge.jpg"><img alt="sourceforege logo" src="_images/sourceforge.jpg" style="width: 150.0px; height: 100.0px;" /></a>
 </div>
 
 
@@ -1111,17 +913,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <h3><a href="#">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">What is CrossMap ?</a></li>
-<li><a class="reference internal" href="#who-is-using-crossmap">Who is using CrossMap ?</a></li>
-<li><a class="reference internal" href="#how-crossmap-works">How CrossMap works?</a><ul>
-<li><a class="reference internal" href="#algorithm">Algorithm</a></li>
-<li><a class="reference internal" href="#time-complexity">Time complexity</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#how-crossmap-works">How CrossMap works?</a></li>
 <li><a class="reference internal" href="#release-history">Release history</a></li>
 <li><a class="reference internal" href="#installation">Installation</a><ul>
 <li><a class="reference internal" href="#use-pip-to-install-crossmap">Use pip to install CrossMap</a></li>
 <li><a class="reference internal" href="#use-pip-to-upgrade-crossmap">Use pip to upgrade CrossMap</a></li>
-<li><a class="reference internal" href="#install-crossmap-from-source-code">Install CrossMap from source code</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#input-and-output">Input and Output</a><ul>

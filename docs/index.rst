@@ -22,16 +22,6 @@ CrossMap is a program for genome coordinates conversion between *different assem
 It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig, BED, GFF, GTF and VCF.
 
 
-Who is using CrossMap ?
-========================
-
-* `Ensembl <http://www.ensembl.org/Homo_sapiens/Tools/AssemblyConverter?db=core>`_
-* `Illumina BaseSpace <https://basespace.illumina.com/apps/>`_
-* `bcbio-nextgen <http://bcbio-nextgen.readthedocs.org/en/latest/contents/introduction.html>`_
-* `NIH Biowulf & Helix <https://hpc.nih.gov/apps/crossmap.html>`_
-* `Georgia Advanced Computing Resource Center <https://wiki.gacrc.uga.edu/wiki/CrossMap>`_
-* `GNU Guix <https://www.gnu.org/software/guix/packages/>`_
-
 How CrossMap works?
 ===================
 
@@ -41,61 +31,26 @@ How CrossMap works?
    :scale: 85 %
    :alt: alternate text
 
-Algorithm
------------------
-   
-CrossMap first determines the correspondence between genome assemblies from 
-UCSC `chain <http://genome.ucsc.edu/goldenPath/help/chain.html>`_ file (chain file 
-describes the pair-wise alignments between two genomes). Genome intervals will be stored in
-`interval tree <http://en.wikipedia.org/wiki/Interval_tree>`_ data structure, 
-which allows one to efficiently find all intervals that overlap with any given interval or point.
-Then CrossMap remaps each entry in BAM/SAM, BED, GFF/GTF, VCF file to the target assembly by querying the `interval tree <http://en.wikipedia.org/wiki/Interval_tree>`_.
-Exon/intron structure in BED file; spliced alignments, paired alignments, insert size, header
-section, SAM flags in BAM/SAM file; reference alleles, indels in VCF file will be processed
-properly.
-
-For Wiggle/BigWig format files, line-by-line computation will be very slow. To increase speed,
-CrossMap groups consecutive coordinates with the same coverage score into bins (i.e., genomic regions),
-then remaps those regions one-by-one to the target assembly by querying the interval tree.  In other words, Wiggle/BigWig files will
-be converted into `bedGraph <http://genome.ucsc.edu/goldenPath/help/bedgraph.html>`_ format
-internally, which will be converted into BigWig format (if UCSC’s '`wigToBigWig <http://hgdownload.cse.ucsc.edu/admin/exe/>`_'
-executable exists and is callable).
-
-Time complexity
------------------
-Assume there are N lines in the chain file. CrossMap loads the chain file first and processes
-the query file line by line. Thus the space complexity is O(N). For each query region (s,t),
-it takes O(logN) time to locate which chain(s) overlap with s and t. Then it takes O(logN)
-time to search the sorted ungapped alignments in this chain that overlap with s and t and
-calculate the converted values for s and t in the target assembly. So in total it takes O(logN)
-time to convert one query. The time complexity is O(logN*M) to convert M queries.
-
-In practical, the time CrossMap takes increases linearly to the size of input file.
 
 Release history
 ===================
 
-* 08/21/2019: Release version 0.3.7.
-  
-  * Fix bug when the alternative allele is missing from VCF file. 
-  * Append additional column to "*.vcf.unmap" to explain why the liftover was failed. 
-   * Fail(Unmap) : The location of the variant is unmappable to the target assembly.
-   * Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.
-   * Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.
+* 14/11/2019: Release version 0.3.9.
 
+ * fix bug when the alternative allele field in VCF file contains "*" or multiple alleles are separated by ",".
+ * rewrite 'map_coordinates' function to deal with chain file containing either full (eg "chr1") or abbreviate (eg "1") chromosome IDs.
+
+* 10/09/2019: Release version 0.3.8.
+
+ * The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.
 
 * 07/22/2019: Release version 0.3.6.
   
   * Support MAF (mutation annotation format). 
   * Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files. 
 
-
-* 07/11/2019: Release version 0.3.5.
-
- * Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.
-
 * 04/01/2019: Release version 0.3.4.
- 
+
  * Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 
 
 * 01/07/2019: Release version 0.3.3.
@@ -103,8 +58,8 @@ Release history
  * Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
 
 * 12/14/18: Release version 0.3.2. 
-  
-  * Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
+ 
+ * Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
  
 * 11/05/18: Release version 0.3.0:
 
@@ -176,12 +131,8 @@ Use pip to install CrossMap
 
 ::
 
- pip3 install git+https://github.com/liguowang/CrossMap.git
- 
- or 
- 
  pip3 install CrossMap	#Install CrossMap supporting Python3
- 
+ pip2 install CrossMap	#Install CrossMap supporting Python2.7.*
 
 Use pip to upgrade CrossMap
 -----------------------------
@@ -189,55 +140,8 @@ Use pip to upgrade CrossMap
 ::
 
  pip3 install CrossMap --upgrade	#upgrade CrossMap supporting Python3
- 
-Install CrossMap from source code
-----------------------------------
+ pip2 install CrossMap --upgrade	#upgrade CrossMap supporting Python2.7.*
 
-* `Source code <http://sourceforge.net/projects/crossmap/files>`_
-* `Test datsets <http://sourceforge.net/projects/crossmap/files/test.hg19.zip/download>`_
-
-**Prerequisite**
-
-* CrossMap (version <= 0.2.9)
-
- 1. `python2.7.* <http://www.python.org/getit/releases/2.7/>`_
- 2. `numpy <http://numpy.scipy.org/>`_
- 3. `cython <http://cython.org/>`_
- 4. `pysam <https://pypi.python.org/pypi/pysam>`_
- 5. `bx-python <https://pypi.python.org/pypi/bx-python/0.7.3>`_
-
-* CrossMap (version >=  0.3.0)
-
- 1. `python3 <https://www.python.org/downloads/release/python-360/>`_
- 2. `numpy <http://numpy.scipy.org/>`_
- 3. `cython <http://cython.org/>`_
- 4. `pysam <https://pypi.python.org/pypi/pysam>`_
- 5. `bx-python <https://pypi.python.org/pypi/bx-python/0.7.3>`_
- 6. `pyBigWig <https://github.com/deeptools/pyBigWig>`_
-
-::
-
- $ tar zxf CrossMap-VERSION.tar.gz
- 
- $ cd CrossMap-VERSION
- 
- # install CrossMap to default location. In Linux/Unix, this location is like:
- # /home/user/lib/python2.7/site-packages/
- $ python setup.py install 
- 
- # or you can install CrossMap to a specified location:
- $ python setup.py install --root=/home/user/CrossMap
- 
- # setup PYTHONPATH. Skip this step if CrossMap was installed to default location. 
- $ export PYTHONPATH=/home/user/CrossMap/usr/local/lib/python2.7/site-packages:$PYTHONPATH. 
- 
- # Skip this step if CrossMap was installed to default location. 
- $ export PATH=/home/user/CrossMap/usr/local/bin:$PATH
-
-NOTE:
-
-1. Mac users need to download and install `Xcode <https://developer.apple.com/xcode/>`_
-   command line tools.
 
 Input and Output
 =================
@@ -250,76 +154,7 @@ format, a reference genome sequence file(in FASTA format) is needed.
 Chain file
 -----------
 
-**UCSC built chain files (Human, Homo sapiens)**
-
-* `hg38ToHg19.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/hg38ToHg19.over.chain.gz>`_ (Chain file for hg38 to hg19 conversion)
-* `hg19ToHg38.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg38.over.chain.gz>`_ (Chain file for hg19 to hg38 conversion)
-* `hg18ToHg38.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg18/liftOver/hg18ToHg38.over.chain.gz>`_ (Chain file for hg18 to hg38 conversion)
-* `hg19ToHg18.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg18.over.chain.gz>`_ (Chain file for hg19 to hg18 conversion)
-* `hg19ToHg17.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/hg19ToHg17.over.chain.gz>`_ (Chain file for hg19 to hg17 conversion)
-* `hg18ToHg19.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg18/liftOver/hg18ToHg19.over.chain.gz>`_ (Chain file for hg18 to hg19 conversion)
-* `hg18ToHg17.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg18/liftOver/hg18ToHg17.over.chain.gz>`_ (Chain file for hg18 to hg17 conversion)
-* `hg17ToHg19.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg17/liftOver/hg17ToHg19.over.chain.gz>`_ (Chain file for hg17 to hg19 conversion)
-* `hg17ToHg18.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/hg17/liftOver/hg17ToHg18.over.chain.gz>`_ (Chain file for hg17 to hg18 conversion)
-* `GRCh37ToHg19.over.chain.gz <http://sourceforge.net/projects/crossmap/files/chain_files/GRCh37ToHg19.over.chain.gz/download>`_ (Chain file for GRCh37 to hg19 conversion)
-* `hg19ToGRCh37.over.chain.gz <http://sourceforge.net/projects/crossmap/files/chain_files/hg19ToGRCh37.over.chain.gz/download>`_ (Chain file for hg19 to GRCh37 conversion)
-
-**UCSC built chain files (Mouse, Mus musculus)**
-
-* `mm10ToMm9.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/mm10ToMm9.over.chain.gz>`_  (Chain file for mm10 to mm9 conversion)
-* `mm9ToMm10.over.chain.gz <http://hgdownload.soe.ucsc.edu/goldenPath/mm9/liftOver/mm9ToMm10.over.chain.gz>`_  (Chain file for mm9 to mm10 conversion)
-* `mm9ToMm8.over.chain.gz  <http://hgdownload.soe.ucsc.edu/goldenPath/mm9/liftOver/mm9ToMm8.over.chain.gz>`_ (Chain file for mm9 to mm8 conversion)
- 
-* UCSC Chain file of other species can be downloaded from: http://hgdownload.soe.ucsc.edu/downloads.html
-
-
-**Ensembl built chain files (Human, Homo sapiens)**
-
-* NCBI34 <=> GRCh38 
-
- * `NCBI34_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI34_to_GRCh38.chain.gz/download>`_
- * `GRCh38_to_NCBI34.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI34.chain.gz/download>`_
-
-* NCBI35 <=> GRCh38 
-
- * `NCBI35_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI35_to_GRCh38.chain.gz/download>`_
- * `GRCh38_to_NCBI35.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI35.chain.gz/download>`_
-
-* NCBI36 <=> GRCh38 
-
- * `NCBI36_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI36_to_GRCh38.chain.gz/download>`_
- * `GRCh38_to_NCBI36.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_NCBI36.chain.gz/download>`_
-
-* GRCh37 <=> GRCh38 
-
- * `GRCh37_to_GRCh38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_GRCh38.chain.gz/download>`_
- * `GRCh38_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh38_to_GRCh37.chain.gz/download>`_
-
-* NCBI34 <=> GRCh37
-
- * `NCBI34_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI34_to_GRCh37.chain.gz/download>`_
- * `GRCh37_to_NCBI34.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI34.chain.gz/download>`_
-
-* NCBI35 <=> GRCh37 
-
- * `NCBI35_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI35_to_GRCh37.chain.gz/download>`_
- * `GRCh37_to_NCBI35.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI35.chain.gz/download>`_
-
-* NCBI36 <=> GRCh37
-
- * `NCBI36_to_GRCh37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/NCBI36_to_GRCh37.chain.gz/download>`_
- * `GRCh37_to_NCBI36.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/homo_sapiens%28human%29/GRCh37_to_NCBI36.chain.gz/download>`_
-  
-**Ensembl built chain files (Mouse, Mus musculus)**
-
-* `NCBIM37_to_GRCm38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/NCBIM37_to_GRCm38.chain.gz/download>`_
-* `GRCm38_to_NCBIM36.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/GRCm38_to_NCBIM36.chain.gz/download>`_
-* `GRCm38_to_NCBIM37.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/GRCm38_to_NCBIM37.chain.gz/download>`_
-* `NCBIM36_to_GRCm38.chain.gz <https://sourceforge.net/projects/crossmap/files/Ensembl_chain_files/mus_musculus%28mouse%29/NCBIM36_to_GRCm38.chain.gz/download>`_
-
-**Ensembl Chain file of other species can be downloaded from:** ftp://ftp.ensembl.org/pub/assembly_mapping/
-
-
+**Chain files generated from Ensembl can be downloaded from:** ftp://ftp.ensembl.org/pub/assembly_mapping/
 
 User Input file
 ----------------
@@ -406,8 +241,8 @@ Run CrossMap.py **with** a command keyword will print help message for the comma
 Convert BED format files
 -------------------------
 A `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`_ (Browser Extensible Data) file
-is a tab-delimited text file describing genome regions or gene annotations. It is the standard
-file format used by UCSC. It consists of one line per feature, each containing 3-12 columns.
+is a tab-delimited text file describing genome regions or gene annotations.
+It consists of one line per feature, each containing 3-12 columns.
 CrossMap converts BED files with less than 12 columns to a different assembly by updating the
 chromosome and genome coordinates only; all other columns remain unchanged. Regions from old
 assembly mapping to multiple locations to the new assembly will be split.  For 12-columns BED
@@ -475,7 +310,7 @@ Example (one input region was split because it cannot be consecutively mapped ta
 
 Example (Use **bed** command to convert a bedGraph file, output another bedGraph file. If Use **wig** command to convert a bedGraph file, output a **bigWig** file. )::
 
- $ python3 ../bin/CrossMap.py bed ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_hg19.bgr
+ $ python3 CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
  
  chrX	5873316	5873391	2.0	->	chrX	5955275	5955350	2.0
  chrX	5873673	5873710	0.8	->	chrX	5955632	5955669	0.8
@@ -485,8 +320,8 @@ Example (Use **bed** command to convert a bedGraph file, output another bedGraph
  chrX	5874230	5874471	0.3	->	chrX	5956189	5956430	0.3
  chrX	5874471	5874518	0.9	->	chrX	5956430	5956477	0.9
 
- $ python3 ../bin/CrossMap.py wig ../data/UCSC_chain/hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
- @ 2018-11-06 00:09:11: Read chain_file:  ../data/UCSC_chain/hg19ToHg38.over.chain.gz
+ $ python3 CrossMap.py wig hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
+ @ 2018-11-06 00:09:11: Read chain_file:  hg19ToHg38.over.chain.gz
  @ 2018-11-06 00:09:12: Liftover wiggle file: 4_hg19.bgr ==> output_hg38.bgr
  @ 2018-11-06 00:09:12: Merging overlapped entries in bedGraph file ...
  @ 2018-11-06 00:09:12: Sorting bedGraph file:output_hg38.bgr
@@ -686,13 +521,9 @@ Convert Wiggle format files
 `Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`_ (WIG) format is useful for
 displaying continuous data such as GC content and the reads intensity of high-throughput sequencing data.
 BigWig is a self-indexed binary-format Wiggle file, and has the advantage of supporting random access.
-This means only regions that need to be displayed are retrieved by genome browser, and it dramatically
-reduces the time needed for data transferring (`Kent et al., 2010 <http://bioinformatics.oxfordjournals.org/content/26/17/2204.long>`_).
 Input wiggle data can be in variableStep (for data with irregular intervals) or fixedStep
-(for data with regular intervals). Regardless of the input, the output will always in bedGraph
-format. bedGraph format is similar to wiggle format and can be converted into BigWig format
-using UCSC `wigToBigWig <http://hgdownload.cse.ucsc.edu/admin/exe/>`_ tool. We export files
-in bedGraph format because it's more compact than wiggle format, and more importantly,
+(for data with regular intervals). Regardless of the input, the output files are always in bedGraph
+format. We export files in bedGraph format because it's more compact than wiggle format, and more importantly,
 CrossMap internally transforms wiggle into bedGraph to increase running speed.
  
 
@@ -728,7 +559,7 @@ If an input file is in BigWig format, the output is BigWig format if UCSC’s
 '`wigToBigWig <http://hgdownload.cse.ucsc.edu/admin/exe/>`_' executable can be found;
 otherwise, the output file will be in bedGraph format.
 
-After v0.3.0, UCSC's '`wigToBigWig <http://hgdownload.cse.ucsc.edu/admin/exe/>`_' is no longer needed.
+After v0.3.0, UCSC's wigToBigWig is no longer needed.
 
 Typing command without any arguments will print help message::
  
@@ -742,8 +573,7 @@ Typing command without any arguments will print help message::
  -----------
    Convert BigWig format file. The "chain_file" can be regular or compressed (*.gz,
    *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://,
-   ftp://) pointing to remote file. Bigwig format:
-   http://genome.ucsc.edu/goldenPath/help/bigWig.html
+   ftp://) pointing to remote file.
  
  Example
  -------
@@ -837,7 +667,7 @@ NOTE:
 3. If no output file was specified, the output will be printed to screen (console). In this case, items failed to convert are also printed out.
   
 Convert VCF format files
------------------------------------
+-------------------------
 `VCF <http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41>`_
 (variant call format) is a flexible and extendable line-oriented text format developed by
 the `1000 Genome Project <http://www.1000genomes.org/>`_. It is useful for representing single
@@ -909,6 +739,7 @@ NOTE:
 4. Output files: *output_file* and *output_file.unmap*. 
 5. In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the format of the input VCF file. 
 
+  
 Convert MAF format files
 -------------------------
 `MAF <https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format/>`_ 
@@ -936,8 +767,7 @@ Typing command without any arguments will print help message::
  Example
  -------
    CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38  test.hg38.maf 
-
-
+ 
 Compare to UCSC liftover tool
 =======================================
 
@@ -994,18 +824,3 @@ Contact
 
 * Wang.Liguo AT mayo.edu
 
-.. image:: _static/mayo.jpg
-   :height: 80 px
-   :width: 80 px
-   :scale: 100 %
-   :alt: Mayo logo
-.. image:: _static/mdacc.jpg
-   :height: 80 px
-   :width: 150 px
-   :scale: 100 %
-   :alt: MDACC logo
-.. image:: _static/sourceforge.jpg
-   :height: 100 px
-   :width: 150 px
-   :scale: 100 %
-   :alt: sourceforege logo
