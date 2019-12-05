@@ -35,6 +35,10 @@ How CrossMap works?
 Release history
 ===================
 
+* 12/05/2019: Release version 0.4.0
+
+ * fix several bugs in "crossmap_bam_file" function
+
 * 14/11/2019: Release version 0.3.9.
 
  * fix bug when the alternative allele field in VCF file contains "*" or multiple alleles are separated by ",".
