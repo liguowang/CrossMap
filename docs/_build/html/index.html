@@ -63,12 +63,36 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </ul>
 </div></blockquote>
 <ul class="simple">
+<li><p>08/21/2019: Release version 0.3.7.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fix bug when the alternative allele is missing from VCF file.</p></li>
+<li><p>Append additional column to “<a href="#id1"><span class="problematic" id="id2">*</span></a>.vcf.unmap” to explain why the liftover was failed.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fail(Unmap) : The location of the variant is unmappable to the target assembly.</p></li>
+<li><p>Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.</p></li>
+<li><p>Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.</p></li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<ul class="simple">
 <li><p>07/22/2019: Release version 0.3.6.</p>
 <ul>
 <li><p>Support MAF (mutation annotation format).</p></li>
 <li><p>Fix error “TypeError: AlignmentHeader does not support item assignment (use header.to_dict()” when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.</p></li>
 </ul>
 </li>
+<li><p>07/11/2019: Release version 0.3.5.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
 <li><p>04/01/2019: Release version 0.3.4.</p></li>
 </ul>
 <blockquote>

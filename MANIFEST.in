@@ -8,4 +8,3 @@ recursive-include lib *.pyx
 recursive-include lib *.pxd
 recursive-include lib *.py
 recursive-include bin *
-recursive-include test *

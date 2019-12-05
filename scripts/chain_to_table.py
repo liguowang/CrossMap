@@ -1,11 +1,22 @@
 #!/usr/bin/env python
 
-import sys
-import collections
-import subprocess
+import os,sys
+import optparse
+from textwrap import wrap
 from time import strftime
 
+import pyBigWig
+import pysam
+from bx.intervals import *
+import numpy as np
 import datetime
+from cmmodule  import ireader
+from cmmodule  import BED
+from cmmodule  import annoGene
+from cmmodule  import sam_header
+from cmmodule  import bgrMerge
+
+import collections
 
 
 def printlog (mesg_lst):

@@ -44,11 +44,23 @@ Release history
 
  * The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.
 
+* 08/21/2019: Release version 0.3.7.
+
+ * Fix bug when the alternative allele is missing from VCF file. 
+ * Append additional column to “*.vcf.unmap” to explain why the liftover was failed.
+  * Fail(Unmap) : The location of the variant is unmappable to the target assembly.
+  * Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.
+  * Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.
+
 * 07/22/2019: Release version 0.3.6.
   
   * Support MAF (mutation annotation format). 
   * Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files. 
 
+* 07/11/2019: Release version 0.3.5.
+ 
+ * Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.
+ 
 * 04/01/2019: Release version 0.3.4.
 
  * Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 

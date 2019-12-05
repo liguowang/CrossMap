@@ -1,16 +1,9 @@
 import os,sys
-import collections
 import subprocess
 import random
 import string
 from time import strftime
-import numpy as np
 
-from cmmodule  import ireader
-from cmmodule  import BED
-from cmmodule  import annoGene
-from cmmodule  import bam_cigar
-from cmmodule  import sam_header
 from cmmodule  import wig_reader
 from cmmodule  import myutils
 
