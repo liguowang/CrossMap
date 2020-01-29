@@ -35,36 +35,15 @@ How CrossMap works?
 Release history
 ===================
 
-* 12/05/2019: Release version 0.4.0
-
- * fix several bugs in "crossmap_bam_file" function
-
-* 14/11/2019: Release version 0.3.9.
-
- * fix bug when the alternative allele field in VCF file contains "*" or multiple alleles are separated by ",".
- * rewrite 'map_coordinates' function to deal with chain file containing either full (eg "chr1") or abbreviate (eg "1") chromosome IDs.
-
 * 10/09/2019: Release version 0.3.8.
 
  * The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.
-
-* 08/21/2019: Release version 0.3.7.
-
- * Fix bug when the alternative allele is missing from VCF file. 
- * Append additional column to “*.vcf.unmap” to explain why the liftover was failed.
-  * Fail(Unmap) : The location of the variant is unmappable to the target assembly.
-  * Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.
-  * Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.
 
 * 07/22/2019: Release version 0.3.6.
   
   * Support MAF (mutation annotation format). 
   * Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files. 
 
-* 07/11/2019: Release version 0.3.5.
- 
- * Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.
- 
 * 04/01/2019: Release version 0.3.4.
 
  * Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 
@@ -170,7 +149,17 @@ format, a reference genome sequence file(in FASTA format) is needed.
 Chain file
 -----------
 
-**Chain files generated from Ensembl can be downloaded from:** ftp://ftp.ensembl.org/pub/assembly_mapping/
+1. **Download Ensembl chain files** 
+
+ * Human to Human: ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/
+ * Mouse to Mouse: ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/
+ * Other organisms: ftp://ftp.ensembl.org/pub/assembly_mapping/
+
+2. **Download UCSC chain files** 
+
+ * Chain files from hg38 (GRCh38) to hg19 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
+ * Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/
+ * Chain File from mm10 (GRCm38) to mm9 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/ 
 
 User Input file
 ----------------

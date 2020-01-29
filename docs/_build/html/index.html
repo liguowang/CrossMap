@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>What is CrossMap ? &#8212; CrossMap 0.3.5 documentation</title>
+    <title>What is CrossMap ? &#8212; CrossMap 0.4.0 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -21,7 +21,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -46,23 +46,6 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
-<li><p>12/05/2019: Release version 0.4.0</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>fix several bugs in “crossmap_bam_file” function</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>14/11/2019: Release version 0.3.9.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>fix bug when the alternative allele field in VCF file contains “*” or multiple alleles are separated by “,”.</p></li>
-<li><p>rewrite ‘map_coordinates’ function to deal with chain file containing either full (eg “chr1”) or abbreviate (eg “1”) chromosome IDs.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
 <li><p>10/09/2019: Release version 0.3.8.</p></li>
 </ul>
 <blockquote>
@@ -71,36 +54,12 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </ul>
 </div></blockquote>
 <ul class="simple">
-<li><p>08/21/2019: Release version 0.3.7.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Fix bug when the alternative allele is missing from VCF file.</p></li>
-<li><p>Append additional column to “<a href="#id1"><span class="problematic" id="id2">*</span></a>.vcf.unmap” to explain why the liftover was failed.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Fail(Unmap) : The location of the variant is unmappable to the target assembly.</p></li>
-<li><p>Fail(REF==ALT) : mappable, but the reference allele (of the target assembly) is same as the alternative allele after liftover.</p></li>
-<li><p>Fail(Multiple_hits) : mappable, but the variant map to multiple locations to the target assembly.</p></li>
-</ul>
-</div></blockquote>
-</div></blockquote>
-<ul class="simple">
 <li><p>07/22/2019: Release version 0.3.6.</p>
 <ul>
 <li><p>Support MAF (mutation annotation format).</p></li>
 <li><p>Fix error “TypeError: AlignmentHeader does not support item assignment (use header.to_dict()” when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.</p></li>
 </ul>
 </li>
-<li><p>07/11/2019: Release version 0.3.5.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Fix bugs where .0 is appended to the end coordinate in the resulting GFF file.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
 <li><p>04/01/2019: Release version 0.3.4.</p></li>
 </ul>
 <blockquote>
@@ -249,7 +208,26 @@ genome coordinates that you want to convert to different assembly. If input file
 format, a reference genome sequence file(in FASTA format) is needed.</p>
 <div class="section" id="chain-file">
 <h2>Chain file<a class="headerlink" href="#chain-file" title="Permalink to this headline">¶</a></h2>
-<p><strong>Chain files generated from Ensembl can be downloaded from:</strong> <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p>
+<ol class="arabic simple">
+<li><p><strong>Download Ensembl chain files</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>Human to Human: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/">ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/</a></p></li>
+<li><p>Mouse to Mouse: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/">ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/</a></p></li>
+<li><p>Other organisms: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p></li>
+</ul>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p><strong>Download UCSC chain files</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>Chain files from hg38 (GRCh38) to hg19 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/</a></p></li>
+<li><p>Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/</a></p></li>
+<li><p>Chain File from mm10 (GRCm38) to mm9 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/</a></p></li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="user-input-file">
 <h2>User Input file<a class="headerlink" href="#user-input-file" title="Permalink to this headline">¶</a></h2>
@@ -1001,7 +979,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.3.5 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
