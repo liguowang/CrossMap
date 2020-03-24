@@ -5,23 +5,23 @@
   <head>
     <meta charset="utf-8" />
     <title>What is CrossMap ? &#8212; CrossMap 0.4.0 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <script type="text/javascript" src="_static/language_data.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CrossMap 0.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -32,7 +32,7 @@
             
   <div class="toctree-wrapper compound">
 </div>
-<a class="reference internal image-reference" href="_images/logo.png"><img alt="alternate text" src="_images/logo.png" style="width: 375.0px; height: 75.0px;" /></a>
+<a class="reference internal image-reference" href="backup/_static/logo.png"><img alt="alternate text" src="backup/_static/logo.png" style="width: 375.0px; height: 75.0px;" /></a>
 <div class="section" id="what-is-crossmap">
 <h1>What is CrossMap ?<a class="headerlink" href="#what-is-crossmap" title="Permalink to this headline">¶</a></h1>
 <p>CrossMap is a program for genome coordinates conversion between <em>different assemblies</em>
@@ -41,18 +41,10 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </div>
 <div class="section" id="how-crossmap-works">
 <h1>How CrossMap works?<a class="headerlink" href="#how-crossmap-works" title="Permalink to this headline">¶</a></h1>
-<a class="reference internal image-reference" href="_images/howitworks.png"><img alt="alternate text" src="_images/howitworks.png" style="width: 510.0px; height: 212.5px;" /></a>
+<a class="reference internal image-reference" href="backup/_static/howitworks.png"><img alt="alternate text" src="backup/_static/howitworks.png" style="width: 510.0px; height: 212.5px;" /></a>
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>03/24/2020: Release version 0.4.1.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>fix the bug when there are consecutive TABs in the input MAF file.</p></li>
-</ul>
-</div></blockquote>
 <ul class="simple">
 <li><p>10/09/2019: Release version 0.3.8.</p></li>
 </ul>
@@ -100,6 +92,96 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 <li><p>add <a class="reference external" href="https://github.com/deeptools/pyBigWig">pyBigWig</a> as a dependency.</p></li>
 </ul>
 </div></blockquote>
+<ul class="simple">
+<li><p>09/06/17: Release version 0.2.8:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>In Bam file lift over: fixed the bug “CrossMap does not set the unmapped read flag for the first read in pair when it is unmapped”.</p></li>
+<li><p>In VCF file lift over: Update the “contig field” in VCF header section. Contig name and size will be changed from the old assembly to the new assembly.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>09/06/17: Release version 0.2.7:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>In VCF file lift over: fixed the bug “non-standard chromosome IDs were not converted”.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>05/09/17: Release version 0.2.6:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>In BAM file lift over: fixed bugs during BAM file sorting and indexing steps (works with pysam v0.11.1).</p></li>
+<li><p>In BAM file lift over: fixed bugs “the read group type is automatically and wrongly changed from Z to A” (<a class="reference external" href="https://github.com/pysam-developers/pysam/issues/113">https://github.com/pysam-developers/pysam/issues/113</a>).</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>10/7/16: Release version 0.2.5:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>fixed bugs during single-end BAM file conversion.</p></li>
+<li><p>Add optional tags to the output BAM file. Details see: <a class="reference internal" href="../index.html#bam-conversion"><span class="std std-ref">Convert BAM/CRAM/SAM format files</span></a>.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>08/18/16: Release version 0.2.4:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>fixed bugs during BAM file conversion:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>When the strand of the ead changes, the seq filed is reverse complemented and the quality field is reversed.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>In the output VCF file, if the reference allele field is empty:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Use CrossMap v0.2.4. Update pysam to the latest version. And make sure chromosome IDs in the reference genome file are in the form of “chr1”, “chr2”, …, “chrX”,”chrY” (but not “1”, “2”, …, “X”,”Y”, in this case, pysam cannot index your reference genome file for some unknown reasons.).</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>to upgrade, run: <strong>pip install CrossMap –upgrade</strong></p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>04/13/16: Release version 0.2.3:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Same as v0.2.2.</p></li>
+<li><p>Two dependency packages bx-python and pysam do not ship with CrossMap starting from v0.2.3 .</p></li>
+<li><p>Users could install CrossMap using pip: <strong>pip install CrossMap</strong>. Note: bx-python and pysam will be installed automatically if they haven’t been installed before.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>11/10/15: Release version 0.2.2: Generate *.unmap files (regions that cannot be unambiguously converted) when converting BED, GTF, GFF files. This version also supports genePred (bed12+8) format. (Thanks for Andrew Yates from EMBL-EBI)</p></li>
+<li><p>08/26/15: Release version 0.2.1: Very minor change, same as 0.2.</p></li>
+<li><p>08/11/15: Release version 0.2: Fixed the bug that CrossMap will not convert wiggle format files due to name collision with bx python.</p></li>
+<li><p>07/27/15: Release version 0.1.9. For VCF file conversion in v0.1.9:</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>CrossMap uses the indexed reference genome (target assembly) sequences rather than load the entire file into memory. Users could index their reference genome file using <strong>samtools faidx</strong> before running CrossMap, otherwise, CrossMap will index it automatically the first time you run it.</p></li>
+<li><p>In the output VCF file, whether the chromosome IDs contain “chr” or not depends on the input format.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><p>05/15/15: Release version 0.1.8: Fixed the bug that CrossMap will output invalid VCF file when the input VCF file contains a INFO field with whitespace.</p></li>
+<li><p>05/04/15: Release version 0.1.7: Address the problem that CrossMap does not convert strand in inversions when input file is BED6 or BED12 format.</p></li>
+<li><p>11/06/14: Release version 0.1.6: Fixed “negative coordinates” bug.</p></li>
+<li><p>08/05/14: Release version 0.1.5: Support compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) wiggle file as input.</p></li>
+<li><p>05/19/14: add chain files for hg38-&gt;hg19, hg19-&gt;hg38, hg18-&gt;hg38, hg19-&gt;GRCh37, GRCh37-&gt;hg19. In CrossMap v0.1.4, conversion results of BAM/SAM files can be directed to STDOUT to support piping.</p></li>
+<li><p>12/12/13: CrossMap was accepted by <a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/early/2013/12/18/bioinformatics.btt730.short?rss=1">Bioinformatics</a></p></li>
+<li><p>10/23/13: CrossMap (0.1.3) was released</p></li>
+</ul>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
@@ -805,7 +887,7 @@ UCSC failed to convert it because this region needs to be split twice:</p>
 </table>
 <p>For genome intervals that were successfully converted to hg18, the start and end coordinates are
 exactly the same between UCSC conversion and CrossMap conversion.</p>
-<a class="reference internal image-reference" href="_images/CrossMap_vs_UCSC.png"><img alt="CrossMap_vs_UCSC_liftover.png" src="_images/CrossMap_vs_UCSC.png" style="width: 700.0px; height: 400.0px;" /></a>
+<a class="reference internal image-reference" href="backup/_static/CrossMap_vs_UCSC.png"><img alt="CrossMap_vs_UCSC_liftover.png" src="backup/_static/CrossMap_vs_UCSC.png" style="width: 700.0px; height: 400.0px;" /></a>
 </div>
 <div class="section" id="citation">
 <h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
@@ -838,7 +920,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table of Contents</a></h3>
+  <h3><a href="../index.html">Table of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">What is CrossMap ?</a></li>
 <li><a class="reference internal" href="#how-crossmap-works">How CrossMap works?</a></li>
@@ -873,14 +955,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
+      <li><a href="../_sources/backup/index.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
+    <form class="search" action="../search.html" method="get">
       <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
@@ -895,9 +977,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
+          <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.4.0 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="../index.html">CrossMap 0.4.0 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

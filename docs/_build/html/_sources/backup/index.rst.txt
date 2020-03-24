@@ -34,9 +34,6 @@ How CrossMap works?
 
 Release history
 ===================
-* 03/24/2020: Release version 0.4.1.
-
- * fix the bug when there are consecutive TABs in the input MAF file.
 
 * 10/09/2019: Release version 0.3.8.
 
@@ -63,6 +60,63 @@ Release history
 
  * v0.3.0 or newer will Support Python3. Previous versions support Python2.7.*
  * add `pyBigWig <https://github.com/deeptools/pyBigWig>`_ as a dependency.  
+
+
+* 09/06/17: Release version 0.2.8:
+
+ * In Bam file lift over: fixed the bug "CrossMap does not set the unmapped read flag for the first read in pair when it is unmapped".
+ * In VCF file lift over: Update the "contig field" in VCF header section. Contig name and size will be changed from the old assembly to the new assembly. 
+ 
+* 09/06/17: Release version 0.2.7:
+ 
+ * In VCF file lift over: fixed the bug "non-standard chromosome IDs were not converted".
+
+* 05/09/17: Release version 0.2.6:
+
+ * In BAM file lift over: fixed bugs during BAM file sorting and indexing steps (works with pysam v0.11.1).
+ 
+ * In BAM file lift over: fixed bugs "the read group type is automatically and wrongly changed from Z to A" (https://github.com/pysam-developers/pysam/issues/113).
+ 
+* 10/7/16: Release version 0.2.5:
+
+ * fixed bugs during single-end BAM file conversion.
+ 
+ * Add optional tags to the output BAM file. Details see: :ref:`bam_conversion`.
+
+* 08/18/16: Release version 0.2.4:
+ 
+ * fixed bugs during BAM file conversion:
+ 
+  * When the strand of the ead changes, the seq filed is reverse complemented and the quality field is reversed. 
+ 
+ * In the output VCF file, if the reference allele field is empty:
+ 
+  * Use CrossMap v0.2.4. Update pysam to the latest version. And make sure chromosome IDs in the reference genome file are in the form of "chr1", "chr2", ..., "chrX","chrY" (but not "1", "2", ..., "X","Y", in this case, pysam cannot index your reference genome file for some unknown reasons.). 
+ 
+ * to upgrade, run: **pip install CrossMap --upgrade**
+ 
+* 04/13/16: Release version 0.2.3:
+
+ * Same as v0.2.2.
+ * Two dependency packages bx-python and pysam do not ship with CrossMap starting from v0.2.3 .
+ * Users could install CrossMap using pip: **pip install CrossMap**. Note: bx-python and pysam will be installed automatically if they haven’t been installed before.
+
+* 11/10/15: Release version 0.2.2: Generate \*.unmap files (regions that cannot be unambiguously converted) when converting BED, GTF, GFF files. This version also supports genePred (bed12+8) format. (Thanks for Andrew Yates from EMBL-EBI) 
+* 08/26/15: Release version 0.2.1: Very minor change, same as 0.2.
+* 08/11/15: Release version 0.2: Fixed the bug that CrossMap will not convert wiggle format files due to name collision with bx python.
+* 07/27/15: Release version 0.1.9. For VCF file conversion in v0.1.9:
+
+ * CrossMap uses the indexed reference genome (target assembly) sequences rather than load the entire file into memory. Users could index their reference genome file using **samtools faidx** before running CrossMap, otherwise, CrossMap will index it automatically the first time you run it. 
+ 
+ * In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the input format.  
+
+* 05/15/15: Release version 0.1.8: Fixed the bug that CrossMap will output invalid VCF file when the input VCF file contains a INFO field with whitespace.
+* 05/04/15: Release version 0.1.7: Address the problem that CrossMap does not convert strand in inversions when input file is BED6 or BED12 format.
+* 11/06/14: Release version 0.1.6: Fixed "negative coordinates" bug.
+* 08/05/14: Release version 0.1.5: Support compressed (\*.gz, \*.Z, \*.z, \*.bz, \*.bz2, \*.bzip2) wiggle file as input. 
+* 05/19/14: add chain files for hg38->hg19, hg19->hg38, hg18->hg38, hg19->GRCh37, GRCh37->hg19. In CrossMap v0.1.4, conversion results of BAM/SAM files can be directed to STDOUT to support piping.
+* 12/12/13: CrossMap was accepted by `Bioinformatics <http://bioinformatics.oxfordjournals.org/content/early/2013/12/18/bioinformatics.btt730.short?rss=1>`_
+* 10/23/13: CrossMap (0.1.3) was released
 
 Installation
 ==================
