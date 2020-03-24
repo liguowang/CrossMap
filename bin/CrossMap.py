@@ -25,7 +25,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.4.0"
+__version__="0.4.1"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -679,7 +679,7 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 			printlog(["Lifting over ... "])
 		else:
 			
-			fields = str.split(line)
+			fields = str.split(line,sep = '\t')
 			total += 1
 			
 			fields[3] = ref_name
@@ -1292,7 +1292,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 				#==================================				
 				else:
 					try:
-						read1_chr = samfile.get_reference_name(old_alignment.next_reference_id)
+						read1_chr = samfile.get_reference_name(old_alignment.reference_id)
 						read1_strand = '-' if old_alignment.is_reverse else '+'
 						read1_start = old_alignment.reference_start
 						read1_end = old_alignment.reference_end
@@ -1548,7 +1548,10 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 							# 10
 							new_alignment.query_sequence = revcomp_DNA(old_alignment.query_sequence)		#reverse complement read sequence
 							# 11
-							new_alignment.query_qualities = old_alignment.query_qualities[::-1]			#reverse quality string
+							try:
+								new_alignment.query_qualities = old_alignment.query_qualities[::-1]			#reverse quality string
+							except:
+								new_alignment.query_qualities = []
 						else:
 							# 6
 							new_alignment.cigartuples = old_alignment.cigartuples
