@@ -180,26 +180,25 @@ Run CrossMap.py **with** a command keyword will print help message for the comma
 
  #Screen output
  
- Usage
- -----
-   CrossMap.py bed chain_file input_bed_file [output_file]
- 
+Usage
+-----
+  CrossMap.py bed chain_file input.bed [output_file]
+
  Description
  -----------
-   Convert BED format file. The "chain_file" and "input_bed_file" can be regular or
-   compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-   (http://, https://, ftp://) pointing to remote file. BED format file must have
-   at least 3 columns (chrom, start, end). If  no "output_file" is specified,
-   output will be directed to the screen (console).
- 
+  Convert BED format file. The "chain_file" and "input.bed" can be regular or
+  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+  (http://, https://, ftp://) pointing to remote file. BED format file must have
+  at least 3 columns (chrom, start, end). If  no "output_file" is specified,
+  output will be directed to the screen (console).
+
  Example1 (write output to file)
  -------------------------------
-   CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed
- 
+  CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed
+
  Example2 (write output to screen)
  ---------------------------------
-   CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed
-
+  CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed
 
 Convert BED format files
 -------------------------
@@ -211,7 +210,7 @@ chromosome and genome coordinates only; all other columns remain unchanged. Regi
 assembly mapping to multiple locations to the new assembly will be split.  For 12-columns BED
 files, all columns will be updated accordingly except the 4th column (name of bed line), 5th
 column (score value) and 9th column (RGB value describing the display color). 12-column BED
-files usually define multiple blocks (e.g. exon); if any of the exons fails to map to a new
+files usually define multiple blocks (e.g. exons); if any of the exons fails to map to a new
 assembly, the whole BED line is skipped. 
 
 The input BED file can be plain text file, compressed file with extension of .gz, .Z, .z,
@@ -730,6 +729,40 @@ Typing command without any arguments will print help message::
  Example
  -------
    CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38  test.hg38.maf 
+
+
+Convert GVCF format files
+-------------------------
+
+Typing command without any arguments will print help message::
+
+ $ CrossMap.py  gvcf
+
+ usage
+ -----
+  CrossMap.py gvcf chain_file input.gvcf refGenome.fa output_file
+
+ Description
+ -----------
+  Convert GVCF format file. The "chain_file" and "input.gvcf" can be regular or
+  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+  (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
+  sequence file of the *target assembly*.
+
+ Example
+ -------
+   CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf 
+
+Example (Convert GVCF file from hg19 to hg38)::
+
+ $ CrossMap.py   gvcf   GRCh37_to_GRCh38.chain.gz   test.hg19.gvcf   Homo_sapiens.GRCh38.dna.primary_assembly.fa   test.hg38.gvcf 
+ @ 2020-05-04 13:17:23: Read the chain file:  ../CrossMap-0.2.9.git/data/human/GRCh37_to_GRCh38.chain.gz
+ @ 2020-05-04 13:17:23: Updating contig field ...
+ @ 2020-05-04 13:17:23: Lifting over ...
+ @ 2020-05-04 13:17:23: Total variants: 9
+ @ 2020-05-04 13:17:23: Variants failed to map: 0
+ @ 2020-05-04 13:17:23: Total non-variant regions: 22
+ @ 2020-05-04 13:17:23: Non-variant regions failed to map: 0 
  
 Compare to UCSC liftover tool
 =======================================

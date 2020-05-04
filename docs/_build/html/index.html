@@ -246,27 +246,28 @@ Usage: CrossMap.py &lt;command&gt; [options]
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bed
 
 #Screen output
-
-Usage
------
-  CrossMap.py bed chain_file input_bed_file [output_file]
-
-Description
------------
-  Convert BED format file. The &quot;chain_file&quot; and &quot;input_bed_file&quot; can be regular or
-  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-  (http://, https://, ftp://) pointing to remote file. BED format file must have
-  at least 3 columns (chrom, start, end). If  no &quot;output_file&quot; is specified,
-  output will be directed to the screen (console).
-
-Example1 (write output to file)
--------------------------------
-  CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed
-
-Example2 (write output to screen)
----------------------------------
-  CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed
 </pre></div>
+</div>
+<div class="section" id="id3">
+<h2>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><blockquote>
+<div><p>CrossMap.py bed chain_file input.bed [output_file]</p>
+</div></blockquote>
+<blockquote>
+<div><p>Convert BED format file. The “chain_file” and “input.bed” can be regular or
+compressed (<a href="#id4"><span class="problematic" id="id5">*</span></a>.gz, <a href="#id6"><span class="problematic" id="id7">*</span></a>.Z, <a href="#id8"><span class="problematic" id="id9">*</span></a>.z, <a href="#id10"><span class="problematic" id="id11">*</span></a>.bz, <a href="#id12"><span class="problematic" id="id13">*</span></a>.bz2, <a href="#id14"><span class="problematic" id="id15">*</span></a>.bzip2) file, local file or URL
+(<a class="reference external" href="http://">http://</a>, <a class="reference external" href="https://">https://</a>, <a class="reference external" href="ftp://">ftp://</a>) pointing to remote file. BED format file must have
+at least 3 columns (chrom, start, end). If  no “output_file” is specified,
+output will be directed to the screen (console).</p>
+</div></blockquote>
+<blockquote>
+<div><p>CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed</p>
+</div></blockquote>
+<blockquote>
+<div><p>CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed</p>
+</div></blockquote>
+</div></blockquote>
 </div>
 <div class="section" id="convert-bed-format-files">
 <h2>Convert BED format files<a class="headerlink" href="#convert-bed-format-files" title="Permalink to this headline">¶</a></h2>
@@ -278,7 +279,7 @@ chromosome and genome coordinates only; all other columns remain unchanged. Regi
 assembly mapping to multiple locations to the new assembly will be split.  For 12-columns BED
 files, all columns will be updated accordingly except the 4th column (name of bed line), 5th
 column (score value) and 9th column (RGB value describing the display color). 12-column BED
-files usually define multiple blocks (e.g. exon); if any of the exons fails to map to a new
+files usually define multiple blocks (e.g. exons); if any of the exons fails to map to a new
 assembly, the whole BED line is skipped.</p>
 <p>The input BED file can be plain text file, compressed file with extension of .gz, .Z, .z,
 .bz, .bz2 and .bzip2, or even a URL pointing to accessible remote files (<a class="reference external" href="http://">http://</a>, <a class="reference external" href="https://">https://</a>
@@ -779,6 +780,39 @@ Example
 </pre></div>
 </div>
 </div>
+<div class="section" id="convert-gvcf-format-files">
+<h2>Convert GVCF format files<a class="headerlink" href="#convert-gvcf-format-files" title="Permalink to this headline">¶</a></h2>
+<p>Typing command without any arguments will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  gvcf
+
+usage
+-----
+ CrossMap.py gvcf chain_file input.gvcf refGenome.fa output_file
+
+Description
+-----------
+ Convert GVCF format file. The &quot;chain_file&quot; and &quot;input.gvcf&quot; can be regular or
+ compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+ (http://, https://, ftp://) pointing to remote file. &quot;refGenome.fa&quot; is genome
+ sequence file of the *target assembly*.
+
+Example
+-------
+  CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf
+</pre></div>
+</div>
+<p>Example (Convert GVCF file from hg19 to hg38):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py   gvcf   GRCh37_to_GRCh38.chain.gz   test.hg19.gvcf   Homo_sapiens.GRCh38.dna.primary_assembly.fa   test.hg38.gvcf
+@ 2020-05-04 13:17:23: Read the chain file:  ../CrossMap-0.2.9.git/data/human/GRCh37_to_GRCh38.chain.gz
+@ 2020-05-04 13:17:23: Updating contig field ...
+@ 2020-05-04 13:17:23: Lifting over ...
+@ 2020-05-04 13:17:23: Total variants: 9
+@ 2020-05-04 13:17:23: Variants failed to map: 0
+@ 2020-05-04 13:17:23: Total non-variant regions: 22
+@ 2020-05-04 13:17:23: Non-variant regions failed to map: 0
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="compare-to-ucsc-liftover-tool">
 <h1>Compare to UCSC liftover tool<a class="headerlink" href="#compare-to-ucsc-liftover-tool" title="Permalink to this headline">¶</a></h1>
@@ -869,6 +903,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 </ul>
 </li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#id3">Usage</a></li>
 <li><a class="reference internal" href="#convert-bed-format-files">Convert BED format files</a></li>
 <li><a class="reference internal" href="#convert-bam-cram-sam-format-files">Convert BAM/CRAM/SAM format files</a></li>
 <li><a class="reference internal" href="#convert-wiggle-format-files">Convert Wiggle format files</a></li>
@@ -876,6 +911,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 <li><a class="reference internal" href="#convert-gff-gtf-format-files">Convert GFF/GTF format files</a></li>
 <li><a class="reference internal" href="#convert-vcf-format-files">Convert VCF format files</a></li>
 <li><a class="reference internal" href="#convert-maf-format-files">Convert MAF format files</a></li>
+<li><a class="reference internal" href="#convert-gvcf-format-files">Convert GVCF format files</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compare-to-ucsc-liftover-tool">Compare to UCSC liftover tool</a></li>

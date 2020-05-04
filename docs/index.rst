@@ -729,6 +729,40 @@ Typing command without any arguments will print help message::
  Example
  -------
    CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38  test.hg38.maf 
+
+
+Convert GVCF format files
+-------------------------
+
+Typing command without any arguments will print help message::
+
+ $ CrossMap.py  gvcf
+
+ usage
+ -----
+  CrossMap.py gvcf chain_file input.gvcf refGenome.fa output_file
+
+ Description
+ -----------
+  Convert GVCF format file. The "chain_file" and "input.gvcf" can be regular or
+  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+  (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
+  sequence file of the *target assembly*.
+
+ Example
+ -------
+   CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf 
+
+Example (Convert GVCF file from hg19 to hg38)::
+
+ $ CrossMap.py   gvcf   GRCh37_to_GRCh38.chain.gz   test.hg19.gvcf   Homo_sapiens.GRCh38.dna.primary_assembly.fa   test.hg38.gvcf 
+ @ 2020-05-04 13:17:23: Read the chain file:  ../CrossMap-0.2.9.git/data/human/GRCh37_to_GRCh38.chain.gz
+ @ 2020-05-04 13:17:23: Updating contig field ...
+ @ 2020-05-04 13:17:23: Lifting over ...
+ @ 2020-05-04 13:17:23: Total variants: 9
+ @ 2020-05-04 13:17:23: Variants failed to map: 0
+ @ 2020-05-04 13:17:23: Total non-variant regions: 22
+ @ 2020-05-04 13:17:23: Non-variant regions failed to map: 0 
  
 Compare to UCSC liftover tool
 =======================================
