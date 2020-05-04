@@ -46,6 +46,14 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
 <ul class="simple">
+<li><p>05/04/2020: Release version 0.4.2.</p></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Support <a class="reference external" href="https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format">GVCF</a> file conversion.</p></li>
+</ul>
+</div></blockquote>
+<ul class="simple">
 <li><p>03/24/2020: Release version 0.4.1.</p></li>
 </ul>
 <blockquote>
@@ -120,24 +128,11 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </div>
 <div class="section" id="input-and-output">
 <h1>Input and Output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h1>
-<p>CrossMap basically needs 2 input files.  <a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/chain.html">chain</a>
-format file describing genome-wide pairwise alignments between assemblies and the file containing
-genome coordinates that you want to convert to different assembly. If input file is in VCF
-format, a reference genome sequence file(in FASTA format) is needed.</p>
 <div class="section" id="chain-file">
 <h2>Chain file<a class="headerlink" href="#chain-file" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/chain.html">chain file</a> describes a pairwise alignment between two reference assemblies. UCSC and Ensemble chain files are available:</p>
 <ol class="arabic simple">
-<li><p><strong>Download Ensembl chain files</strong></p></li>
-</ol>
-<blockquote>
-<div><ul class="simple">
-<li><p>Human to Human: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/">ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/</a></p></li>
-<li><p>Mouse to Mouse: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/">ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/</a></p></li>
-<li><p>Other organisms: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p></li>
-</ul>
-</div></blockquote>
-<ol class="arabic simple" start="2">
-<li><p><strong>Download UCSC chain files</strong></p></li>
+<li><p><strong>UCSC chain files</strong></p></li>
 </ol>
 <blockquote>
 <div><ul class="simple">
@@ -146,16 +141,29 @@ format, a reference genome sequence file(in FASTA format) is needed.</p>
 <li><p>Chain File from mm10 (GRCm38) to mm9 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/</a></p></li>
 </ul>
 </div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p><strong>Ensembl chain files</strong></p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>Human to Human: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/">ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/</a></p></li>
+<li><p>Mouse to Mouse: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/">ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/</a></p></li>
+<li><p>Other organisms: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p></li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="user-input-file">
 <h2>User Input file<a class="headerlink" href="#user-input-file" title="Permalink to this headline">¶</a></h2>
+<p>CrossMap supports the following file formats.</p>
 <ol class="arabic simple">
-<li><p><a class="reference external" href="http://samtools.sourceforge.net/SAMv1.pdf">BAM</a>, <a class="reference external" href="https://samtools.github.io/hts-specs/CRAMv3.pdf">CRAM</a>, or <a class="reference external" href="http://samtools.sourceforge.net/SAMv1.pdf/">SAM</a> format.</p></li>
-<li><p><a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a> or BED-like format. BED file must has at least 3 columns (‘chrom’, ‘start’, ‘end’).</p></li>
-<li><p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a> format. “variableStep”, “fixedStep” and “bedGraph” wiggle line are supported.</p></li>
-<li><p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/bigWig.html">BigWig</a> format.</p></li>
-<li><p><a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format3">GFF</a> or <a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format4">GTF</a> format.</p></li>
-<li><p><a class="reference external" href="http://vcftools.sourceforge.net/index.html">VCF</a> format.</p></li>
+<li><p><a class="reference external" href="http://samtools.sourceforge.net/SAMv1.pdf">BAM</a>, <a class="reference external" href="https://samtools.github.io/hts-specs/CRAMv3.pdf">CRAM</a>, or <a class="reference external" href="http://samtools.sourceforge.net/SAMv1.pdf/">SAM</a></p></li>
+<li><p><a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a> or BED-like. (BED file must has at least ‘chrom’, ‘start’, ‘end’)</p></li>
+<li><p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a> (“variableStep”, “fixedStep” and “bedGraph” formats are supported)</p></li>
+<li><p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/bigWig.html">BigWig</a></p></li>
+<li><p><a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format3">GFF</a> or <a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format4">GTF</a></p></li>
+<li><p><a class="reference external" href="http://vcftools.sourceforge.net/index.html">VCF</a></p></li>
+<li><p><a class="reference external" href="https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format">GVCF</a></p></li>
+<li><p><a class="reference external" href="https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/">MAF</a></p></li>
 </ol>
 </div>
 <div class="section" id="output-file">
@@ -163,8 +171,8 @@ format, a reference genome sequence file(in FASTA format) is needed.</p>
 <p>Format of Output files depends on the input format</p>
 <table class="docutils align-default">
 <colgroup>
-<col style="width: 13%" />
-<col style="width: 87%" />
+<col style="width: 14%" />
+<col style="width: 86%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Input_format</p></th>
@@ -173,16 +181,16 @@ format, a reference genome sequence file(in FASTA format) is needed.</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>BED</p></td>
-<td><p>BED (Genome coordinates will be updated to the target assembly)</p></td>
+<td><p>BED (Genome coordinates will be updated)</p></td>
 </tr>
 <tr class="row-odd"><td><p>BAM</p></td>
-<td><p>BAM (Genome coordinates, header section, all SAM flags, insert size will be updated accordingly)</p></td>
+<td><p>BAM (Genome coordinates, header section, all SAM flags, insert size will be updated)</p></td>
 </tr>
 <tr class="row-even"><td><p>CRAM</p></td>
 <td><p>BAM (require pysam &gt;= 0.8.2)</p></td>
 </tr>
 <tr class="row-odd"><td><p>SAM</p></td>
-<td><p>SAM (Genome coordinates, header section, all SAM flags, insert size will be updated accordingly)</p></td>
+<td><p>SAM (Genome coordinates, header section, all SAM flags, insert size will be updated)</p></td>
 </tr>
 <tr class="row-even"><td><p>Wiggle</p></td>
 <td><p>BigWig</p></td>
@@ -197,7 +205,13 @@ format, a reference genome sequence file(in FASTA format) is needed.</p>
 <td><p>GTF (Genome coordinates will be updated to the target assembly)</p></td>
 </tr>
 <tr class="row-even"><td><p>VCF</p></td>
-<td><p>VCF (Genome coordinates and reference alleles will be updated to the target assembly)</p></td>
+<td><p>VCF (header section, Genome coordinates, reference alleles will be updated)</p></td>
+</tr>
+<tr class="row-odd"><td><p>GVCF</p></td>
+<td><p>GVCF (header section, Genome coordinates, reference alleles will be updated)</p></td>
+</tr>
+<tr class="row-even"><td><p>MAF</p></td>
+<td><p>MAF (Genome coordinates and reference alleles will be updated)</p></td>
 </tr>
 </tbody>
 </table>
@@ -206,28 +220,28 @@ format, a reference genome sequence file(in FASTA format) is needed.</p>
 <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
 <p>Run CrossMap.py <strong>without</strong> any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># run CrossMap without argument
-$ python CrossMap.py
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py
+
+Program: CrossMap (v0.4.2)
+
+Description:
+ CrossMap is a program to convert genome coordinates between different reference
+ assemblies (e.g. from human hg18 to hg19 or vice versa). The supported file
+ formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
+ format), SAM, Wiggle and VCF.
+
+Usage: CrossMap.py &lt;command&gt; [options]
+
+        bam    convert BAM, CRAM or SAM format file.
+        bed    convert BED, bedGraph or other BED-like file.
+        bigwig convert BigWig file.
+        gff    convert GFF or GTF format file.
+        gvcf   convert GVCF file.
+        maf    convert MAF (mutation annotation format) file.
+        vcf    convert VCF file.
+        wig    convert Wiggle or bedGraph format file.
 </pre></div>
 </div>
-<p>Program: CrossMap (v0.3.4)</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Description:</dt><dd><p>CrossMap is a program for convenient conversion of genome coordinates between
-assembly versions (e.g. from human hg18 to hg19 or vice versa). It supports file
-in BAM, CRAM, SAM, BED, Wiggle, BigWig, GFF, GTF and VCF format.</p>
-</dd>
-</dl>
-<p>Usage: CrossMap.py &lt;command&gt; [options]</p>
-<blockquote>
-<div><p>bam  convert alignment file in BAM, CRAM or SAM format.
-bed  convert genome coordinate or annotation file in BED, bedGraph or other BED-like format.
-bigwig       convert genome coordinate file in BigWig format.
-gff  convert genome coordinate or annotation file in GFF or GTF format.
-vcf  convert genome coordinate file in VCF format.
-wig  convert genome coordinate file in Wiggle, or bedGraph format.</p>
-</div></blockquote>
-</div></blockquote>
 <p>Run CrossMap.py <strong>with</strong> a command keyword will print help message for the command. For example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bed
 
@@ -290,7 +304,7 @@ exact the same number of columns as the original one.</p>
 <li><p>*.unmap file contains regions that cannot be unambiguously converted.</p></li>
 </ol>
 <p>Example (run CrossMap with <strong>no</strong> <em>output_file</em> specified):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
 # Conversion results were printed to screen directly (column1-3 are hg18 based, column5-7 are hg19 based)::
 chr1   142614848       142617697       -&gt;      chr1    143903503       143906352
@@ -299,7 +313,7 @@ chr1   142623313       142623350       -&gt;      chr1    143911971       143912
 </pre></div>
 </div>
 <p>Example (run CrossMap with <em>output_file</em> <strong>(test.hg19.bed3)</strong> specified):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
 
 $ cat test.hg19.bed3
 chr1   143903503       143906352
@@ -308,7 +322,7 @@ chr1   143911971       143912008
 </pre></div>
 </div>
 <p>Example (one input region was split because it cannot be consecutively mapped target assembly):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
 chr10  81346644        81349952        +       -&gt;      chr10   81356692        81360000        +
 chr10  81349952        81364937        +       -&gt;      chr10   81360000        81374985        +
@@ -322,7 +336,7 @@ chr10  81371412        81371432        +       (split.2:chr10:81371422:81371432:
 </pre></div>
 </div>
 <p>Example (Use <strong>bed</strong> command to convert a bedGraph file, output another bedGraph file. If Use <strong>wig</strong> command to convert a bedGraph file, output a <strong>bigWig</strong> file. ):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python3 CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
 
 chrX   5873316 5873391 2.0     -&gt;      chrX    5955275 5955350 2.0
 chrX   5873673 5873710 0.8     -&gt;      chrX    5955632 5955669 0.8
@@ -357,7 +371,7 @@ pair-end sequencing, insert size is also recalculated. The input BAM file should
 and indexed properly using samTools (<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/25/16/2078.full">Li et al., 2009</a>).
 Output format is determined from the input format and BAM output will be sorted and indexed automatically.</p>
 <p>Typing command without any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bam
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bam
 
 Usage: CrossMap.py bam chain_file input_file output_file [options]
 Note: If output_file == STDOUT or -, CrossMap will write BAM file to the screen
@@ -532,7 +546,7 @@ Input wiggle data can be in variableStep (for data with irregular intervals) or 
 format. We export files in bedGraph format because it’s more compact than wiggle format, and more importantly,
 CrossMap internally transforms wiggle into bedGraph to increase running speed.</p>
 <p>Typing command without any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  wig
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  wig
 
 Usage
 -----
@@ -564,7 +578,7 @@ If “sort” command does not exist, CrossMap will exit.</p></li>
 otherwise, the output file will be in bedGraph format.</p>
 <p>After v0.3.0, UCSC’s wigToBigWig is no longer needed.</p>
 <p>Typing command without any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  bigwig
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  bigwig
 
 Usage
 -----
@@ -606,7 +620,7 @@ GFF. Plain text, compressed plain text, and URLs pointing to remote files are al
 Only chromosome and genome coordinates are updated. The format of the output is determined from
 the input.</p>
 <p>Typing command without any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  gff
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  gff
 
 Usage
 -----
@@ -675,7 +689,7 @@ nucleotide variants, indels, copy number variants, and structural variants. Chro
 coordinates, and reference alleles are updated to a new assembly, and all the other fields
 are not changed.</p>
 <p>Typing command without any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  vcf
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  vcf
 
 usage
 -----
@@ -745,7 +759,7 @@ chr14  20086290        .       T       C       .       PASS    ADP=441;WT=0;HET=
 files that contain somatic and/or germline mutation annotations. Please do not confused
 with <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format5">Multiple Alignment Format</a>.</p>
 <p>Typing command without any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python2.7 CrossMap.py  maf
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  maf
 
 usage
 -----

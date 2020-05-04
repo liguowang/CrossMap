@@ -7,6 +7,7 @@ Supports BED/BedGraph, GFF/GTF, BAM/SAM/CRAM, BigWig/Wig, VCF, and MAF format fi
 '''
 
 import os,sys	 
+import re
 import optparse
 from textwrap import wrap
 from time import strftime
@@ -25,7 +26,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.3.9"
+__version__="0.4.2"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -542,7 +543,7 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 		elif line.startswith('##PEDIGREE'):
 			print(line, file=FILE_OUT)
 			print(line, file=UNMAP)
-		
+					
 		#meta-information lines needed in unmapped files
 		elif line.startswith('##assembly'):
 			print(line, file=UNMAP)
@@ -620,7 +621,207 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 	UNMAP.close()
 	printlog (["Total entries:", str(total)])
 	printlog (["Failed to map:", str(fail)])
+
+
+
+def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome):
+	'''
+	Convert genome coordinates in GVCF format.
+	
+	Parameters
+	----------
+	mapping : dict
+		Dictionary with source chrom name as key, IntervalTree object as value.
+	
+	infile : file
+		Input file in GVCF format. Can be a regular or compressed (*.gz, *.Z,*.z, *.bz,
+		*.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to
+		remote file.
+		
+	outfile : str
+		prefix of output files.
+	
+	liftoverfile : file
+		Chain (https://genome.ucsc.edu/goldenPath/help/chain.html) format file. Can be a
+		regular or compressed (*.gz, *.Z,*.z, *.bz, *.bz2, *.bzip2) file, local file or
+		URL (http://, https://, ftp://) pointing to remote file.
+	
+	refgenome : file
+		The genome sequence file of 'target' assembly in FASTA format.
+	'''
+	
+	#index refegenome file if it hasn't been done
+	if not os.path.exists(refgenome + '.fai'):
+		printlog(["Creating index for", refgenome])
+		pysam.faidx(refgenome)
+	
+	refFasta = pysam.Fastafile(refgenome)
+	
+	FILE_OUT = open(outfile ,'w')
+	UNMAP = open(outfile + '.unmap','w')
+	
+	total_var = 0
+	failed_var = 0
+	total_region = 0
+	failed_region = 0	
+	withChr = False # check if the VCF data lines use 'chr1' or '1'
+	
+	for line in ireader.reader(infile):
+		if not line.strip():
+			continue
+		line=line.strip()
+		
+		#deal with meta-information lines.		
+		#meta-information lines needed in both mapped and unmapped files
+		if line.startswith('##fileformat'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##INFO'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##FILTER'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##FORMAT'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##ALT'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##SAMPLE'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##PEDIGREE'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##GVCFBlock'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##GATKCommandLine'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+		elif line.startswith('##source'):
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+								
+		#meta-information lines needed in unmapped files
+		elif line.startswith('##assembly'):
+			print(line, file=UNMAP)
+		elif line.startswith('##contig'):
+			print(line, file=UNMAP)
+			if 'ID=chr' in line:
+				withChr = True
+		
+		#update contig information
+		elif line.startswith('#CHROM'):			
+			printlog(["Updating contig field ... "])
+			target_gsize = dict(list(zip(refFasta.references, refFasta.lengths)))
+			for chr_id in sorted(target_gsize):
+				if chr_id.startswith('chr'):
+					if withChr is True:
+						print("##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
+					else:
+						print("##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id.replace('chr',''), target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
+				else:
+					if withChr is True:
+						print("##contig=<ID=%s,length=%d,assembly=%s>" % ('chr' + chr_id, target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
+					else:
+						print("##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
+						
+			print("##liftOverProgram=CrossMap(https://sourceforge.net/projects/crossmap/)", file=FILE_OUT)
+			print("##liftOverFile=" + liftoverfile, file=FILE_OUT)
+			print("##new_reference_genome=" + refgenome, file=FILE_OUT)
+			print("##liftOverTime=" + datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)		
+			print(line, file=FILE_OUT)
+			print(line, file=UNMAP)
+			printlog(["Lifting over ... "])
+
+		else:
+			if line.startswith('#'):continue
+			
+			# process non-variant region
+			if 'END=' in line:
+				fields = str.split(line,maxsplit=8)
+				total_region += 1
+				chrom = fields[0]
+				start = int(fields[1])-1	 # 0 based
+				try:
+					m = re.search(r"END\=(\d+)", line)
+					end = int(m[1])
+				except:
+					print (line + "\tFail(Unmap)", file=UNMAP)
+					failed_region += 1
+					continue				
 				
+				a = map_coordinates(mapping, chrom, start, end,'+')
+				if a is None:
+					print (line + "\tFail(Unmap)", file=UNMAP)
+					failed_region += 1
+					continue
+				if len(a) == 2:
+					# update chrom
+					target_chr = str(a[1][0])	#target_chr is from chain file, could be 'chr1' or '1'
+					target_start = a[1][1]
+					target_end = a[1][2]
+					fields[0] = target_chr
+					
+					# update start coordinate
+					fields[1] = target_start + 1
+					
+					# update END
+					fields[7] = fields[7].replace(('END=' + str(end)), ('END=' + str(target_end)))		
+					print('\t'.join(map(str, fields)), file=FILE_OUT)
+										
+			# process variant line
+			else:
+			
+				fields = str.split(line,maxsplit=7)
+				total_var += 1
+				chrom = fields[0]
+				start = int(fields[1])-1	 	# 0 based, ref_allele start
+				end = start + len(fields[3])	# ref_allele end
+				alt_allele = fields[4].replace(' ','').split(',')[0]	# 20  10000598    .   T   A,<NON_REF> 1754.77 .   DP=54;
+				   
+				a = map_coordinates(mapping, chrom, start, end,'+')
+				if a is None:
+					print (line + "\tFail(Unmap)", file=UNMAP)
+					failed_var += 1
+					continue
+				
+				if len(a) == 2:
+					# update chrom
+					target_chr = str(a[1][0])	#target_chr is from chain file, could be 'chr1' or '1'
+					target_start = a[1][1]
+					target_end = a[1][2]
+					fields[0] = target_chr
+					
+					# update start coordinate
+					fields[1] = target_start + 1
+					
+					# update ref allele
+					target_chr = update_chromID(refFasta.references[0], target_chr)
+					fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+							
+					if a[1][3] == '-':
+						fields[4] = revcomp_DNA(alt_allele, True) + ',<NON_REF>'
+					
+					#ref_allele and alt_alele are different
+					if fields[3] != alt_allele:
+						print('\t'.join(map(str, fields)), file=FILE_OUT)
+					else:
+						print (line + "\tFail(REF==ALT)", file=UNMAP)
+						failed_var += 1
+				else:
+					print (line + "\tFail(Multiple_hits)", file=UNMAP)
+					failed_var += 1
+					continue
+	FILE_OUT.close()
+	UNMAP.close()
+	printlog (["Total variants:", str(total_var)])
+	printlog (["Variants failed to map:", str(failed_var)])
+	printlog (["Total non-variant regions:", str(total_region)])
+	printlog (["Non-variant regions failed to map:", str(failed_region)])	
+					
 def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_name):
 	'''
 	Convert genome coordinates in MAF (mutation annotation foramt) format.
@@ -679,7 +880,7 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 			printlog(["Lifting over ... "])
 		else:
 			
-			fields = str.split(line)
+			fields = str.split(line,sep = '\t')
 			total += 1
 			
 			fields[3] = ref_name
@@ -1111,9 +1312,8 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 	
 	# chromosome ID style of the original BAM file
 	chrom_style = sam_ori_header['SQ'][0]['SN']	# either 'chr1' or '1'
-	#print (chrom_style)
-	
-	#update chrom_size of target genome
+		
+	# update chrom_size of target genome
 	target_chrom_sizes = {}
 	for n,l in chrom_size.items():
 		target_chrom_sizes[update_chromID(chrom_style, n)] = l
@@ -1124,15 +1324,12 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 	if outfile_prefix is not None:
 		if file_type == 'BAM':
 			OUT_FILE = pysam.Samfile( outfile_prefix + '.bam', "wb", header = new_header )
-			#OUT_FILE_UNMAP = pysam.Samfile( outfile_prefix + '.unmap.bam', "wb", template=samfile )
 			printlog (["Liftover BAM file:", infile, '==>', outfile_prefix + '.bam'])
 		elif file_type == 'CRAM':
 			OUT_FILE = pysam.Samfile( outfile_prefix + '.bam', "wb", header = new_header )
-			#OUT_FILE_UNMAP = pysam.Samfile( outfile_prefix + '.unmap.bam', "wb", template=samfile )
 			printlog (["Liftover CRAM file:", infile, '==>', outfile_prefix + '.bam'])
 		elif file_type == 'SAM':
 			OUT_FILE = pysam.Samfile( outfile_prefix + '.sam', "wh", header = new_header )
-			#OUT_FILE_UNMAP = pysam.Samfile( outfile_prefix + '.unmap.sam', "wh", template=samfile )
 			printlog (["Liftover SAM file:", infile, '==>',	 outfile_prefix + '.sam'])
 		else:
 			print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
@@ -1141,20 +1338,16 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 	else:
 		if file_type == 'BAM':
 			OUT_FILE = pysam.Samfile( '-', "wb", header = new_header )
-			#OUT_FILE_UNMAP = pysam.Samfile( infile.replace('.bam','') + '.unmap.bam', "wb", template=samfile )
 			printlog (["Liftover BAM file:", infile])
 		elif file_type == 'CRAM':
 			OUT_FILE = pysam.Samfile( '-', "wb", header = new_header )
-			#OUT_FILE_UNMAP = pysam.Samfile( infile.replace('.bam','') + '.unmap.bam', "wb", template=samfile )
 			printlog (["Liftover CRAM file:", infile])
 		elif file_type == 'SAM':
 			OUT_FILE = pysam.Samfile( '-', "w", header = new_header )
-			#OUT_FILE_UNMAP = pysam.Samfile( infile.replace('.sam','') + '.unmap.sam', "wh", template=samfile )
 			printlog (["Liftover SAM file:", infile])
 		else:
 			print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
 			sys.exit(1)			
-
 	QF = 0
 	NN = 0
 	NU = 0
@@ -1172,529 +1365,433 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 	try:
 		while(1):
 			total_item += 1
-			new_alignment = pysam.AlignedRead() # create AlignedRead object
 			old_alignment = next(samfile)
+			new_alignment = pysam.AlignedRead() # create AlignedRead object
 			
-			# qcfailed reads will be written to OUT_FILE_UNMAP for both SE and PE reads
-			if old_alignment.is_qcfail:
-				QF += 1
-				if addtag: old_alignment.set_tag(tag="QF", value=0) 
-				OUT_FILE.write(old_alignment)
-				continue			
-			new_alignment.qname = old_alignment.qname	# 1st column. read name.
-			new_alignment.seq = old_alignment.seq		# 10th column. read sequence. all bases.
-			new_alignment.qual = old_alignment.qual		# 11th column. read sequence quality. all bases.
-			new_alignment.tags = old_alignment.tags		# 12 - columns
+			new_alignment.query_name = old_alignment.query_name               # 1st column. read name.
+			new_alignment.query_sequence = old_alignment.query_sequence       # 10th column. read sequence. all bases.
+			new_alignment.query_qualities = old_alignment.query_qualities	  # 11th column. read sequence quality. all bases.
+			new_alignment.set_tags(old_alignment.get_tags() )                 # 12 - columns
+			
 			
 			# by default pysam will change RG:Z to RG:A, which can cause downstream failures with GATK and freebayes
 			# Thanks Wolfgang Resch <wresch@helix.nih.gov> identified this bug and provided solution.
-			
 			try:
 				rg, rgt = old_alignment.get_tag("RG", with_value_type=True)
 			except KeyError:
 				pass
 			else:
 				new_alignment.set_tag("RG", str(rg), rgt)
+				
 			
+			## Pair-end sequencing
 			if old_alignment.is_paired:
-				new_alignment.flag = 0x0001 #pair-end
+				new_alignment.flag = 0x1 #pair-end in sequencing
 				if old_alignment.is_read1:
 					new_alignment.flag = new_alignment.flag | 0x40
 				elif old_alignment.is_read2:
-					new_alignment.flag = new_alignment.flag | 0x80			
-			
-				#==================================
-				# R1 is originally unmapped
-				#==================================
-				if old_alignment.is_unmapped:
-					#This line will set the unmapped read flag for the first read in pair (in case it is unmapped). 
-					#Thanks Amir Keivan Mohtashami reporting this bug.
-					new_alignment.flag = new_alignment.flag | 0x4
+					new_alignment.flag = new_alignment.flag | 0x80		
+
+				if old_alignment.is_qcfail:
+					new_alignment.flag = new_alignment.flag | 0x200
+					new_alignment.reference_id = -1                       #3
+					new_alignment.reference_start = 0                     #4
+					new_alignment.mapping_quality = 255				      #5	
+					new_alignment.cigartuples = old_alignment.cigartuples #6
+					new_alignment.next_reference_id = -1   #7
+					new_alignment.next_reference_start = 0 #8
+					new_alignment.template_length = 0      #9
 					
-					#------------------------------------
-					# both R1 and R2  unmapped
-					#------------------------------------
+					QF += 1
+					if addtag: new_alignment.set_tag(tag="QF", value=0)
+					OUT_FILE.write(new_alignment)
+					continue					
+				#==================================
+				# R1 originally unmapped
+				#==================================					
+				elif old_alignment.is_unmapped:
+					new_alignment.flag = new_alignment.flag | 0x4         #2
+					new_alignment.reference_id = -1                       #3
+					new_alignment.reference_start = 0                     #4
+					new_alignment.mapping_quality = 255			          #5
+					new_alignment.cigartuples = old_alignment.cigartuples #6
+					
+					# R1 & R2 originally unmapped
 					if old_alignment.mate_is_unmapped:
+						new_alignment.next_reference_id = -1   #7
+						new_alignment.next_reference_start = 0 #8
+						new_alignment.template_length = 0      #9
+						
 						NN += 1
-						if addtag: old_alignment.set_tag(tag="NN", value=0)
-						OUT_FILE.write(old_alignment)
+						if addtag: new_alignment.set_tag(tag="NN", value=0)
+						OUT_FILE.write(new_alignment)
 						continue
-					else:	# originally, read-1 unmapped, read-2 is mapped
+					# R1 unmap, R2 is mapped
+					else:	
 						try:
-							read2_chr = samfile.getrname(old_alignment.rnext)									
+							read2_chr = samfile.get_reference_name(old_alignment.next_reference_id)									
 							read2_strand = '-' if old_alignment.mate_is_reverse else '+'
-							read2_start = old_alignment.pnext
+							read2_start = old_alignment.next_reference_start
 							read2_end = read2_start + 1
 							read2_maps = map_coordinates(mapping, read2_chr, read2_start, read2_end, read2_strand)
-							# [('chr1', 246974830, 246974833, '+' ), ('chr1', 248908207, 248908210, '+' )]
 						except:
 							read2_maps = None
 
-					#------------------------------------
-					# both R1 and R2  unmapped
-					#------------------------------------					
-					if read2_maps is None:
-						NN += 1
-						if addtag: old_alignment.set_tag(tag="NN", value=0)
-						OUT_FILE.write(old_alignment)
-						continue	
-					
-					#------------------------------------
-					# R1 unmapped, R2 unique
-					#------------------------------------						
-					elif len(read2_maps) == 2:							
-						# 2											
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
-						# 3
-						new_alignment.tid = name_to_id[read2_maps[1][0]]	#recommend to set the RNAME of unmapped read to its mate's
-						# 4
-						new_alignment.pos = read2_maps[1][1]				#recommend to set the POS of unmapped read to its mate's
-						# 5
-						new_alignment.mapq = old_alignment.mapq
-						# 6
-						new_alignment.cigar = old_alignment.cigar
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]
-						# 8
-						new_alignment.pnext = read2_maps[1][1]	#start
-						# 9
-						new_alignment.tlen = 0
+						#------------------------------------
+						# R1 unmapped, R2 failed to liftover
+						#------------------------------------					
+						if read2_maps is None:
+							new_alignment.next_reference_id = -1   #7
+							new_alignment.next_reference_start = 0 #8
+							new_alignment.template_length = 0      #9
 						
-						NU += 1
-						if addtag: new_alignment.set_tag(tag="NU", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
+							NN += 1
+							if addtag: new_alignment.set_tag(tag="NN", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
 					
-					#------------------------------------
-					# R1 unmapped, R2 multiple
-					#------------------------------------						
-					else:
-						# 2
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
-						# 2
-						new_alignment.flag = new_alignment.flag | 0x100
-						# 3
-						new_alignment.tid = name_to_id[read2_maps[1][0]]
-						# 4
-						new_alignment.pos = read2_maps[1][1]
-						# 5
-						new_alignment.mapq = old_alignment.mapq
-						# 6
-						new_alignment.cigar = old_alignment.cigar
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]
-						# 8
-						new_alignment.pnext =  read2_maps[1][1] #start
-						# 9
-						new_alignment.tlen = 0
+						#------------------------------------
+						# R1 unmapped, R2 unique
+						#------------------------------------						
+						elif len(read2_maps) == 2:							
+							# 2-9									
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
+							new_alignment.reference_id = name_to_id[read2_maps[1][0]]	#recommend to set the RNAME of unmapped read to its mate's
+							new_alignment.reference_start = read2_maps[1][1]				#recommend to set the POS of unmapped read to its mate's
+							new_alignment.mapping_quality = old_alignment.mapping_quality
+							new_alignment.cigartuples = old_alignment.cigartuples
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.next_reference_start = read2_maps[1][1]
+							new_alignment.template_length = 0
 						
-						NM += 1
-						if addtag: new_alignment.set_tag(tag="NM", value=0)
-						OUT_FILE.write(new_alignment)
-						continue						
+							NU += 1
+							if addtag: new_alignment.set_tag(tag="NU", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
+					
+						#------------------------------------
+						# R1 unmapped, R2 multiple
+						#------------------------------------						
+						else:
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
+							# 2-9
+							new_alignment.flag = new_alignment.flag | 0x100
+							new_alignment.reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.reference_start = read2_maps[1][1]
+							new_alignment.mapping_quality = old_alignment.mapping_quality
+							new_alignment.cigartuples = old_alignment.cigartuples
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.next_reference_start =  read2_maps[1][1]
+							new_alignment.template_length = 0
+						
+							NM += 1
+							if addtag: new_alignment.set_tag(tag="NM", value=0)
+							OUT_FILE.write(new_alignment)
+							continue						
 				#==================================
 				# R1 is originally mapped 
 				#==================================				
 				else:
 					try:
-						read1_chr = samfile.getrname(old_alignment.tid)
-						
+						read1_chr = samfile.get_reference_name(old_alignment.reference_id)
 						read1_strand = '-' if old_alignment.is_reverse else '+'
-						read1_start = old_alignment.pos
-						read1_end = old_alignment.aend
+						read1_start = old_alignment.reference_start
+						read1_end = old_alignment.reference_end
 						read1_maps = map_coordinates(mapping, read1_chr, read1_start, read1_end, read1_strand)
-						#print (read1_chr)
-						#print (read1_maps)
 					except:
 						read1_maps = None
 				
 					if not old_alignment.mate_is_unmapped:
 						try:
-							read2_chr = samfile.getrname(old_alignment.rnext)									
+							read2_chr = samfile.get_reference_name(old_alignment.next_reference_id)									
 							read2_strand = '-' if old_alignment.mate_is_reverse else '+'
-							read2_start = old_alignment.pnext
+							read2_start = old_alignment.next_reference_start
 							read2_end = read2_start + 1
 							read2_maps = map_coordinates(mapping, read2_chr, read2_start, read2_end, read2_strand)
-							# [('chr1', 246974830, 246974833, '+' ), ('chr1', 248908207, 248908210, '+' )]
 						except:
 							read2_maps = None	
-				#------------------------------------
-				# R1 unmapped (failed to liftover)
-				#------------------------------------	
-				if read1_maps is None:
-					# 2 update flag (0x4: segment unmapped)														 
-					new_alignment.flag = new_alignment.flag | 0x4
-					# 3
-					new_alignment.tid = -1
-					# 4
-					new_alignment.pos = 0
-					# 5
-					new_alignment.mapq = 255
-					# 6
-					new_alignment.cigar = old_alignment.cigar
-					# 7
-					new_alignment.rnext = -1
-					# 8
-					new_alignment.pnext = 0
-					# 9
-					new_alignment.tlen = 0
+					#------------------------------------
+					# R1 failed to liftover
+					#------------------------------------	
+					if read1_maps is None:					
+						# read2 is unmapped or failed to convertion
+						if old_alignment.mate_is_unmapped or (read2_maps is None):
+							# col2 - col9
+							new_alignment.flag = new_alignment.flag | 0x4  #2
+							new_alignment.reference_id = -1                #3
+							new_alignment.reference_start = 0              #4
+							new_alignment.mapping_quality = 255            #5
+							new_alignment.cigartuples = old_alignment.cigartuples #6
+							new_alignment.next_reference_id = -1	           #7
+							new_alignment.next_reference_start = 0         #8
+							new_alignment.template_length = 0              #9
+							
+							if addtag: new_alignment.set_tag(tag="NN", value=0)
+							NN += 1
+							OUT_FILE.write(new_alignment)
+							continue
 					
-					# (1) read2 is unmapped before conversion
-					if old_alignment.mate_is_unmapped:
-						NN += 1
-						if addtag: new_alignment.set_tag(tag="NN", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
+						# read2 is unique mapped
+						elif len(read2_maps) == 2:	
+							# col2 - col9
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
+							new_alignment.reference_id = name_to_id[read2_maps[1][0]]	 #recommend to set the RNAME of unmapped read to its mate's
+							new_alignment.reference_start = read2_maps[1][1]				#recommend to set the POS of unmapped read to its mate's
+							new_alignment.mapping_quality = old_alignment.mapping_quality
+							new_alignment.cigartuples = old_alignment.cigartuples
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.next_reference_start = read2_maps[1][1]	#start
+							new_alignment.template_length = 0
+						
+							NU += 1
+							if addtag: new_alignment.set_tag(tag="NU", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
 					
-					# (2) read2 is unmapped after conversion	
-					elif read2_maps is None:										
-						# 2
-						new_alignment.flag = new_alignment.flag | 0x8	
+						# read2 is multiple mapped
+						else:
+							# col2 - col9
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
+							new_alignment.flag = new_alignment.flag | 0x100
+							new_alignment.reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.reference_start = read2_maps[1][1]
+							new_alignment.mapping_quality = 255			# mapq not available 
+							new_alignment.cigartuples = old_alignment.cigartuples
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.next_reference_start =  read2_maps[1][1] #start
+							new_alignment.template_length = 0
 						
-						NN += 1 
-						if addtag: new_alignment.set_tag(tag="NN", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
-						
-					# (3) read2 is unique mapped
-					elif len(read2_maps) == 2:	
-						# 2											
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
-						# 3
-						new_alignment.tid = name_to_id[read2_maps[1][0]]	#recommend to set the RNAME of unmapped read to its mate's
-						# 4
-						new_alignment.pos = read2_maps[1][1]				#recommend to set the POS of unmapped read to its mate's
-						# 5
-						new_alignment.mapq = old_alignment.mapq
-						# 6
-						new_alignment.cigar = old_alignment.cigar
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]
-						# 8
-						new_alignment.pnext = read2_maps[1][1]	#start
-						# 9
-						new_alignment.tlen = 0
-						
-						NU += 1
-						if addtag: new_alignment.set_tag(tag="NU", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
-					
-					# (4) read2 is multiple mapped
-					else:
-						# 2
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20		
-						# 2
-						new_alignment.flag = new_alignment.flag | 0x100
-						# 3
-						new_alignment.tid = name_to_id[read2_maps[1][0]]
-						# 4
-						new_alignment.pos = read2_maps[1][1]
-						# 5
-						new_alignment.mapq = 255			# mapq not available 
-						# 6
-						new_alignment.cigar = old_alignment.cigar
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]
-						# 8
-						new_alignment.pnext =  read2_maps[1][1] #start
-						# 9
-						new_alignment.tlen = 0
-						
-						NM += 1
-						if addtag:new_alignment.set_tag(tag="NM", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
+							NM += 1
+							if addtag:new_alignment.set_tag(tag="NM", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
 				
-				#------------------------------------
-				# R1 uniquely mapped
-				#------------------------------------
-				elif len(read1_maps) == 2:
-					
-					if read1_maps[1][3] == '-':
-						new_alignment.flag = new_alignment.flag | 0x10	
-					
-					if read1_maps[0][3] != read1_maps[1][3]:	# opposite strand
-						# 6
-						new_alignment.cigar = old_alignment.cigar[::-1]			#reverse cigar tuple
-						# 10
-						new_alignment.seq = revcomp_DNA(old_alignment.seq)		#reverse complement read sequence
-						# 11
-						new_alignment.qual = old_alignment.qual[::-1]			#reverse quality string
-					elif read1_maps[0][3] == read1_maps[1][3]:	#  same strand
-						# 6
-						new_alignment.cigar = old_alignment.cigar
+					#------------------------------------
+					# R1 uniquely mapped
+					#------------------------------------
+					elif len(read1_maps) == 2:
+						# col2 - col5
+						if read1_maps[1][3] == '-':new_alignment.flag = new_alignment.flag | 0x10
+						new_alignment.reference_id = name_to_id[read1_maps[1][0]]
+						new_alignment.reference_start = read1_maps[1][1]	
+						new_alignment.mapping_quality = old_alignment.mapping_quality 				
 						
-					# 3
-					new_alignment.tid = name_to_id[read1_maps[1][0]]	#chrom
-					# 4
-					new_alignment.pos = read1_maps[1][1]	#start
-					# 5
-					new_alignment.mapq = old_alignment.mapq 
-					
-					# (1) R2 unmapped before or after conversion
-					if (old_alignment.mate_is_unmapped) or (read2_maps is None):
-						# 2
-						new_alignment.flag = new_alignment.flag | 0x8
-						# 7
-						new_alignment.rnext = name_to_id[read1_maps[1][0]]
-						# 8
-						new_alignment.pnext =  read1_maps[1][1]
-						# 9
-						new_alignment.tlen = 0
+						if read1_maps[0][3] != read1_maps[1][3]:	# opposite strand
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples[::-1]			#reverse cigar tuple
+							# 10
+							new_alignment.query_sequence = revcomp_DNA(old_alignment.query_sequence)		#reverse complement read sequence
+							# 11
+							new_alignment.query_qualities = old_alignment.query_qualities[::-1]			#reverse quality string
+						elif read1_maps[0][3] == read1_maps[1][3]:	#  same strand
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples
 						
-						UN += 1
-						if addtag: new_alignment.set_tag(tag="UN", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
-					
-					# (2) R2 is unique mapped
-					elif len(read2_maps)==2:
-						# 2
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]	#chrom
-						# 8
-						new_alignment.pnext =  read2_maps[1][1]
-						# 9						
-						new_alignment.tlen = abs(new_alignment.pos - new_alignment.pnext) -1 - old_alignment.alen
-						# 2
-						if (read2_maps[1][3] != read1_maps[1][3]) and (new_alignment.tlen <= IS_size + fold * IS_std) and (new_alignment.tlen >= IS_size - fold * IS_std):
-							new_alignment.flag = new_alignment.flag | 0x2
-						
-						UU += 1
-						if addtag: new_alignment.set_tag(tag="UU", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
-					
-					# (3) R2 is multiple mapped
-					else:
-						# 2 (strand)
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
-						# 2 (secondary alignment)
-						new_alignment.flag = new_alignment.flag | 0x100
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]	#chrom
-						# 8
-						new_alignment.pnext =  read2_maps[1][1] #start
-						# 9
-						new_alignment.tlen = abs(new_alignment.pos - new_alignment.pnext) -1 - old_alignment.alen
-						
-						UM += 1
-						if addtag: new_alignment.set_tag(tag="UM", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
-				
-				#------------------------------------
-				# R1 multiple mapped
-				#-----------------------------------
-				elif len(read1_maps) > 2 and len(read1_maps) % 2 ==0:
-					# 2
-					new_alignment.flag = new_alignment.flag | 0x100						
-					# 2
-					if read1_maps[1][3] == '-':
-						new_alignment.flag = new_alignment.flag | 0x10
-					
-					if read1_maps[0][3] != read1_maps[1][3]:
-						# 6
-						new_alignment.cigar = old_alignment.cigar[::-1]			#reverse cigar tuple
-						# 10
-						new_alignment.seq = revcomp_DNA(old_alignment.seq)		#reverse complement read sequence
-						# 11
-						new_alignment.qual = old_alignment.qual[::-1]			#reverse quality string
-					elif read1_maps[0][3] == read1_maps[1][3]:							
-						new_alignment.cigar = old_alignment.cigar
-					# 3
-					new_alignment.tid = name_to_id[read1_maps[1][0]]	#chrom
-					# 4
-					new_alignment.pos = read1_maps[1][1]	#start	
-					# 5
-					new_alignment.mapq = 255
-					
 
-					# (1) R2 is unmapped
-					if (old_alignment.mate_is_unmapped) or (read2_maps is None):
-						# 2
-						new_alignment.flag = new_alignment.flag | 0x8
-						# 7
-						new_alignment.rnext = name_to_id[read1_maps[1][0]]
-						# 8
-						new_alignment.pnext =  read1_maps[1][1]
-						# 9
-						new_alignment.tlen = 0
 					
-						MN += 1
-						if addtag: new_alignment.set_tag(tag="MN", value=0)
-						OUT_FILE.write(new_alignment)
-						continue
-					
-					# (2) read2 is unique mapped
-					elif len(read2_maps)==2:
-						# 2
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]	#chrom
-						# 8
-						new_alignment.pnext =  read2_maps[1][1]
-						# 9						
-						new_alignment.tlen = abs(new_alignment.pos - new_alignment.pnext) -1 - old_alignment.alen
+						# R2 unmapped before or after conversion
+						if (old_alignment.mate_is_unmapped) or (read2_maps is None):
+							#2,7-9
+							new_alignment.flag = new_alignment.flag | 0x8
+							new_alignment.next_reference_id = name_to_id[read1_maps[1][0]]
+							new_alignment.next_reference_start =  read1_maps[1][1]
+							new_alignment.template_length = 0
 						
-						MU += 1
-						if addtag: new_alignment.set_tag(tag="MU", value=0)
-						OUT_FILE.write(new_alignment)
-						continue		
+							UN += 1
+							if addtag: new_alignment.set_tag(tag="UN", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
 					
-					# (3) R2 is multiple mapped
-					else:
-						# 2 (strand)
-						if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
-						# 2 (secondary alignment)
-						new_alignment.flag = new_alignment.flag | 0x100
-						# 7
-						new_alignment.rnext = name_to_id[read2_maps[1][0]]	#chrom
-						# 8
-						new_alignment.pnext =  read2_maps[1][1] #start
-						# 9
-						new_alignment.tlen = abs(new_alignment.pos - new_alignment.pnext) -1 - old_alignment.alen
+						# R2 is unique mapped
+						elif len(read2_maps)==2:
+							# 2,7-9
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]	#chrom
+							new_alignment.next_reference_start =  read2_maps[1][1]
+							new_alignment.template_length = abs(new_alignment.reference_start - new_alignment.next_reference_start) + old_alignment.reference_length
+							# 2
+							if (read2_maps[1][3] != read1_maps[1][3]) and (new_alignment.template_length <= IS_size + fold * IS_std) and (new_alignment.template_length >= IS_size - fold * IS_std):
+								new_alignment.flag = new_alignment.flag | 0x2
 						
-						MM += 1
-						if addtag: new_alignment.set_tag(tag="MM", value=0)
-						OUT_FILE.write(new_alignment)
-						continue				
-				#else:
-				#	#old_alignment.tid = name_to_id[samfile.getrname(old_alignment.tid)]	
-				#	OUT_FILE_UNMAP.write(old_alignment) 
-				#	failed += 1
+							UU += 1
+							if addtag: new_alignment.set_tag(tag="UU", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
+					
+						# R2 is multiple mapped
+						else:
+							# 2 (strand)
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
+							# 2 (secondary alignment)
+							new_alignment.flag = new_alignment.flag | 0x100
+						
+							#7-9
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]
+							new_alignment.next_reference_start =  read2_maps[1][1]
+							new_alignment.template_length = 0
+							
+							UM += 1
+							if addtag: new_alignment.set_tag(tag="UM", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
+					#------------------------------------
+					# R1 multiple mapped
+					#-----------------------------------
+					elif len(read1_maps) > 2 and len(read1_maps) % 2 ==0:
+						# 2
+						new_alignment.flag = new_alignment.flag | 0x100						
+						if read1_maps[1][3] == '-':
+							new_alignment.flag = new_alignment.flag | 0x10
+						# 3-5
+						new_alignment.tid = name_to_id[read1_maps[1][0]]	#chrom
+						new_alignment.pos = read1_maps[1][1]	#start	
+						new_alignment.mapq = 255
+					
+						if read1_maps[0][3] != read1_maps[1][3]:	# opposite strand
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples[::-1]			        #reverse cigar tuple
+							# 10
+							new_alignment.query_sequence = revcomp_DNA(old_alignment.query_sequence)		#reverse complement read sequence
+							# 11
+							new_alignment.query_qualities = old_alignment.query_qualities[::-1]			#reverse quality string
+						elif read1_maps[0][3] == read1_maps[1][3]:	#  same strand
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples	
+							
+						# (1) R2 is unmapped
+						if (old_alignment.mate_is_unmapped) or (read2_maps is None):
+							#2,7-9
+							new_alignment.flag = new_alignment.flag | 0x8
+							new_alignment.next_reference_id = name_to_id[read1_maps[1][0]]
+							new_alignment.next_reference_start =  read1_maps[1][1]
+							new_alignment.template_length = 0
+							
+							MN += 1
+							if addtag: new_alignment.set_tag(tag="MN", value=0)
+							OUT_FILE.write(new_alignment)
+							continue
+					
+						# (2) read2 is unique mapped
+						elif len(read2_maps)==2:
+							# 2,7-9
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]	#chrom
+							new_alignment.next_reference_start =  read2_maps[1][1]
+							new_alignment.template_length = 0
+						
+							MU += 1
+							if addtag: new_alignment.set_tag(tag="MU", value=0)
+							OUT_FILE.write(new_alignment)
+							continue		
+					
+						# (3) R2 is multiple mapped
+						else:
+							# 2,7-9
+							if read2_maps[1][3] == '-': new_alignment.flag = new_alignment.flag | 0x20
+							# 2 (secondary alignment)
+							new_alignment.flag = new_alignment.flag | 0x100
+							new_alignment.next_reference_id = name_to_id[read2_maps[1][0]]	#chrom
+							new_alignment.next_reference_start =  read2_maps[1][1]
+							new_alignment.template_length = 0
+						
+							MM += 1
+							if addtag: new_alignment.set_tag(tag="MM", value=0)
+							OUT_FILE.write(new_alignment)
+							continue	
 			
 			# Singel end sequencing
 			else:
+				# 7-9
+				new_alignment.next_reference_id = -1
+				new_alignment.next_reference_start = 0
+				new_alignment.template_length = 0
+				
 				# (1) originally unmapped
 				if old_alignment.is_unmapped:
-					SN += 1
-					if addtag: old_alignment.set_tag(tag="SN",value=0)
-					OUT_FILE.write(old_alignment)
-					continue
-				else:
-					new_alignment.flag = 0x0
-					read_chr = samfile.getrname(old_alignment.tid)
-					read_strand = '-' if old_alignment.is_reverse else '+'
-					read_start = old_alignment.pos
-					read_end = old_alignment.aend
-					read_maps = map_coordinates(mapping, read_chr, read_start, read_end, read_strand)
-				
-				# (2) unmapped afte liftover
-				if read_maps is None:
-					# 1
-					new_alignment.qname = old_alignment.qname
-					# 2
+					# 2-6
 					new_alignment.flag = new_alignment.flag | 0x4
-					# 3
-					new_alignment.tid = -1
-					# 4
-					new_alignment.pos = 0
-					# 5
-					new_alignment.mapq = 255
-					# 6
-					new_alignment.cigar= old_alignment.cigar
-					# 7
-					new_alignment.rnext = -1
-					# 8
-					new_alignment.pnext = 0
-					# 9
-					new_alignment.tlen = 0
-					# 10
-					new_alignment.seq = old_alignment.seq
-					# 11
-					new_alignment.qual = old_alignment.qual
-					# 12
-					new_alignment.tags = old_alignment.tags
+					new_alignment.reference_id = -1
+					new_alignment.reference_start = 0
+					new_alignment.mapping_quality = 255
+					new_alignment.cigartuples = old_alignment.cigartuples
 					
 					SN += 1
 					if addtag: new_alignment.set_tag(tag="SN",value=0)
 					OUT_FILE.write(new_alignment)
 					continue
+				else:
+					new_alignment.flag = 0x0
+					read_chr = samfile.get_reference_name(old_alignment.reference_id)
+					read_strand = '-' if old_alignment.is_reverse else '+'
+					read_start = old_alignment.reference_start
+					read_end = old_alignment.reference_end
+					read_maps = map_coordinates(mapping, read_chr, read_start, read_end, read_strand)
 				
-				# (3) unique mapped
-				if len(read_maps)==2:
-					# 1
-					new_alignment.qname = old_alignment.qname
-					# 2
-					if read_maps[1][3] == '-':
-						new_alignment.flag = new_alignment.flag | 0x10	
-					if read_maps[0][3] != read_maps[1][3]:
-						# 6
-						new_alignment.cigar = old_alignment.cigar[::-1]			#reverse cigar tuple
-						# 10
-						new_alignment.seq = revcomp_DNA(old_alignment.seq)		#reverse complement read sequence
-						# 11
-						new_alignment.qual = old_alignment.qual[::-1]			#reverse quality string
-					else:
-						# 6
-						new_alignment.cigar = old_alignment.cigar
-						# 10
-						new_alignment.seq = old_alignment.seq
-						# 11
-						new_alignment.qual = old_alignment.qual
+					# (2) unmapped afte liftover
+					if read_maps is None:
+						new_alignment.flag = new_alignment.flag | 0x4
+						new_alignment.reference_id = -1
+						new_alignment.reference_start = 0
+						new_alignment.mapping_quality = 255					
 						
-					# 3
-					new_alignment.tid = name_to_id[read_maps[1][0]]
-					# 4
-					new_alignment.pos = read_maps[1][1]
-					# 5
-					new_alignment.mapq = old_alignment.mapq
-					# 7
-					new_alignment.rnext = -1
-					# 8
-					new_alignment.pnext = 0
-					# 9
-					new_alignment.tlen = 0
-					
-					SU += 1
-					if addtag: new_alignment.set_tag(tag="SU",value=0)
-					OUT_FILE.write(new_alignment)
-					continue
+						SN += 1
+						if addtag: new_alignment.set_tag(tag="SN",value=0)
+						OUT_FILE.write(new_alignment)
+						continue
 				
-				# (4) multiple mapped
-				if len(read_maps) > 2 and len(read_maps) % 2 ==0:
-
-					# 1
-					new_alignment.qname = old_alignment.qname
-					new_alignment.flag = new_alignment.flag | 0x100
-					# 2
-					if read_maps[1][3] == '-':
-						new_alignment.flag = new_alignment.flag | 0x10	
-					if read_maps[0][3] != read_maps[1][3]:
-						# 6
-						new_alignment.cigar = old_alignment.cigar[::-1]			#reverse cigar tuple
-						# 10
-						new_alignment.seq = revcomp_DNA(old_alignment.seq)		#reverse complement read sequence
-						# 11
-						new_alignment.qual = old_alignment.qual[::-1]			#reverse quality string
-					else:
-						# 6
-						new_alignment.cigar = old_alignment.cigar
-						# 10
-						new_alignment.seq = old_alignment.seq
-						# 11
-						new_alignment.qual = old_alignment.qual
+					# (3) unique mapped
+					if len(read_maps)==2:
+						if read_maps[1][3] == '-':
+							new_alignment.flag = new_alignment.flag | 0x10	
+						if read_maps[0][3] != read_maps[1][3]:
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples[::-1]			#reverse cigar tuple
+							# 10
+							new_alignment.query_sequence = revcomp_DNA(old_alignment.query_sequence)		#reverse complement read sequence
+							# 11
+							try:
+								new_alignment.query_qualities = old_alignment.query_qualities[::-1]			#reverse quality string
+							except:
+								new_alignment.query_qualities = []
+						else:
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples
 						
-					# 3
-					new_alignment.tid = name_to_id[read_maps[1][0]]
-					# 4
-					new_alignment.pos = read_maps[1][1]
-					# 5
-					new_alignment.mapq = old_alignment.mapq
-					# 7
-					new_alignment.rnext = -1
-					# 8
-					new_alignment.pnext = 0
-					# 9
-					new_alignment.tlen = 0
+						# 3-5
+						new_alignment.reference_id = name_to_id[read_maps[1][0]]
+						new_alignment.reference_start = read_maps[1][1]
+						new_alignment.mapping_quality = old_alignment.mapping_quality
 					
-					SM += 1
-					if addtag:	new_alignment.set_tag(tag="SM",value=0)
-					OUT_FILE.write(new_alignment)
-					continue					
+						SU += 1
+						if addtag: new_alignment.set_tag(tag="SU",value=0)
+						OUT_FILE.write(new_alignment)
+						continue
+				
+					# (4) multiple mapped
+					if len(read_maps) > 2 and len(read_maps) % 2 ==0:
+						new_alignment.flag = new_alignment.flag | 0x100
+						if read_maps[1][3] == '-':
+							new_alignment.flag = new_alignment.flag | 0x10	
+						if read_maps[0][3] != read_maps[1][3]:
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples[::-1]			#reverse cigar tuple
+							# 10
+							new_alignment.query_sequence = revcomp_DNA(old_alignment.query_sequence)		#reverse complement read sequence
+							# 11
+							new_alignment.query_qualities = old_alignment.query_qualities[::-1]			#reverse quality string
+						else:
+							# 6
+							new_alignment.cigartuples = old_alignment.cigartuples
+						
+						# 3-5
+						new_alignment.tid = name_to_id[read_maps[1][0]]
+						new_alignment.pos = read_maps[1][1]
+						new_alignment.mapq = old_alignment.mapq
+					
+						SM += 1
+						if addtag:	new_alignment.set_tag(tag="SM",value=0)
+						OUT_FILE.write(new_alignment)
+						continue					
 	except StopIteration:
 		printlog(["Done!"]) 
 	OUT_FILE.close()
@@ -1846,8 +1943,8 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
 	
 
 def general_help():
-	desc="""CrossMap is a program for convenient conversion of genome coordinates between assembly versions (e.g. from human hg18 to hg19 or vice versa). \
-It supports file in BAM, CRAM, SAM, BED, Wiggle, BigWig, GFF, GTF and VCF format."""
+	desc="""CrossMap is a program to convert genome coordinates between different reference assemblies (e.g. from human hg18 to hg19 or vice versa). \
+The supported file formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation format), SAM, Wiggle and VCF."""
 	
 	print("Program: %s (v%s)" % ("CrossMap", __version__), file=sys.stderr)
 	print("\nDescription: \n%s" % '\n'.join('  '+i for i in wrap(desc,width=80)), file=sys.stderr)
@@ -1858,8 +1955,8 @@ It supports file in BAM, CRAM, SAM, BED, Wiggle, BigWig, GFF, GTF and VCF format
 
 def bed_help():
 	msg =[
-	('Usage', "CrossMap.py bed chain_file input_bed_file [output_file]"),
-	('Description', "Convert BED format file. The \"chain_file\" and \"input_bed_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. BED format file must have at least 3 columns (chrom, start, end). If  no \"output_file\" is specified, output will be directed to the screen (console)."),
+	('Usage', "CrossMap.py bed chain_file input.bed [output_file]"),
+	('Description', "Convert BED format file. The \"chain_file\" and \"input.bed\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. BED format file must have at least 3 columns (chrom, start, end). If  no \"output_file\" is specified, output will be directed to the screen (console)."),
 	('Example1 (write output to file)', "CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed"),
 	('Example2 (write output to screen)', "CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed"),
 	]
@@ -1868,7 +1965,7 @@ def bed_help():
 	
 def gff_help():
 	msg =[
-	('Usage', "CrossMap.py gff chain_file input_gff_file output_file"),
+	('Usage', "CrossMap.py gff chain_file input.gff output_file"),
 	('Description', "Convert GFF or GTF format file. The\"chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. Input file must be in GFF or GTF format. GFF format: http://genome.ucsc.edu/FAQ/FAQformat.html#format3 GTF format: http://genome.ucsc.edu/FAQ/FAQformat.html#format4"),
 	('Example1 (write output to file)', "CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf"),
 	('Example2 (write output to screen)', "CrossMap.py gff	hg19ToHg18.over.chain.gz test.hg19.gtf"),
@@ -1878,7 +1975,7 @@ def gff_help():
 
 def wig_help():
 	msg =[
-	('Usage', "CrossMap.py wig chain_file input_wig_file output_prefix"),
+	('Usage', "CrossMap.py wig chain_file input.wig output_prefix"),
 	('Description', "Convert wiggle format file. The \"chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file.  Both \"variableStep\" and \"fixedStep\" wiggle lines are supported. Wiggle format: http://genome.ucsc.edu/goldenPath/help/wiggle.html"),
 	('Example', "CrossMap.py wig hg18ToHg19.over.chain.gz test.hg18.wig test.hg19"),
 	]
@@ -1887,7 +1984,7 @@ def wig_help():
 
 def bigwig_help():
 	msg =[
-	('Usage', "CrossMap.py bigwig chain_file input_bigwig_file output_prefix"),
+	('Usage', "CrossMap.py bigwig chain_file input.bigwig output_prefix"),
 	('Description', "Convert BigWig format file. The \"chain_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. Bigwig format: http://genome.ucsc.edu/goldenPath/help/bigWig.html"),
 	('Example', "CrossMap.py bigwig hg18ToHg19.over.chain.gz test.hg18.bw test.hg19"),
 	]
@@ -1895,24 +1992,34 @@ def bigwig_help():
 		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
 def bam_help():
-	usage="CrossMap.py bam -a chain_file input_file output_file [options] "
+	usage="CrossMap.py bam -a chain_file input.bam output_file [options] "
 	import optparse
 	parser.print_help()
 
 def vcf_help():
 	msg =[
-	("usage","CrossMap.py vcf chain_file input_VCF_file ref_genome_file output_file"),
-	("Description", "Convert VCF format file. The \"chain_file\" and \"input_VCF_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"ref_genome_file\" is genome sequence file of 'target assembly' in FASTA format."),
+	("usage","CrossMap.py vcf chain_file input.vcf refGenome.fa output_file"),
+	("Description", "Convert VCF format file. The \"chain_file\" and \"input.vcf\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"refGenome.fa\" is genome sequence file of the *target assembly*."),
 	("Example", " CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf"),
 	]
 	for i,j in msg:
 		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
+def gvcf_help():
+	msg =[
+	("usage","CrossMap.py gvcf chain_file input.gvcf refGenome.fa output_file"),
+	("Description", "Convert GVCF format file. The \"chain_file\" and \"input.gvcf\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"refGenome.fa\" is genome sequence file of the *target assembly*."),
+	("Example", " CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf"),
+	]
+	for i,j in msg:
+		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+
+
 
 def maf_help():
 	msg =[
-	("usage","CrossMap.py maf chain_file input_MAF_file ref_genome_file build_name output_file"),
-	("Description", "Convert MAF format file. The \"chain_file\" and \"input_MAF_file\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"ref_genome_file\" is genome sequence file of 'target assembly' in FASTA format. \"build_name\" is the name of the 'target_assembly' (eg \"GRCh38\")"),
+	("usage","CrossMap.py maf chain_file input.maf refGenome.fa build_name output_file"),
+	("Description", "Convert MAF format file. The \"chain_file\" and \"input.maf\" can be regular or compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file. \"refGenome.fa\" is genome sequence file of *target assembly*. \"build_name\" is the name of the *target_assembly* (eg \"GRCh38\")"),
 	("Example", " CrossMap.py  maf	hg19ToHg38.over.chain.gz  test.hg19.maf	 hg38.fa  GRCh38 test.hg38.maf"),
 	]
 	for i,j in msg:
@@ -1921,13 +2028,14 @@ def maf_help():
 	
 if __name__=='__main__':
 	commands = {
-	'bed':'convert genome coordinate or annotation file in BED, bedGraph or other BED-like format.',
-	'bam':'convert alignment file in BAM, CRAM or SAM format.',
-	'gff':'convert genome coordinate or annotation file in GFF or GTF format.',
-	'wig':'convert genome coordinate file in Wiggle, or bedGraph format.',
-	'bigwig':'convert genome coordinate file in BigWig format.',
-	'vcf':'convert genome coordinate file in VCF format.',
-	'maf':'convert genome coordinate file in MAF (mutation annotation format).'
+	'bed':'convert BED, bedGraph or other BED-like file.',
+	'bam':'convert BAM, CRAM or SAM format file.',
+	'gff':'convert GFF or GTF format file.',
+	'wig':'convert Wiggle or bedGraph format file.',
+	'bigwig':'convert BigWig file.',
+	'vcf':'convert VCF file.',
+	'gvcf':'convert GVCF file.',
+	'maf':'convert MAF (mutation annotation format) file.'
 	}	
 	kwds = list(commands.keys())
 
@@ -2036,6 +2144,18 @@ if __name__=='__main__':
 				crossmap_vcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = sys.argv[2], refgenome = genome_file)
 			else:
 				vcf_help()
+				sys.exit(0)			
+
+		elif sys.argv[1].lower() == 'gvcf':
+			if len(sys.argv) == 6:
+				chain_file = sys.argv[2]
+				in_file = sys.argv[3]
+				genome_file = sys.argv[4]
+				out_file = sys.argv[5]
+				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				crossmap_gvcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = sys.argv[2], refgenome = genome_file)
+			else:
+				gvcf_help()
 				sys.exit(0)			
 
 		elif sys.argv[1].lower() == 'maf':	#mapping, infile, outfile, liftoverfile, refgenome, ref_name

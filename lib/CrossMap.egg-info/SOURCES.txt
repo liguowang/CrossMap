@@ -170,6 +170,7 @@ bin/CrossMap.py
 data/.DS_Store
 data/readme.txt
 data/human/GRCh37_to_GRCh38.chain.gz
+data/human/GRCh37_to_GRCh38.chain.tab
 data/human/GRCh37_to_NCBI34.chain.gz
 data/human/GRCh37_to_NCBI35.chain.gz
 data/human/GRCh37_to_NCBI36.chain.gz
@@ -189,6 +190,7 @@ data/mouse/GRCm38_to_NCBIM37.chain.gz
 data/mouse/NCBIM36_to_GRCm38.chain.gz
 data/mouse/NCBIM37_to_GRCm38.chain.gz
 data/mouse/checksums.txt
+dist/.DS_Store
 docs/Makefile
 docs/conf.py
 docs/crossMap_logo.png
@@ -198,6 +200,7 @@ docs/_build/.DS_Store
 docs/_build/doctrees.zip
 docs/_build/doctrees/environment.pickle
 docs/_build/doctrees/index.doctree
+docs/_build/doctrees/backup/index.doctree
 docs/_build/html/.DS_Store
 docs/_build/html/.buildinfo
 docs/_build/html/genindex.html
@@ -214,6 +217,7 @@ docs/_build/html/_images/mdacc.jpg
 docs/_build/html/_images/sourceforge.jpg
 docs/_build/html/_sources/index.rst.txt
 docs/_build/html/_sources/index.txt
+docs/_build/html/_sources/backup/index.rst.txt
 docs/_build/html/_static/CrossMap_vs_UCSC.png
 docs/_build/html/_static/ajax-loader.gif
 docs/_build/html/_static/basic.css
@@ -260,6 +264,7 @@ docs/_build/html/_static/underscore.js
 docs/_build/html/_static/up-pressed.png
 docs/_build/html/_static/up.png
 docs/_build/html/_static/websupport.js
+docs/_build/html/backup/index.html
 docs/_build/latex/CrossMap.aux
 docs/_build/latex/CrossMap.idx
 docs/_build/latex/CrossMap.ilg
@@ -293,6 +298,7 @@ docs/_static/logo.png
 docs/_static/mayo.jpg
 docs/_static/mdacc.jpg
 docs/_static/sourceforge.jpg
+docs/backup/index.rst
 lib/psyco_full.py
 lib/CrossMap.egg-info/PKG-INFO
 lib/CrossMap.egg-info/SOURCES.txt
@@ -326,19 +332,5 @@ lib/cmmodule/__pycache__/ireader.cpython-36.pyc
 lib/cmmodule/__pycache__/myutils.cpython-36.pyc
 lib/cmmodule/__pycache__/sam_header.cpython-36.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-36.pyc
+scripts/GRCh37_to_GRCh38.tab
 scripts/chain_to_table.py
-test/.DS_Store
-test/0_hg19.bed12
-test/0_hg19.bed3
-test/1_hg19.vcf
-test/2_hg19.bam
-test/3_hg19.bw
-test/4_hg19.bgr
-test/5_hg19.fixedStep.bw
-test/5_hg19.fixedStep.wig
-test/6_hg19.variableStep.bw
-test/6_hg19.variableStep.wig
-test/7_hg19.gtf
-test/8_hg19.maf
-test/remove_comma.py
-test/test.sh
