@@ -37,7 +37,7 @@
 <h1>What is CrossMap ?<a class="headerlink" href="#what-is-crossmap" title="Permalink to this headline">¶</a></h1>
 <p>CrossMap is a program for genome coordinates conversion between <em>different assemblies</em>
 (such as <a class="reference external" href="http://www.ncbi.nlm.nih.gov/assembly/2928/">hg18 (NCBI36)</a>   &lt;=&gt; <a class="reference external" href="http://www.ncbi.nlm.nih.gov/assembly/2758/">hg19 (GRCh37)</a>).
-It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig, BED, GFF, GTF and VCF.</p>
+It supports commonly used file formats including <a class="reference external" href="https://samtools.github.io/hts-specs/SAMv1.pdf">BAM</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/CRAM_(file_format)">CRAM</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/SAM_(file_format)">SAM</a>, <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a>, <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/bigWig.html">BigWig</a>, <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a>, <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format3">GFF</a>, <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format4">GTF</a>, <a class="reference external" href="https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/">MAF</a> and <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.2.pdf">VCF</a>/<a class="reference external" href="https://sites.google.com/site/gvcftools/home/about-gvcf">gVCF</a>.</p>
 </div>
 <div class="section" id="how-crossmap-works">
 <h1>How CrossMap works?<a class="headerlink" href="#how-crossmap-works" title="Permalink to this headline">¶</a></h1>
@@ -45,85 +45,39 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>05/04/2020: Release version 0.4.2.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Support <a class="reference external" href="https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format">GVCF</a> file conversion.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>03/24/2020: Release version 0.4.1.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>fix the bug when there are consecutive TABs in the input MAF file.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>10/09/2019: Release version 0.3.8.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>07/22/2019: Release version 0.3.6.</p>
-<ul>
+<p><strong>07/09/2020: Release version 0.4.3</strong></p>
+<p>Structural Variants VCF files often use INFO/END field to indicate the end of a deletion. v0.4.3 updates “END” coordinate in INFO field.</p>
+<p><strong>05/04/2020: Release version 0.4.2</strong></p>
+<p>Support <a class="reference external" href="https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format">GVCF</a> file conversion.</p>
+<p><strong>03/24/2020: Release version 0.4.1</strong></p>
+<p>Fix the bug when there are consecutive TABs in the input MAF file.</p>
+<p><strong>10/09/2019: Release version 0.3.8</strong></p>
+<p>The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.</p>
+<p><strong>07/22/2019: Release version 0.3.6</strong></p>
+<ol class="arabic simple">
 <li><p>Support MAF (mutation annotation format).</p></li>
 <li><p>Fix error “TypeError: AlignmentHeader does not support item assignment (use header.to_dict()” when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.</p></li>
-</ul>
-</li>
-<li><p>04/01/2019: Release version 0.3.4.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Fix bugs when chromosome IDs (of the source genome) in chain file do not have ‘chr’ prefix (such as “GRCh37ToHg19.over.chain.gz”). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>01/07/2019: Release version 0.3.3.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>12/14/18: Release version 0.3.2.</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li><p>Fix the key error problem (e.g  <em>KeyError: “sequence ‘b‘7_KI270803v1_alt’’ not present”</em>). This error happens when a locus from the orignal assembly is mapped to a “alternative”, “unplaced” or “unlocalized” contig in the target assembly, and this “target contig” does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the “.unmap” file.</p></li>
-</ul>
-</div></blockquote>
-<ul class="simple">
-<li><p>11/05/18: Release version 0.3.0:</p></li>
-</ul>
-<blockquote>
-<div><ul class="simple">
+</ol>
+<p><strong>04/01/2019: Release version 0.3.4</strong></p>
+<p>Fix bugs when chromosome IDs (of the source genome) in chain file do not have ‘chr’ prefix (such as “GRCh37ToHg19.over.chain.gz”). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording.</p>
+<p><strong>01/07/2019: Release version 0.3.3</strong></p>
+<p>Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.</p>
+<p><strong>12/14/18: Release version 0.3.2</strong></p>
+<p>Fix the key error problem (e.g  <em>KeyError: “sequence ‘b‘7_KI270803v1_alt’’ not present”</em>). This error happens when a locus from the orignal assembly is mapped to a “alternative”, “unplaced” or “unlocalized” contig in the target assembly, and this “target contig” does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the “.unmap” file.</p>
+<p><strong>11/05/18: Release version 0.3.0</strong></p>
+<ol class="arabic simple">
 <li><p>v0.3.0 or newer will Support Python3. Previous versions support Python2.7.*</p></li>
 <li><p>add <a class="reference external" href="https://github.com/deeptools/pyBigWig">pyBigWig</a> as a dependency.</p></li>
-</ul>
-</div></blockquote>
+</ol>
 </div>
 <div class="section" id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="use-pip-to-install-crossmap">
-<h2>Use pip to install CrossMap<a class="headerlink" href="#use-pip-to-install-crossmap" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python3</span>
+<span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python3</span>
+
 <span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python2.7.*</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="use-pip-to-upgrade-crossmap">
-<h2>Use pip to upgrade CrossMap<a class="headerlink" href="#use-pip-to-upgrade-crossmap" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python3</span>
 <span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python2.7.*</span>
 </pre></div>
-</div>
 </div>
 </div>
 <div class="section" id="input-and-output">
@@ -131,9 +85,7 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 <div class="section" id="chain-file">
 <h2>Chain file<a class="headerlink" href="#chain-file" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/chain.html">chain file</a> describes a pairwise alignment between two reference assemblies. UCSC and Ensemble chain files are available:</p>
-<ol class="arabic simple">
-<li><p><strong>UCSC chain files</strong></p></li>
-</ol>
+<p><strong>UCSC chain files</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Chain files from hg38 (GRCh38) to hg19 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/</a></p></li>
@@ -141,9 +93,7 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 <li><p>Chain File from mm10 (GRCm38) to mm9 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/</a></p></li>
 </ul>
 </div></blockquote>
-<ol class="arabic simple" start="2">
-<li><p><strong>Ensembl chain files</strong></p></li>
-</ol>
+<p><strong>Ensembl chain files</strong></p>
 <blockquote>
 <div><ul class="simple">
 <li><p>Human to Human: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/">ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/</a></p></li>
@@ -168,7 +118,7 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </div>
 <div class="section" id="output-file">
 <h2>Output file<a class="headerlink" href="#output-file" title="Permalink to this headline">¶</a></h2>
-<p>Format of Output files depends on the input format</p>
+<p>The format of output files depends on the input</p>
 <table class="docutils align-default">
 <colgroup>
 <col style="width: 14%" />
@@ -219,16 +169,16 @@ It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig,
 </div>
 <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Run CrossMap.py <strong>without</strong> any arguments will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py
+<p>Run CrossMap.py <strong>without</strong> any arguments will print help message</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py
 
-Program: CrossMap (v0.4.2)
+Program: CrossMap (v0.4.3)
 
 Description:
- CrossMap is a program to convert genome coordinates between different reference
- assemblies (e.g. from human hg18 to hg19 or vice versa). The supported file
- formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
- format), SAM, Wiggle and VCF.
+  CrossMap is a program to convert genome coordinates between different reference
+  assemblies (e.g. from human hg18 to hg19 or vice versa). The supported file
+  formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
+  format), SAM, Wiggle and VCF.
 
 Usage: CrossMap.py &lt;command&gt; [options]
 
@@ -243,31 +193,25 @@ Usage: CrossMap.py &lt;command&gt; [options]
 </pre></div>
 </div>
 <p>Run CrossMap.py <strong>with</strong> a command keyword will print help message for the command. For example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bed
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py vcf
 
 #Screen output
+
+usage
+-----
+  CrossMap.py vcf chain_file input.vcf refGenome.fa output_file
+
+Description
+-----------
+  Convert VCF format file. The &quot;chain_file&quot; and &quot;input.vcf&quot; can be regular or
+  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+  (http://, https://, ftp://) pointing to remote file. &quot;refGenome.fa&quot; is genome
+  sequence file of the *target assembly*.
+
+Example
+-------
+   CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf
 </pre></div>
-</div>
-<div class="section" id="id3">
-<h2>Usage<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><blockquote>
-<div><p>CrossMap.py bed chain_file input.bed [output_file]</p>
-</div></blockquote>
-<blockquote>
-<div><p>Convert BED format file. The “chain_file” and “input.bed” can be regular or
-compressed (<a href="#id4"><span class="problematic" id="id5">*</span></a>.gz, <a href="#id6"><span class="problematic" id="id7">*</span></a>.Z, <a href="#id8"><span class="problematic" id="id9">*</span></a>.z, <a href="#id10"><span class="problematic" id="id11">*</span></a>.bz, <a href="#id12"><span class="problematic" id="id13">*</span></a>.bz2, <a href="#id14"><span class="problematic" id="id15">*</span></a>.bzip2) file, local file or URL
-(<a class="reference external" href="http://">http://</a>, <a class="reference external" href="https://">https://</a>, <a class="reference external" href="ftp://">ftp://</a>) pointing to remote file. BED format file must have
-at least 3 columns (chrom, start, end). If  no “output_file” is specified,
-output will be directed to the screen (console).</p>
-</div></blockquote>
-<blockquote>
-<div><p>CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed</p>
-</div></blockquote>
-<blockquote>
-<div><p>CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed</p>
-</div></blockquote>
-</div></blockquote>
 </div>
 <div class="section" id="convert-bed-format-files">
 <h2>Convert BED format files<a class="headerlink" href="#convert-bed-format-files" title="Permalink to this headline">¶</a></h2>
@@ -857,7 +801,7 @@ exactly the same between UCSC conversion and CrossMap conversion.</p>
 </div>
 <div class="section" id="citation">
 <h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
-<p>Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., &amp; Wang, L. (2013). CrossMap: a versatile tool for coordinate conversion between genome assemblies. Bioinformatics (Oxford, England), btt730.</p>
+<p><a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/24351709/">Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., &amp; Wang, L. (2013). CrossMap: a versatile tool for coordinate conversion between genome assemblies. Bioinformatics (Oxford, England), btt730</a></p>
 </div>
 <div class="section" id="license">
 <h1>LICENSE<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
@@ -891,11 +835,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 <li><a class="reference internal" href="#">What is CrossMap ?</a></li>
 <li><a class="reference internal" href="#how-crossmap-works">How CrossMap works?</a></li>
 <li><a class="reference internal" href="#release-history">Release history</a></li>
-<li><a class="reference internal" href="#installation">Installation</a><ul>
-<li><a class="reference internal" href="#use-pip-to-install-crossmap">Use pip to install CrossMap</a></li>
-<li><a class="reference internal" href="#use-pip-to-upgrade-crossmap">Use pip to upgrade CrossMap</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#input-and-output">Input and Output</a><ul>
 <li><a class="reference internal" href="#chain-file">Chain file</a></li>
 <li><a class="reference internal" href="#user-input-file">User Input file</a></li>
@@ -903,7 +843,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 </ul>
 </li>
 <li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#id3">Usage</a></li>
 <li><a class="reference internal" href="#convert-bed-format-files">Convert BED format files</a></li>
 <li><a class="reference internal" href="#convert-bam-cram-sam-format-files">Convert BAM/CRAM/SAM format files</a></li>
 <li><a class="reference internal" href="#convert-wiggle-format-files">Convert Wiggle format files</a></li>

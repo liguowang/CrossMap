@@ -1,4 +1,3 @@
-
 .. toctree::
    :maxdepth: 2
    
@@ -19,7 +18,7 @@ What is CrossMap ?
 
 CrossMap is a program for genome coordinates conversion between *different assemblies*
 (such as `hg18 (NCBI36) <http://www.ncbi.nlm.nih.gov/assembly/2928/>`_   <=> `hg19 (GRCh37) <http://www.ncbi.nlm.nih.gov/assembly/2758/>`_). 
-It supports commonly used file formats including BAM, CRAM, SAM, Wiggle, BigWig, BED, GFF, GTF and VCF.
+It supports commonly used file formats including `BAM <https://samtools.github.io/hts-specs/SAMv1.pdf>`_, `CRAM <https://en.wikipedia.org/wiki/CRAM_(file_format)>`_, `SAM <https://en.wikipedia.org/wiki/SAM_(file_format)>`_, `Wiggle <https://genome.ucsc.edu/goldenPath/help/wiggle.html>`_, `BigWig <https://genome.ucsc.edu/goldenPath/help/bigWig.html>`_, `BED <https://genome.ucsc.edu/FAQ/FAQformat.html#format1>`_, `GFF <https://genome.ucsc.edu/FAQ/FAQformat.html#format3>`_, `GTF <https://genome.ucsc.edu/FAQ/FAQformat.html#format4>`_, `MAF <https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/>`_ and `VCF <https://samtools.github.io/hts-specs/VCFv4.2.pdf>`_/`gVCF <https://sites.google.com/site/gvcftools/home/about-gvcf>`_.
 
 
 How CrossMap works?
@@ -34,57 +33,54 @@ How CrossMap works?
 
 Release history
 ===================
-* 05/04/2020: Release version 0.4.2.
 
- * Support `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`_ file conversion.
+**07/09/2020: Release version 0.4.3**
  
-* 03/24/2020: Release version 0.4.1.
+Structural Variants VCF files often use INFO/END field to indicate the end of a deletion. v0.4.3 updates "END" coordinate in INFO field. 
+ 
+**05/04/2020: Release version 0.4.2**
 
- * fix the bug when there are consecutive TABs in the input MAF file.
+Support `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`__ file conversion.
+ 
+**03/24/2020: Release version 0.4.1**
 
-* 10/09/2019: Release version 0.3.8.
+Fix the bug when there are consecutive TABs in the input MAF file.
 
- * The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.
+**10/09/2019: Release version 0.3.8**
 
-* 07/22/2019: Release version 0.3.6.
+The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.
+
+**07/22/2019: Release version 0.3.6**
   
-  * Support MAF (mutation annotation format). 
-  * Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files. 
+1. Support MAF (mutation annotation format). 
+2. Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files. 
 
-* 04/01/2019: Release version 0.3.4.
+**04/01/2019: Release version 0.3.4**
 
- * Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 
+Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detct if a VCF mapping was inverted, and if so reverse complements the altenerative allele (Thanks Andrew Yates). Improve wording. 
 
-* 01/07/2019: Release version 0.3.3.
+**01/07/2019: Release version 0.3.3**
  
- * Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
+Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
 
-* 12/14/18: Release version 0.3.2. 
+**12/14/18: Release version 0.3.2**
  
- * Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
+Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the orignal assembly is mapped to a "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file. 
  
-* 11/05/18: Release version 0.3.0:
+**11/05/18: Release version 0.3.0**
 
- * v0.3.0 or newer will Support Python3. Previous versions support Python2.7.*
- * add `pyBigWig <https://github.com/deeptools/pyBigWig>`_ as a dependency.  
+1. v0.3.0 or newer will Support Python3. Previous versions support Python2.7.\*
+2. add `pyBigWig <https://github.com/deeptools/pyBigWig>`_ as a dependency.  
 
 Installation
 ==================
 
-Use pip to install CrossMap
------------------------------
-
 ::
 
  pip3 install CrossMap	#Install CrossMap supporting Python3
- pip2 install CrossMap	#Install CrossMap supporting Python2.7.*
-
-Use pip to upgrade CrossMap
------------------------------
-
-::
-
  pip3 install CrossMap --upgrade	#upgrade CrossMap supporting Python3
+ 
+ pip2 install CrossMap	#Install CrossMap supporting Python2.7.*
  pip2 install CrossMap --upgrade	#upgrade CrossMap supporting Python2.7.*
 
 
@@ -97,13 +93,13 @@ Chain file
 A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a pairwise alignment between two reference assemblies. UCSC and Ensemble chain files are available:
 
 
-1. **UCSC chain files** 
+**UCSC chain files** 
 
  * Chain files from hg38 (GRCh38) to hg19 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
  * Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/
  * Chain File from mm10 (GRCm38) to mm9 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/ 
 
-2. **Ensembl chain files** 
+**Ensembl chain files** 
 
  * Human to Human: ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/
  * Mouse to Mouse: ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/
@@ -115,20 +111,20 @@ User Input file
 
 CrossMap supports the following file formats.
  
-1. `BAM <http://samtools.sourceforge.net/SAMv1.pdf>`_, `CRAM <https://samtools.github.io/hts-specs/CRAMv3.pdf>`_, or `SAM <http://samtools.sourceforge.net/SAMv1.pdf/>`_
-2. `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`_ or BED-like. (BED file must has at least 'chrom', 'start', 'end')
-3. `Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`_ ("variableStep", "fixedStep" and "bedGraph" formats are supported)
-4. `BigWig <http://genome.ucsc.edu/goldenPath/help/bigWig.html>`_
-5. `GFF <http://genome.ucsc.edu/FAQ/FAQformat.html#format3>`_ or `GTF <http://genome.ucsc.edu/FAQ/FAQformat.html#format4>`_
-6. `VCF <http://vcftools.sourceforge.net/index.html>`_  
-7. `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`_
-8. `MAF <https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/>`_
+1. `BAM <http://samtools.sourceforge.net/SAMv1.pdf>`__, `CRAM <https://samtools.github.io/hts-specs/CRAMv3.pdf>`__, or `SAM <http://samtools.sourceforge.net/SAMv1.pdf/>`__
+2. `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`__ or BED-like. (BED file must has at least 'chrom', 'start', 'end')
+3. `Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`__ ("variableStep", "fixedStep" and "bedGraph" formats are supported)
+4. `BigWig <http://genome.ucsc.edu/goldenPath/help/bigWig.html>`__
+5. `GFF <http://genome.ucsc.edu/FAQ/FAQformat.html#format3>`__ or `GTF <http://genome.ucsc.edu/FAQ/FAQformat.html#format4>`__
+6. `VCF <http://vcftools.sourceforge.net/index.html>`__  
+7. `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`__
+8. `MAF <https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/>`__
 
 
 Output file
 ----------------
 
-Format of Output files depends on the input format
+The format of output files depends on the input
 
 ==============  =========================================================================================
 Input_format        Output_format         
@@ -148,60 +144,57 @@ MAF				MAF (Genome coordinates and reference alleles will be updated)
 
 
 Usage
-=============
+=====
 
-Run CrossMap.py **without** any arguments will print help message::
+Run CrossMap.py **without** any arguments will print help message
+::
  
-
- $ python CrossMap.py
+ $CrossMap.py
  
- Program: CrossMap (v0.4.2)
+ Program: CrossMap (v0.4.3)
 
  Description:
-  CrossMap is a program to convert genome coordinates between different reference
-  assemblies (e.g. from human hg18 to hg19 or vice versa). The supported file
-  formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
-  format), SAM, Wiggle and VCF.
+   CrossMap is a program to convert genome coordinates between different reference
+   assemblies (e.g. from human hg18 to hg19 or vice versa). The supported file
+   formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
+   format), SAM, Wiggle and VCF.
 
  Usage: CrossMap.py <command> [options]
 
-	 bam	convert BAM, CRAM or SAM format file.
-	 bed	convert BED, bedGraph or other BED-like file.
-	 bigwig	convert BigWig file.
-	 gff	convert GFF or GTF format file.
-	 gvcf	convert GVCF file.
-	 maf	convert MAF (mutation annotation format) file.
-	 vcf	convert VCF file.
-	 wig	convert Wiggle or bedGraph format file.
+ 	 bam	convert BAM, CRAM or SAM format file.
+ 	 bed	convert BED, bedGraph or other BED-like file.
+ 	 bigwig	convert BigWig file.
+ 	 gff	convert GFF or GTF format file.
+ 	 gvcf	convert GVCF file.
+ 	 maf	convert MAF (mutation annotation format) file.
+ 	 vcf	convert VCF file.
+ 	 wig	convert Wiggle or bedGraph format file.
 	   
 Run CrossMap.py **with** a command keyword will print help message for the command. For example::
 
- $ python CrossMap.py bed
+ $ python CrossMap.py vcf
 
  #Screen output
  
-Usage
------
-  CrossMap.py bed chain_file input.bed [output_file]
-
+ usage
+ -----
+   CrossMap.py vcf chain_file input.vcf refGenome.fa output_file
+ 
  Description
  -----------
-  Convert BED format file. The "chain_file" and "input.bed" can be regular or
-  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-  (http://, https://, ftp://) pointing to remote file. BED format file must have
-  at least 3 columns (chrom, start, end). If  no "output_file" is specified,
-  output will be directed to the screen (console).
+   Convert VCF format file. The "chain_file" and "input.vcf" can be regular or
+   compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+   (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
+   sequence file of the *target assembly*.
+ 
+ Example
+ -------
+    CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf
 
- Example1 (write output to file)
- -------------------------------
-  CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed test.hg19.bed
 
- Example2 (write output to screen)
- ---------------------------------
-  CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed
 
 Convert BED format files
--------------------------
+------------------------
 A `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`_ (Browser Extensible Data) file
 is a tab-delimited text file describing genome regions or gene annotations.
 It consists of one line per feature, each containing 3-12 columns.
@@ -218,7 +211,7 @@ The input BED file can be plain text file, compressed file with extension of .gz
 and ftp://). Compressed remote files are not supported. The output is a BED format file with
 exact the same number of columns as the original one.
 
-Standard `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`_ format has 12 columns, but CrossMap also supports BED-like formats:
+Standard `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`__ format has 12 columns, but CrossMap also supports BED-like formats:
 
 * BED3: The first 3 columns ("chrom", "start", "end") of BED format file.
 * BED6: The first 6 columns ("chrom", "start", "end", "name", "score", "strand") of BED format file.
@@ -797,7 +790,7 @@ exactly the same between UCSC conversion and CrossMap conversion.
    
 Citation
 =========
-Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., & Wang, L. (2013). CrossMap: a versatile tool for coordinate conversion between genome assemblies. Bioinformatics (Oxford, England), btt730.   
+`Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., & Wang, L. (2013). CrossMap: a versatile tool for coordinate conversion between genome assemblies. Bioinformatics (Oxford, England), btt730 <https://pubmed.ncbi.nlm.nih.gov/24351709/>`_   
 
 LICENSE
 ==========
