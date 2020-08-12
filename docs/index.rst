@@ -693,6 +693,11 @@ NOTE:
 3. If the reference genome sequence file (../database/genome/hg18.fa) was not indexed, CrossMap will automatically indexed it (only the first time you run CrossMap). 
 4. Output files: *output_file* and *output_file.unmap*. 
 5. In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the format of the input VCF file. 
+6. Interpretation of Failed tags:
+ * Fail(Multiple_hits) : This genomic location were mapped to two or more locations to the target assembly.
+ * Fail(REF==ALT) : After liftover, the reference allele and  the alternative allele are same (i.e. this is NOT an SNP/variant after liftover)
+ * Fail(Unmap) : Unable to map this genomic location to the target assembly. 
+ * Fail(KeyError) : Unable to find the contig ID (or chromosome ID) from the reference genome sequence (of the target assembly).  
 
   
 Convert MAF format files
