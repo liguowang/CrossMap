@@ -1,4 +1,6 @@
 .DS_Store
+10_out
+10_out.unmap
 LICENSE.txt
 MANIFEST.in
 PKG-INFO
@@ -167,9 +169,9 @@ setup.py
 .eggs/nose-1.3.7-py3.7.egg/nose/tools/trivial.py
 bin/.DS_Store
 bin/CrossMap.py
+bin/CrossMap_beta.py
 data/.DS_Store
 data/readme.txt
-data/human/GRCh37_to_GRCh38.chain.gz
 data/human/GRCh37_to_GRCh38.chain.tab
 data/human/GRCh37_to_NCBI34.chain.gz
 data/human/GRCh37_to_NCBI35.chain.gz
@@ -298,7 +300,6 @@ docs/_static/logo.png
 docs/_static/mayo.jpg
 docs/_static/mdacc.jpg
 docs/_static/sourceforge.jpg
-docs/backup/index.rst
 lib/psyco_full.py
 lib/CrossMap.egg-info/PKG-INFO
 lib/CrossMap.egg-info/SOURCES.txt
@@ -315,11 +316,21 @@ lib/cmmodule/bgrMerge.py
 lib/cmmodule/dotProduct.py
 lib/cmmodule/fasta.py
 lib/cmmodule/ireader.py
+lib/cmmodule/mapbam.py
+lib/cmmodule/mapbed.py
+lib/cmmodule/mapgff.py
+lib/cmmodule/mapgvcf.py
+lib/cmmodule/mapmaf.py
+lib/cmmodule/mapregion.py
+lib/cmmodule/mapvcf.py
+lib/cmmodule/mapwig.py
+lib/cmmodule/meta_data.py
 lib/cmmodule/mystat.py
 lib/cmmodule/myutils.py
 lib/cmmodule/quantile.py
 lib/cmmodule/sam_header.py
 lib/cmmodule/twoList.py
+lib/cmmodule/utils.py
 lib/cmmodule/wig_reader.py
 lib/cmmodule/wiggle.py
 lib/cmmodule/__pycache__/BED.cpython-36.pyc

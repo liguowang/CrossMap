@@ -34,6 +34,10 @@ How CrossMap works?
 Release history
 ===================
 
+**08/14/2020: Release version 0.5.0**
+
+Add :code:`CrossMap.py region` function to convert large genomic regions. Unlike the :code:`CrossMap.py bed` function which splits big genomic regions, :code:`CrossMap.py region` try to convert the big genomic region as a whole. 
+
 **07/09/2020: Release version 0.4.3**
  
 Structural Variants VCF files often use INFO/END field to indicate the end of a deletion. v0.4.3 updates "END" coordinate in INFO field. 
@@ -153,44 +157,23 @@ Run CrossMap.py **without** any arguments will print help message
  
  Program: CrossMap (v0.4.3)
 
- Description:
-   CrossMap is a program to convert genome coordinates between different reference
-   assemblies (e.g. from human hg18 to hg19 or vice versa). The supported file
-   formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
-   format), SAM, Wiggle and VCF.
+Description:
+  CrossMap is a program to convert genome coordinates between different reference
+  assemblies(e.g. from human hg19 to hg38 or vice versa). The supported file
+  formats include BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation
+  format), SAM, Wiggle and VCF.
 
- Usage: CrossMap.py <command> [options]
+Usage: CrossMap.py <command> [options]
 
- 	 bam	convert BAM, CRAM or SAM format file.
- 	 bed	convert BED, bedGraph or other BED-like file.
- 	 bigwig	convert BigWig file.
- 	 gff	convert GFF or GTF format file.
- 	 gvcf	convert GVCF file.
- 	 maf	convert MAF (mutation annotation format) file.
- 	 vcf	convert VCF file.
- 	 wig	convert Wiggle or bedGraph format file.
-	   
-Run CrossMap.py **with** a command keyword will print help message for the command. For example::
-
- $ python CrossMap.py vcf
-
- #Screen output
- 
- usage
- -----
-   CrossMap.py vcf chain_file input.vcf refGenome.fa output_file
- 
- Description
- -----------
-   Convert VCF format file. The "chain_file" and "input.vcf" can be regular or
-   compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-   (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
-   sequence file of the *target assembly*.
- 
- Example
- -------
-    CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf
-
+	 bam	convert BAM, CRAM or SAM format file.
+	 bed	convert BED, bedGraph or other BED-like file.
+	 bigwig	convert BigWig file.
+	 gff	convert GFF or GTF format file.
+	 gvcf	convert GVCF file.
+	 maf	convert MAF (mutation annotation format) file.
+	 region	convert big genomic regions (in BED format) such as CNV blocks.
+	 vcf	convert VCF file.
+	 wig	convert Wiggle or bedGraph format file.
 
 
 Convert BED format files
@@ -230,7 +213,8 @@ NOTE:
 9. If input region cannot be consecutively mapped target assembly, it will be split.
 10. \*.unmap file contains regions that cannot be unambiguously converted. 
 
-Example (run CrossMap with **no** *output_file* specified)::
+Example
+run CrossMap with **no** *output_file* specified::
 
  $ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
@@ -239,7 +223,8 @@ Example (run CrossMap with **no** *output_file* specified)::
  chr1	142617697	142623312	->	chr1	143906355	143911970
  chr1	142623313	142623350	->	chr1	143911971	143912008
 
-Example (run CrossMap with *output_file* **(test.hg19.bed3)** specified)::
+Example
+run CrossMap with *output_file* **(test.hg19.bed3)** specified::
 
  $ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
 
@@ -248,14 +233,11 @@ Example (run CrossMap with *output_file* **(test.hg19.bed3)** specified)::
  chr1	143906355	143911970
  chr1	143911971	143912008
 
-Example (one input region was split because it cannot be consecutively mapped target assembly)::
+Example
+One input region was split because it cannot be consecutively mapped to the target assembly::
 
  $ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
-
- chr10	81346644	81349952	+	->	chr10	81356692	81360000	+
- chr10	81349952	81364937	+	->	chr10	81360000	81374985	+
- chr10	81364952	81365854	+	->	chr10	81375000	81375902	+
- chr10	81365875	81369946	+	->	chr10	81375929	81380000	+
+ 
  chr10	81369946	81370453	+	->	chr10	81380000	81380507	+
  chr10	81370483	81371363	+	->	chr10	81380539	81381419	+
  chr10	81371363	81371365	+	->	chr10	62961832	62961834	+
@@ -263,7 +245,9 @@ Example (one input region was split because it cannot be consecutively mapped ta
  chr10	81371412	81371432	+	(split.2:chr10:81371422:81371432:+)	chrX	63278348	63278358	+
 
 
-Example (Use **bed** command to convert a bedGraph file, output another bedGraph file. If Use **wig** command to convert a bedGraph file, output a **bigWig** file. )::
+Example
+Use **bed** command to convert a bedGraph file, output another bedGraph file. 
+Use **wig** command to convert a bedGraph file, output a **bigWig** file.::
 
  $ CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
  
@@ -283,7 +267,37 @@ Example (Use **bed** command to convert a bedGraph file, output another bedGraph
  @ 2018-11-06 00:09:12: Writing header to "output_hg38.bw" ...
  @ 2018-11-06 00:09:12: Writing entries to "output_hg38.bw" ...
 
+Example
+Use **region** command to convert large genomic regions in BED format. ::
+ 
+ # a genomic region of 3.48Mb
+ $ cat test.bed
+ chr2	239716679	243199373
+ 
+Using **bed** command to convert this 3.48Mb region. It will be split into 74 blocks::
 
+ $CrossMap.py bed GRCh37_to_GRCh38.chain.gz  test.bed
+ 
+ chr2	239716679	243199373	(split.1:chr2:239716679:239801978:+)	chr2	238808038	238893337
+ chr2	239716679	243199373	(split.2:chr2:239831978:240205681:+)	chr2	238910282	239283985
+ chr2	239716679	243199373	(split.3:chr2:240205681:240319336:+)	chr2	239283986	239397641
+ ... (split 74 times)
+ 
+Using **region** command to convert this 3.48Mb region. "-r" (the minimum ratio of bases that must remap) is 0.85 by default::
+
+ $CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed
+ 
+ chr2	239716679	243199373	->	chr2	238808038	242183529	map_ratio=0.9622
+
+Increase -r to 0.99::
+
+ $CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed -r 0.99
+ 
+ chr2	239716679	243199373	Fail	map_ratio=0.9622
+ 
+ 
+
+ 
 .. _bam_conversion:
 
 Convert BAM/CRAM/SAM format files
@@ -304,24 +318,25 @@ Output format is determined from the input format and BAM output will be sorted 
 
 Typing command without any arguments will print help message::
 
- $ CrossMap.py bam
+ Usage:
+ CrossMap.py bam  <chain_file>  <input.bam> [output_file] [options]
  
- Usage: CrossMap.py bam chain_file input_file output_file [options]
- Note: If output_file == STDOUT or -, CrossMap will write BAM file to the screen
+ Note:
+ If output_file is 'STDOUT','-' or missing, CrossMap will write BAM file to the screen
  
  Options:
    -m INSERT_SIZE, --mean=INSERT_SIZE
                          Average insert size of pair-end sequencing (bp).
-                         [default=200.0]
+                         {default=200.0}
    -s INSERT_SIZE_STDEV, --stdev=INSERT_SIZE_STDEV
-                         Stanadard deviation of insert size. [default=30.0]
+                        Stanadard deviation of insert size. {default=30.0}
    -t INSERT_SIZE_FOLD, --times=INSERT_SIZE_FOLD
                          A mapped pair is considered as "proper pair" if both
-                         ends mapped to different strand and the distance
-                         between them is less then '-t' * stdev from the mean.
-                         [default=3.0]
+                         ends mapped to different strand and
+                         the distance between them is less then '-t' * stdev
+                         from the mean. {default=3.0}
    -a, --append-tags     Add tag to each alignment.
-
+  
 Example (Convert BAM from hg19 to hg18)::
 
  # add optional tags using '-a' (recommend always use '-a' option)
@@ -356,25 +371,7 @@ Example (Convert BAM from hg19 to hg18)::
  @SQ	SN:chr1	LN:249250621
  @SQ	SN:chr2	LN:243199373
  @SQ	SN:chr3	LN:198022430
- @SQ	SN:chr4	LN:191154276
- @SQ	SN:chr5	LN:180915260
- @SQ	SN:chr6	LN:171115067
- @SQ	SN:chr7	LN:159138663
- @SQ	SN:chr8	LN:146364022
- @SQ	SN:chr9	LN:141213431
- @SQ	SN:chr10	LN:135534747
- @SQ	SN:chr11	LN:135006516
- @SQ	SN:chr12	LN:133851895
- @SQ	SN:chr13	LN:115169878
- @SQ	SN:chr14	LN:107349540
- @SQ	SN:chr15	LN:102531392
- @SQ	SN:chr16	LN:90354753
- @SQ	SN:chr17	LN:81195210
- @SQ	SN:chr18	LN:78077248
- @SQ	SN:chr19	LN:59128983
- @SQ	SN:chr20	LN:63025520
- @SQ	SN:chr21	LN:48129895
- @SQ	SN:chr22	LN:51304566
+ ...
  @SQ	SN:chrX	LN:155270560
  @SQ	SN:chrY	LN:59373566
  @SQ	SN:chrM	LN:16571
@@ -386,47 +383,13 @@ Example (Convert BAM from hg19 to hg18)::
  @SQ	SN:chr1	LN:247249719
  @SQ	SN:chr10	LN:135374737
  @SQ	SN:chr11	LN:134452384
- @SQ	SN:chr11_random	LN:215294
- @SQ	SN:chr12	LN:132349534
- @SQ	SN:chr13	LN:114142980
- @SQ	SN:chr13_random	LN:186858
- @SQ	SN:chr14	LN:106368585
- @SQ	SN:chr15	LN:100338915
- @SQ	SN:chr15_random	LN:784346
- @SQ	SN:chr16	LN:88827254
- @SQ	SN:chr17	LN:78774742
- @SQ	SN:chr17_random	LN:2617613
- @SQ	SN:chr18	LN:76117153
- @SQ	SN:chr18_random	LN:4262
- @SQ	SN:chr19	LN:63811651
- @SQ	SN:chr19_random	LN:301858
- @SQ	SN:chr1_random	LN:1663265
- @SQ	SN:chr2	LN:242951149
- @SQ	SN:chr20	LN:62435964
- @SQ	SN:chr21	LN:46944323
- @SQ	SN:chr21_random	LN:1679693
- @SQ	SN:chr22	LN:49691432
- @SQ	SN:chr22_random	LN:257318
- @SQ	SN:chr3	LN:199501827
- @SQ	SN:chr3_random	LN:749256
- @SQ	SN:chr4	LN:191273063
- @SQ	SN:chr4_random	LN:842648
- @SQ	SN:chr5	LN:180857866
- @SQ	SN:chr6	LN:170899992
- @SQ	SN:chr6_random	LN:1875562
- @SQ	SN:chr7	LN:158821424
- @SQ	SN:chr7_random	LN:549659
- @SQ	SN:chr8	LN:146274826
- @SQ	SN:chr8_random	LN:943810
- @SQ	SN:chr9	LN:140273252
- @SQ	SN:chr9_random	LN:1146434
- @SQ	SN:chrM	LN:16571
+ ...
  @SQ	SN:chrX	LN:154913754
  @SQ	SN:chrX_random	LN:1719168
  @SQ	SN:chrY	LN:57772954
  @RG	ID:Sample_618545BE	SM:Sample_618545BE	LB:Sample_618545BE	PL:Illumina
  @PG	PN:bwa	ID:bwa	VN:0.6.2-r126
- @PG	ID:CrossMap	VN:0.1.3
+ @PG	ID:CrossMap	VN:0.5.0
  @CO	Liftover from original BAM/SAM file: test.hg19.bam
  @CO	Liftover is based on the chain file: ../test/hg19ToHg18.over.chain.gz 
 
@@ -463,13 +426,13 @@ U
 - SU = uniquely mapped
 
                          
-NOTE:
+.. note::
 
-1. All alignments (mapped, partial mapped, unmapped, QC failed) will write to one file. Users can filter them by tags (this is why '-a' is always recommended).
-2. Header section will be updated to the target assembly.
-3. Genome coordinates and all SAM flags in the alignment section will be updated to the target assembly.
-4. if the input is a CRAM file, pysam must >= 0.8.2 
-5. Optional fields in the alignment section will not be updated.
+   1. All alignments (mapped, partial mapped, unmapped, QC failed) will write to one file. Users can filter them by tags.
+   2. Header section will be updated to the target assembly.
+   3. Genome coordinates and all SAM flags in the alignment section will be updated to the target assembly.
+   4. If the input is a CRAM file, pysam version should >= 0.8.2 
+   5. Optional fields in the alignment section will not update.
 
 Convert Wiggle format files
 -----------------------------------
@@ -488,7 +451,7 @@ Typing command without any arguments will print help message::
  
  Usage
  -----
-   CrossMap.py wig chain_file input_wig_file output_prefix
+   CrossMap.py  wig  <chain_file>  <input.wig>  <output_prefix>
  
  Description
  -----------
@@ -500,13 +463,11 @@ Typing command without any arguments will print help message::
  
  Example
  -------
-   CrossMap.py wig hg18ToHg19.over.chain.gz test.hg18.wig test.hg19
-     
-NOTE: 
+   CrossMap.py wig hg18ToHg19.over.chain.gz test.hg18.wig test.hg19     
 
-1. To improve performance, this script calls `GNU "sort"
-   <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_ command internally.
-   If "sort" command does not exist, CrossMap will exit.    
+.. note::
+
+   To improve performance, this script calls `GNU "sort" <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_ command internally. If "sort" command does not exist, CrossMap will exit.    
 
 Convert BigWig format files
 -----------------------------------
@@ -522,18 +483,19 @@ Typing command without any arguments will print help message::
  
  Usage
  -----
-   CrossMap.py bigwig chain_file input_bigwig_file output_prefix
-
+   CrossMap.py  bigwig  <chain_file>  <input.bigwig>  <output_prefix>
+ 
  Description
  -----------
    Convert BigWig format file. The "chain_file" can be regular or compressed (*.gz,
    *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://,
-   ftp://) pointing to remote file.
+   ftp://) pointing to remote file. Bigwig format:
+   http://genome.ucsc.edu/goldenPath/help/bigWig.html
  
  Example
  -------
    CrossMap.py bigwig hg18ToHg19.over.chain.gz test.hg18.bw test.hg19
-  
+    
 Example (Convert BigWig file from hg18 to hg19)::
 
  $ python CrossMap.py bigwig  hg19ToHg18.over.chain.gz  test.hg19.bw test.hg18
@@ -543,12 +505,9 @@ Example (Convert BigWig file from hg18 to hg19)::
  @ 2013-11-17 22:15:38: Sorting bedGraph file:test.hg18.bgr
  @ 2013-11-17 22:15:39: Convert wiggle to bigwig ...
 
-NOTE: 
+.. note:: 
 
-1. To improve performance, this script calls `GNU "sort"
-   <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_ command
-   internally. If "sort" command does not exist, CrossMap will exit.
-2. Output files: output_prefix.bw, output_prefix.bgr, output_prefix.sorted.bgr 
+   To improve performance, this script calls `GNU "sort" <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_ command internally. If "sort" command does not exist, CrossMap will exit.
 
   
 Convert GFF/GTF format files
@@ -566,7 +525,7 @@ Typing command without any arguments will print help message::
   
  Usage
  -----
-   CrossMap.py gff chain_file input_gff_file output_file
+   CrossMap.py  gff  <chain_file>  <input.gff>  <output_file>
  
  Description
  -----------
@@ -578,12 +537,12 @@ Typing command without any arguments will print help message::
  
  Example1 (write output to file)
  -------------------------------
-   CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf
+   CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf 
  
  Example2 (write output to screen)
  ---------------------------------
-   CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf
-
+   CrossMap.py gff hg19ToHg18.over.chain.gz test.hg19.gtf
+  
 Example (Convert GTF file from hg19 to hg18)::
 
  $ python CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf
@@ -614,12 +573,11 @@ Example (Convert GTF file from hg19 to hg18)::
  chr1	hg19_refGene	exon	10113360	10113458	0.000000	+	.	gene_id "NM_006048"; transcript_id "NM_006048"; 
 
 
-NOTE:
+.. note::
 
-1. Each feature  (exon, intron, UTR, etc) is processed separately and independently, and
-   we do NOT check if features originally belonging to the same gene were converted into the same gene.
-2. If user wants to lift over gene annotation files, use BED12 format.
-3. If no output file was specified, the output will be printed to screen (console). In this case, items failed to convert are also printed out.
+   1. Each feature  (exon, intron, UTR, etc) is processed separately and independently, and we do NOT check if features originally belonging to the same gene were converted into the same gene.
+   2. If user wants to lift over gene annotation files, use BED12 format.
+   3. If no output file was specified, the output will be printed to screen (console). In this case, items failed to convert are also printed out.
   
 Convert VCF format files
 -------------------------
@@ -636,14 +594,14 @@ Typing command without any arguments will print help message::
 
  usage
  -----
-   CrossMap.py vcf chain_file input_VCF_file ref_genome_file output_file
- 
+   CrossMap.py  vcf  <chain_file>  <input.vcf>  <refGenome.fa>  <output_file>
+
  Description
  -----------
-   Convert VCF format file. The "chain_file" and "input_VCF_file" can be regular or
+   Convert VCF format file. The "chain_file" and "input.vcf" can be regular or
    compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-   (http://, https://, ftp://) pointing to remote file. "ref_genome_file" is genome
-   sequence file of 'target assembly' in FASTA format.
+   (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
+   sequence file of the *target assembly*.
  
  Example
  -------
@@ -686,18 +644,20 @@ Example (Convert VCF file from hg19 to hg18)::
  chr14	20086290	.	T	C	.	PASS	ADP=441;WT=0;HET=1;HOM=0;NC=0	GT:GQ:SDP:DP:RD:AD:FREQ:PVAL:RBQ:ABQ:RDF:RDR:ADF:ADR	0/1:4:441:441:427:14:3.17%:5.4963E-5:37:38:236:191:6:8
 
 
-NOTE:
+.. note::
 
-1. Genome coordinates and reference allele will be updated to target assembly.
-2. Reference genome is genome sequence of target assembly.
-3. If the reference genome sequence file (../database/genome/hg18.fa) was not indexed, CrossMap will automatically indexed it (only the first time you run CrossMap). 
-4. Output files: *output_file* and *output_file.unmap*. 
-5. In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the format of the input VCF file. 
-6. Interpretation of Failed tags:
- * Fail(Multiple_hits) : This genomic location were mapped to two or more locations to the target assembly.
- * Fail(REF==ALT) : After liftover, the reference allele and  the alternative allele are same (i.e. this is NOT an SNP/variant after liftover)
- * Fail(Unmap) : Unable to map this genomic location to the target assembly. 
- * Fail(KeyError) : Unable to find the contig ID (or chromosome ID) from the reference genome sequence (of the target assembly).  
+   1. Genome coordinates and reference allele will be updated to target assembly.
+   2. Reference genome is genome sequence of target assembly.
+   3. If the reference genome sequence file (../database/genome/hg18.fa) was not indexed, CrossMap will automatically indexed it (only the first time you run CrossMap). 
+   4. Output files: *output_file* and *output_file.unmap*. 
+   5. In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the format of the input VCF file. 
+
+Interpretation of Failed tags:
+
+* Fail(Multiple_hits) : This genomic location were mapped to two or more locations to the target assembly.
+* Fail(REF==ALT) : After liftover, the reference allele and  the alternative allele are same (i.e. this is NOT an SNP/variant after liftover)
+* Fail(Unmap) : Unable to map this genomic location to the target assembly. 
+* Fail(KeyError) : Unable to find the contig ID (or chromosome ID) from the reference genome sequence (of the target assembly).  
 
   
 Convert MAF format files
@@ -714,19 +674,20 @@ Typing command without any arguments will print help message::
  
  usage
  -----
-  CrossMap.py maf chain_file input_MAF_file ref_genome_file build_name output_file
-
+   CrossMap.py maf  <chain_file>  <input.maf>  <refGenome.fa>  <build_name>
+   <output_file>
+ 
  Description
  -----------
-  Convert MAF format file. The "chain_file" and "input_MAF_file" can be regular or
-  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-  (http://, https://, ftp://) pointing to remote file. "ref_genome_file" is genome
-  sequence file of 'target assembly' in FASTA format. "build_name" is the name of
-  the 'target_assembly' (eg "GRCh38")
-
+   Convert MAF format file. The "chain_file" and "input.maf" can be regular or
+   compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+   (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
+   sequence file of *target assembly*. "build_name" is the name of the
+   *target_assembly* (eg "GRCh38")
+ 
  Example
  -------
-   CrossMap.py  maf  hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38  test.hg38.maf 
+  CrossMap.py  maf       hg19ToHg38.over.chain.gz  test.hg19.maf  hg38.fa  GRCh38 test.hg38.maf
 
 
 Convert GVCF format files
@@ -738,19 +699,19 @@ Typing command without any arguments will print help message::
 
  usage
  -----
-  CrossMap.py gvcf chain_file input.gvcf refGenome.fa output_file
-
+   CrossMap.py gvcf <chain_file>  <input.gvcf>  <refGenome.fa>  <output_file>
+ 
  Description
  -----------
-  Convert GVCF format file. The "chain_file" and "input.gvcf" can be regular or
-  compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
-  (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
-  sequence file of the *target assembly*.
-
+   Convert GVCF format file. The "chain_file" and "input.gvcf" can be regular or
+   compressed (*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL
+   (http://, https://, ftp://) pointing to remote file. "refGenome.fa" is genome
+   sequence file of the *target assembly*.
+ 
  Example
  -------
-   CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf 
-
+   CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf
+   
 Example (Convert GVCF file from hg19 to hg38)::
 
  $ CrossMap.py   gvcf   GRCh37_to_GRCh38.chain.gz   test.hg19.gvcf   Homo_sapiens.GRCh38.dna.primary_assembly.fa   test.hg38.gvcf 
@@ -761,9 +722,70 @@ Example (Convert GVCF file from hg19 to hg38)::
  @ 2020-05-04 13:17:23: Variants failed to map: 0
  @ 2020-05-04 13:17:23: Total non-variant regions: 22
  @ 2020-05-04 13:17:23: Non-variant regions failed to map: 0 
+
+Convert large genomic regions
+------------------------------------------
+
+
+For **large genomic regions** such as CNV blocks, the :code:`CrossMap.py bed` will split each large region into smaller blocks that are 100% matched to the target assembly. 
+:code:`CrossMap.py target` will NOT split large regions, instead, it will calculate the **map ratio** (i.e. {bases mapped to target genome} / {total bases in query region}). If the
+**map ratio** is larger than the threshold specified by :code:`-r`, the coordinates will be converted to the target genome, otherwise, fails. 
+
+Typing command without any arguments will print help message::
+
+ Usage
+ -----
+ CrossMap.py region <chain_file>  <regions.bed> [output_file] [options]
+ 
+ Examples:
+ CrossMap.py region hg18ToHg19.over.chain.gz CNV.hg18.bed CNV.hg19.bed   # write to file
+ CrossMap.py region hg18ToHg19.over.chain.gz CNV.hg18.bed   # write to screen
+ 
+ Options:
+   -r MIN_MAP_RATIO, --ratio=MIN_MAP_RATIO
+                         Minimum ratio of bases that must remap. {default=0.85}
+
+Example::
+
+ $CrossMap.py region  GRCh37_to_GRCh38.chain.gz test11_hg19_region.bed
+ 
+ @ 2020-08-14 16:46:04: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
+ chr1	0	2500000	->	chr1	10000	2568561	map_ratio=0.9360
+ chr1	145394955	145807817	->	chr1	145627235	146040039	map_ratio=0.9994
+ chr1	146527987	147394444	->	chr1	147056425	147922330	map_ratio=0.9989
+ chr10	82045472	88931651	->	chr10	80285716	87171894	map_ratio=1.0000
+ chr11	43940000	46020000	->	chr11	43918450	45998449	map_ratio=1.0000
+ chr15	22805313	23094530	Fail	map_ratio=0.3607
+ chr15	22805313	28390339	->	chr15	22598414	28145193	map_ratio=0.8967
+ chr15	31080645	32462776	->	chr15	30788442	32170575	map_ratio=1.0000
+ chr15	72900171	78151253	->	chr15	72607830	77858911	map_ratio=1.0000
+ chr15	83219735	85722039	->	chr15	82550985	85178808	map_ratio=0.9800
+ chr16	15511655	16293689	->	chr16	15417798	16199832	map_ratio=1.0000
+ chr16	21950135	22431889	->	chr16	21938814	22420568	map_ratio=1.0000
+ chr16	28823196	29046783	->	chr16	28811875	29035462	map_ratio=1.0000
+ chr16	29650840	30200773	->	chr16	29639519	30189452	map_ratio=1.0000
+ chr17	1247834	1303556	->	chr17	1344540	1400262	map_ratio=1.0000
+ chr17	2496923	2588909	->	chr17	2593629	2685615	map_ratio=1.0000
+ chr17	16812771	20211017	->	chr17	16909457	20307704	map_ratio=1.0000
+ chr17	29107491	30265075	->	chr17	30780473	31938056	map_ratio=1.0000
+ chr17	34815904	36217432	Unmap
+ chr17	43705356	44164691	->	chr17	45627990	46087325	map_ratio=1.0000
+ chr2	50145643	51259674	->	chr2	49918505	51032536	map_ratio=1.0000
+ chr2	96742409	97677516	->	chr2	96076661	97011779	map_ratio=1.0000
+ chr2	111394040	112012649	->	chr2	110636463	111255072	map_ratio=1.0000
+ chr2	239716679	243199373	->	chr2	238808038	242183529	map_ratio=0.9622
+ chr22	19037332	21466726	Fail	map_ratio=0.8490
+ chr22	21920127	23653646	->	chr22	21565838	23311459	map_ratio=0.9996
+ chr22	51113070	51171640	->	chr22	50674642	50733212	map_ratio=1.0000
+ chr3	195720167	197354826	->	chr3	195993296	197627955	map_ratio=1.0000
+ chr4	1552030	2091303	->	chr4	1550303	2089576	map_ratio=1.0000
+ chr5	175720924	177052594	->	chr5	176293921	177625593	map_ratio=1.0000
+ chr7	72744915	74142892	->	chr7	73330912	74728554	map_ratio=0.9997
+ chr8	8098990	11872558	->	chr8	8241468	12015049	map_ratio=1.0000
+ chr9	140513444	140730578	->	chr9	137618992	137836126	map_ratio=1.0000
  
 Compare to UCSC liftover tool
-=======================================
+==============================
 
 To access the accuracy of CrossMap, we randomly generated 10,000 genome intervals (download from `here <https://sourceforge.net/projects/crossmap/files/hg19.rand.bed.gz/download>`_) with the
 fixed interval size of 200 bp from hg19. Then we converted them into hg18 using CrossMap

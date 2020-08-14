@@ -1,0 +1,3 @@
+scripts/*
+test/test.sh
+dist/*

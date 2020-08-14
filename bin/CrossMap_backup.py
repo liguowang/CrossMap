@@ -1,4 +1,4 @@
-#!python
+#!/usr/bin/env python
 '''
 ---------------------------------------------------------------------------------------
 CrossMap: lift over genomic coordinates between genome assemblies.
@@ -26,7 +26,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.4.3"
+__version__="0.4.4"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -603,7 +603,12 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 				
 				# update ref allele
 				target_chr = update_chromID(refFasta.references[0], target_chr)
-				fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+				try:
+					fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+				except:
+					print (line + "\tFail(KeyError)", file=UNMAP)
+					fail += 1
+					continue
 				
 				# update END if any
 				fields[7] = re.sub('END\=\d+','END='+str(target_end),fields[7])
