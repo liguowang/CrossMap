@@ -86,9 +86,9 @@ def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85):
 
 		if (a is None) or (len(a) % 2 != 0):
 			if outfile is None:
-				print(line + '\tUnmap')
+				print(line + '\tFail\tUnmap')
 			else:
-				print(line + '\tUnmap', file=UNMAP)
+				print(line + '\tFail\tUnmap', file=UNMAP)
 			continue
 
 		#when a == 2, there is one-to-one match (i.e. 100% match)
@@ -123,13 +123,16 @@ def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85):
 			if map_ratio >= min_ratio:
 				if len(a_target_chroms) == 1:
 					t_chrom = a_target_chroms.pop()
+					fields[0] = t_chrom
+					fields[1] = min(a_target_starts)
+					fields[2] = max(a_target_ends)
 					if outfile is None:
-						print(line + '\t->\t' + '\t'.join([t_chrom, str(min(a_target_starts)), str(max(a_target_ends))]) + ("\tmap_ratio=%.4f" % map_ratio))
+						print(line + '\t->\t' + '\t'.join([str(i) for i in fields]) + ("\tmap_ratio=%.4f" % map_ratio))
 					else:
-						print('\t'.join([t_chrom, str(min(a_target_starts)), str(max(a_target_ends))]) + ("\tmap_ratio=%.4f" % map_ratio), file=FILE_OUT)
+						print('\t'.join([str(i) for i in fields]) + ("\tmap_ratio=%.4f" % map_ratio), file=FILE_OUT)
 				else:
-					if outfile is None: print(line + '\tFail (query map to diff chroms)')
-					else: print(line + '\tFail (query map to diff chroms)', file=UNMAP)
+					if outfile is None: print(line + '\tFail\tCrossChroms')
+					else: print(line + '\tFail\tCrossChroms', file=UNMAP)
 			# map_ratio > 0 but < cutoff
 			elif map_ratio >0 and map_ratio < min_ratio:
 				if outfile is None: print(line + '\tFail' + ("\tmap_ratio=%.4f" % map_ratio))
