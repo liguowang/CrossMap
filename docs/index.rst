@@ -34,6 +34,10 @@ How CrossMap works?
 Release history
 ===================
 
+**08/19/2020: Release version 0.5.1**
+
+In :code:`CrossMap.py region`: keep additional columns (columns after the 3rd column) of the orignal BED file after conversion. 
+
 **08/14/2020: Release version 0.5.0**
 
 Add :code:`CrossMap.py region` function to convert large genomic regions. Unlike the :code:`CrossMap.py bed` function which splits big genomic regions, :code:`CrossMap.py region` try to convert the big genomic region as a whole. 
@@ -48,7 +52,7 @@ Support `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GV
  
 **03/24/2020: Release version 0.4.1**
 
-Fix the bug when there are consecutive TABs in the input MAF file.
+Deal with consecutive TABs in the input MAF file.
 
 **10/09/2019: Release version 0.3.8**
 
@@ -783,6 +787,11 @@ Example::
  chr7	72744915	74142892	->	chr7	73330912	74728554	map_ratio=0.9997
  chr8	8098990	11872558	->	chr8	8241468	12015049	map_ratio=1.0000
  chr9	140513444	140730578	->	chr9	137618992	137836126	map_ratio=1.0000
+
+.. note::
+
+   1. Input BED file should have at least 3 columns (chrom, start, end). Additional columns will be kept as is. 
+
  
 Compare to UCSC liftover tool
 ==============================
