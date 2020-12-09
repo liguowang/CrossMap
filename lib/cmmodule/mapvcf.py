@@ -2,13 +2,14 @@ import os
 import pysam
 import re
 import datetime
+import subprocess
 #import logging
 from cmmodule  import ireader
 from cmmodule.utils import printlog,update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
-def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False):
+def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False, compress = False):
 	'''
 	Convert genome coordinates in VCF format.
 
@@ -176,5 +177,13 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 				continue
 	FILE_OUT.close()
 	UNMAP.close()
+
 	printlog (["Total entries:", str(total)])
 	printlog (["Failed to map:", str(fail)])
+
+	if compress:
+		try:
+			printlog(["Compressing \"%s\" ..." % outfile])
+			subprocess.call("gzip " + outfile, shell=True)
+		except:
+			pass

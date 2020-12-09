@@ -7,7 +7,7 @@ from cmmodule.utils import printlog,update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
-def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False):
+def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False, compress = False):
 	'''
 	Convert genome coordinates in GVCF format.
 
@@ -223,3 +223,10 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 	printlog (["Variants failed to map:", str(failed_var)])
 	printlog (["Total non-variant regions:", str(total_region)])
 	printlog (["Non-variant regions failed to map:", str(failed_region)])
+
+	if compress:
+		try:
+			printlog(["Compressing \"%s\" ..." % outfile])
+			subprocess.call("gzip " + outfile, shell=True)
+		except:
+			pass
