@@ -281,7 +281,9 @@ if __name__=='__main__':
 				  "CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf  --no-comp-alleles  #do NOT compare ref_allele to alt_allele.")
 			parser = optparse.OptionParser(usage, add_help_option=False)
 			parser.add_option("--no-comp-alleles", action="store_true",dest="no_comp_alleles", help=
-							"If set, CrossMap does NOT check if the reference allele is different from the alternate allele." )
+							"If set, CrossMap does NOT check if the reference allele is different from the alternate allele.")
+			parser.add_option("--compress", action="store_true",dest="compression", help=
+							"If set, compress the output VCF file by calling the system \"gzip\".")
 			(options,args)=parser.parse_args()
 
 			if options.no_comp_alleles is None:
@@ -293,7 +295,7 @@ if __name__=='__main__':
 				genome_file = args[3]
 				out_file = args[4]
 				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
-				crossmap_vcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles)
+				crossmap_vcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles, compress = options.compression)
 			else:
 				parser.print_help()
 				sys.exit(0)
@@ -305,6 +307,8 @@ if __name__=='__main__':
 			parser = optparse.OptionParser(usage, add_help_option=False)
 			parser.add_option("--no-comp-alleles", action="store_true",dest="no_comp_alleles", help=
 							"If set, CrossMap does NOT check if the reference allele is different from the alternate allele." )
+			parser.add_option("--compress", action="store_true",dest="compression", help=
+							"If set, compress the output gVCF file by calling the system \"gzip\".")
 			(options,args)=parser.parse_args()
 
 			if options.no_comp_alleles is None:
@@ -316,7 +320,7 @@ if __name__=='__main__':
 				genome_file = args[3]
 				out_file = args[4]
 				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
-				crossmap_gvcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles)
+				crossmap_gvcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles, compress = options.compression)
 			else:
 				parser.print_help()
 				sys.exit(0)
