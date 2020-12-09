@@ -96,8 +96,13 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 				fields[6] = target_end
 
 				# update ref allele
-				target_chr = update_chromID(refFasta.references[0], target_chr)
-				fields[10] = refFasta.fetch(target_chr,target_start,target_end).upper()
+				try:
+					target_chr = update_chromID(refFasta.references[0], target_chr)
+					fields[10] = refFasta.fetch(target_chr,target_start,target_end).upper()
+				except:
+					print(line, file=UNMAP)
+					fail += 1
+					continue
 
 				if a[1][3] == '-':
 					fields[10] = revcomp_DNA(fields[10], True)

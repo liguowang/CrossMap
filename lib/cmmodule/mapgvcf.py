@@ -7,7 +7,7 @@ from cmmodule.utils import printlog,update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
-def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome):
+def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False):
 	'''
 	Convert genome coordinates in GVCF format.
 
@@ -31,7 +31,17 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 
 	refgenome : file
 		The genome sequence file of 'target' assembly in FASTA format.
+
+	noCompAllele : bool
+		A logical value indicates whether to compare ref_allele to alt_allele after
+		liftover. If True, the variant will be marked as "unmap" if
+		ref_allele == alt_allele.
 	'''
+
+	if noCompAllele:
+		printlog(["Keep variants [reference_allele == alternative_allele] ..."])
+	else:
+		printlog(["Filter out variants [reference_allele == alternative_allele] ..."])
 
 	#index refegenome file if it hasn't been done
 	if not os.path.exists(refgenome + '.fai'):
@@ -183,18 +193,26 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 					fields[1] = target_start + 1
 
 					# update ref allele
-					target_chr = update_chromID(refFasta.references[0], target_chr)
-					fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+					try:
+						target_chr = update_chromID(refFasta.references[0], target_chr)
+						fields[3] = refFasta.fetch(target_chr,target_start,target_end).upper()
+					except:
+						print(line+ "\tFail(No_targetRef)", file=UNMAP)
+						failed_var += 1
 
 					if a[1][3] == '-':
 						fields[4] = revcomp_DNA(alt_allele, True) + ',<NON_REF>'
 
-					#ref_allele and alt_alele are different
-					if fields[3] != alt_allele:
+					# check if ref_allele is the same as alt_allele
+					if noCompAllele:
 						print('\t'.join(map(str, fields)), file=FILE_OUT)
 					else:
-						print (line + "\tFail(REF==ALT)", file=UNMAP)
-						failed_var += 1
+						if fields[3] != fields[4]:
+							print('\t'.join(map(str, fields)), file=FILE_OUT)
+						else:
+							print (line + "\tFail(REF==ALT)", file=UNMAP)
+							failed_var += 1
+
 				else:
 					print (line + "\tFail(Multiple_hits)", file=UNMAP)
 					failed_var += 1

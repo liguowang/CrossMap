@@ -9,7 +9,7 @@ Setup script for CrossMap  -- Lift over genomics coordinates between assemblies
 
 def main():
     setup(  name = "CrossMap",
-            version = "0.5.0",
+            version = "0.5.2",
             python_requires='>=3.5',
             py_modules = [ 'psyco_full' ],
             packages = find_packages( 'lib' ),

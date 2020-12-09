@@ -2,12 +2,13 @@ import os
 import pysam
 import re
 import datetime
+#import logging
 from cmmodule  import ireader
 from cmmodule.utils import printlog,update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
-def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
+def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False):
 	'''
 	Convert genome coordinates in VCF format.
 
@@ -31,7 +32,17 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 
 	refgenome : file
 		The genome sequence file of 'target' assembly in FASTA format.
+
+	noCompAllele : bool
+		A logical value indicates whether to compare ref_allele to alt_allele after
+		liftover. If True, the variant will be marked as "unmap" if
+		ref_allele == alt_allele.
 	'''
+
+	if noCompAllele:
+		printlog(["Keep variants [reference_allele == alternative_allele] ..."])
+	else:
+		printlog(["Filter out variants [reference_allele == alternative_allele] ..."])
 
 	#index refegenome file if it hasn't been done
 	if not os.path.exists(refgenome + '.fai'):
@@ -118,7 +129,7 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 			start = int(fields[1])-1	 # 0 based
 			end = start + len(fields[3])
 
-			a = map_coordinates(mapping, chrom, start, end,'+')
+			a = map_coordinates(mapping, chrom, start, end, '+')
 			if a is None:
 				print (line + "\tFail(Unmap)", file=UNMAP)
 				fail += 1
@@ -150,11 +161,15 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome):
 				if a[1][3] == '-':
 					fields[4] = revcomp_DNA(fields[4], True)
 
-				if fields[3] != fields[4]:
+				# check if ref_allele is the same as alt_allele
+				if noCompAllele:
 					print('\t'.join(map(str, fields)), file=FILE_OUT)
 				else:
-				   print (line + "\tFail(REF==ALT)", file=UNMAP)
-				   fail += 1
+					if fields[3] != fields[4]:
+						print('\t'.join(map(str, fields)), file=FILE_OUT)
+					else:
+						print (line + "\tFail(REF==ALT)", file=UNMAP)
+						fail += 1
 			else:
 				print (line + "\tFail(Multiple_hits)", file=UNMAP)
 				fail += 1
