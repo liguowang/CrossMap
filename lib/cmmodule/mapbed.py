@@ -45,19 +45,19 @@ def crossmap_bed_file(mapping, inbed, outfile=None):
 		try:
 			int(fields[1])
 		except:
-			print("Start corrdinate is not an integer. skip " + line, file=sys.stderr)
+			print("Start coordinate is not an integer. skip " + line, file=sys.stderr)
 			if outfile:
 				print(line + '\tInvalidStartPosition', file=UNMAP)
 			continue
 		try:
 			int(fields[2])
 		except:
-			print("End corrdinate is not an integer. skip " + line, file=sys.stderr)
+			print("End coordinate is not an integer. skip " + line, file=sys.stderr)
 			if outfile:
 				print(line + '\tInvalidEndPosition', file=UNMAP)
 			continue
 		if int(fields[1]) > int(fields[2]):
-			print("\"Start\" is larger than \"End\" corrdinate is not an integer. skip " + line, file=sys.stderr)
+			print("\"Start\" is larger than \"End\" coordinate is not an integer. skip " + line, file=sys.stderr)
 			if outfile:
 				print(line + '\tStart>End', file=UNMAP)
 			continue
