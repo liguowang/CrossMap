@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 '''
----------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 CrossMap: lift over genomic coordinates between genome assemblies.
 Supports BED/BedGraph, GFF/GTF, BAM/SAM/CRAM, BigWig/Wig, VCF, and MAF format files.
----------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------
 '''
 
 import sys
 import optparse
 import pyBigWig
+#import logging
 from textwrap import wrap
 from cmmodule.utils     import read_chain_file
 from cmmodule.mapvcf    import crossmap_vcf_file
@@ -25,7 +26,7 @@ __contributor__="Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__="0.5.0"
+__version__="0.5.2"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -34,7 +35,7 @@ __status__ = "Production"
 def general_help(cmds):
 	desc=("CrossMap is a program to convert genome coordinates between different reference assemblies"
 		"(e.g. from human hg19 to hg38 or vice versa). The supported file formats include BAM, BED, "
-		"BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation format), SAM, Wiggle and VCF.")
+		"BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation format), SAM, Wiggle, and VCF.")
 
 	print("Program: %s (v%s)" % ("CrossMap", __version__), file=sys.stderr)
 	print("\nDescription: \n%s" % '\n'.join('  '+i for i in wrap(desc,width=80)), file=sys.stderr)
@@ -93,27 +94,27 @@ def bigwig_help():
 	for i,j in msg:
 		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
-def vcf_help():
-	msg =[
-	("usage","CrossMap.py  vcf  <chain_file>  <input.vcf>  <refGenome.fa>  <output_file>"),
-	("Description", ("Convert VCF format file. The \"chain_file\" and \"input.vcf\" can be regular or compressed "
-				  "(*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) "
-				  "pointing to remote file. \"refGenome.fa\" is genome sequence file of the *target assembly*.")),
-	("Example", " CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf"),
-	]
-	for i,j in msg:
-		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+#def vcf_help():
+#	msg =[
+#	("usage","CrossMap.py  vcf  <chain_file>  <input.vcf>  <refGenome.fa>  <output_file>"),
+#	("Description", ("Convert VCF format file. The \"chain_file\" and \"input.vcf\" can be regular or compressed "
+#				  "(*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) "
+#				  "pointing to remote file. \"refGenome.fa\" is genome sequence file of the *target assembly*.")),
+#	("Example", " CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf"),
+#	]
+#	for i,j in msg:
+#		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
-def gvcf_help():
-	msg =[
-	("usage","CrossMap.py gvcf <chain_file>  <input.gvcf>  <refGenome.fa>  <output_file>"),
-	("Description", ("Convert GVCF format file. The \"chain_file\" and \"input.gvcf\" can be regular or compressed "
-				  "(*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) "
-				  "pointing to remote file. \"refGenome.fa\" is genome sequence file of the *target assembly*.")),
-	("Example", " CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf"),
-	]
-	for i,j in msg:
-		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
+#def gvcf_help():
+#	msg =[
+#	("usage","CrossMap.py gvcf <chain_file>  <input.gvcf>  <refGenome.fa>  <output_file>"),
+#	("Description", ("Convert GVCF format file. The \"chain_file\" and \"input.gvcf\" can be regular or compressed "
+#				  "(*.gz, *.Z, *.z, *.bz, *.bz2, *.bzip2) file, local file or URL (http://, https://, ftp://) "
+#				  "pointing to remote file. \"refGenome.fa\" is genome sequence file of the *target assembly*.")),
+#	("Example", " CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf"),
+#	]
+#	for i,j in msg:
+#		 print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j,width=80)]), file=sys.stderr)
 
 
 def maf_help():
@@ -132,7 +133,7 @@ def maf_help():
 if __name__=='__main__':
 
 	commands = {
-	'bed':'convert BED, bedGraph or other BED-like file.',
+	'bed':'convert BED, bedGraph or other BED-like files.',
 	'bam':'convert BAM, CRAM or SAM format file.',
 	'gff':'convert GFF or GTF format file.',
 	'wig':'convert Wiggle or bedGraph format file.',
@@ -273,28 +274,51 @@ if __name__=='__main__':
 									fold=options.insert_size_fold,addtag=False)
 			else:
 				parser.print_help()
+
 		elif sys.argv[1].lower() == 'vcf':
-			if len(sys.argv) == 6:
-				chain_file = sys.argv[2]
-				in_file = sys.argv[3]
-				genome_file = sys.argv[4]
-				out_file = sys.argv[5]
+			usage=("\nCrossMap.py vcf <chain_file>  <input.vcf>  <refGenome.fa>  <output_file> [options]\n\nExamples:\n"
+				  "CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf                     #comparing ref_allele to alt_allele to make sure they are different.\n"
+				  "CrossMap.py vcf hg19ToHg18.over.chain.gz test.hg19.vcf hg18.fa test.hg18.vcf  --no-comp-alleles  #do NOT compare ref_allele to alt_allele.")
+			parser = optparse.OptionParser(usage, add_help_option=False)
+			parser.add_option("--no-comp-alleles", action="store_true",dest="no_comp_alleles", help=
+							"If set, CrossMap does NOT check if the reference allele is different from the alternate allele." )
+			(options,args)=parser.parse_args()
+
+			if options.no_comp_alleles is None:
+				options.no_comp_alleles = False
+
+			if len(args) == 5:
+				chain_file = args[1]
+				in_file = args[2]
+				genome_file = args[3]
+				out_file = args[4]
 				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
-				crossmap_vcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = sys.argv[2], refgenome = genome_file)
+				crossmap_vcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles)
 			else:
-				vcf_help()
+				parser.print_help()
 				sys.exit(0)
 
 		elif sys.argv[1].lower() == 'gvcf':
-			if len(sys.argv) == 6:
-				chain_file = sys.argv[2]
-				in_file = sys.argv[3]
-				genome_file = sys.argv[4]
-				out_file = sys.argv[5]
+			usage=("\nCrossMap.py gvcf <chain_file>  <input.gvcf>  <refGenome.fa>  <output_file> [options]\n\nExamples:\n"
+				  "CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf                     #comparing ref_allele to alt_allele to make sure they are different.\n"
+				  "CrossMap.py gvcf hg19ToHg18.over.chain.gz test.hg19.gvcf hg18.fa test.hg18.gvcf  --no-comp-alleles  #do NOT compare ref_allele to alt_allele.")
+			parser = optparse.OptionParser(usage, add_help_option=False)
+			parser.add_option("--no-comp-alleles", action="store_true",dest="no_comp_alleles", help=
+							"If set, CrossMap does NOT check if the reference allele is different from the alternate allele." )
+			(options,args)=parser.parse_args()
+
+			if options.no_comp_alleles is None:
+				options.no_comp_alleles = False
+
+			if len(args) == 5:
+				chain_file = args[1]
+				in_file = args[2]
+				genome_file = args[3]
+				out_file = args[4]
 				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
-				crossmap_gvcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = sys.argv[2], refgenome = genome_file)
+				crossmap_gvcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles)
 			else:
-				gvcf_help()
+				parser.print_help()
 				sys.exit(0)
 
 		elif sys.argv[1].lower() == 'maf':	#mapping, infile, outfile, liftoverfile, refgenome, ref_name
@@ -312,4 +336,3 @@ if __name__=='__main__':
 		else:
 			general_help(commands)
 			sys.exit(0)
-
