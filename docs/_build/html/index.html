@@ -92,7 +92,7 @@ It supports commonly used file formats including <a class="reference external" h
 <h1>Input and Output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="chain-file">
 <h2>Chain file<a class="headerlink" href="#chain-file" title="Permalink to this headline">¶</a></h2>
-<p>A <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/chain.html">chain file</a> describes a pairwise alignment between two reference assemblies. UCSC and Ensemble chain files are available:</p>
+<p>A <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/chain.html">chain file</a> describes a pairwise alignment between two reference assemblies. <a class="reference external" href="https://genome.ucsc.edu/">UCSC</a> and <a class="reference external" href="https://uswest.ensembl.org/index.html">Ensembl</a> chain files are available:</p>
 <p><strong>UCSC chain files</strong></p>
 <blockquote>
 <div><ul class="simple">
@@ -616,6 +616,8 @@ CrossMap.py vcf &lt;chain_file&gt;  &lt;input.vcf&gt;  &lt;refGenome.fa&gt;  &lt
 Options:
   --no-comp-alleles  If set, CrossMap does NOT check if the reference allele is
                      different from the alternate allele.
+ --compress          If set, compress the output VCF file by calling the
+                     system &quot;gzip&quot;.
 </pre></div>
 </div>
 <p>Example: filter out variants [reference_allele == alternative_allele]:</p>
@@ -696,6 +698,8 @@ CrossMap.py gvcf &lt;chain_file&gt;  &lt;input.gvcf&gt;  &lt;refGenome.fa&gt;  &
  Options:
   --no-comp-alleles  If set, CrossMap does NOT check if the reference allele is
                      different from the alternate allele.
+ --compress          If set, compress the output gVCF file by calling the
+                     system &quot;gzip&quot;.
 </pre></div>
 </div>
 <p>Example (Convert GVCF file from hg19 to hg38):</p>

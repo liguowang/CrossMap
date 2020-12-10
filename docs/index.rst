@@ -102,7 +102,7 @@ Input and Output
 Chain file
 -----------
 
-A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a pairwise alignment between two reference assemblies. UCSC and Ensemble chain files are available:
+A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a pairwise alignment between two reference assemblies. `UCSC <https://genome.ucsc.edu/>`_ and `Ensembl <https://uswest.ensembl.org/index.html>`_ chain files are available:
 
 
 **UCSC chain files** 
@@ -616,7 +616,8 @@ Typing :code:`CrossMap.py vcf` without any arguments will print a help message::
  Options:
    --no-comp-alleles  If set, CrossMap does NOT check if the reference allele is
                       different from the alternate allele.
-
+  --compress          If set, compress the output VCF file by calling the
+                      system "gzip".
 
 Example: filter out variants [reference_allele == alternative_allele]::
 
@@ -701,7 +702,8 @@ Typing :code:`CrossMap.py gvcf` without any arguments will print a help message:
   Options:
    --no-comp-alleles  If set, CrossMap does NOT check if the reference allele is
                       different from the alternate allele.
-
+  --compress          If set, compress the output gVCF file by calling the
+                      system "gzip".
 
    
 Example (Convert GVCF file from hg19 to hg38)::
