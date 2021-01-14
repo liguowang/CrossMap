@@ -39,6 +39,9 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 	if not os.path.exists(refgenome + '.fai'):
 		printlog(["Creating index for", refgenome])
 		pysam.faidx(refgenome)
+	if os.path.getctime(refgenome + '.fai') < os.path.getctime(refgenome):
+		printlog(["Index file is older than reference genome. Re-creating index for", refgenome])
+		pysam.faidx(refgenome)
 
 	refFasta = pysam.Fastafile(refgenome)
 
