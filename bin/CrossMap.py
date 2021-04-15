@@ -156,14 +156,14 @@ if __name__=='__main__':
 				chain_file = sys.argv[2]
 				in_file = sys.argv[3]
 				out_file = None
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file, print_table = False)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_bed_file(mapTree, in_file, out_file)
 
 			elif len(sys.argv) == 5:
 				chain_file = sys.argv[2]
 				in_file = sys.argv[3]
 				out_file = sys.argv[4]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_bed_file(mapTree, in_file, out_file)
 			else:
 				bed_help()
@@ -181,13 +181,13 @@ if __name__=='__main__':
 				chain_file = args[1]
 				in_file = args[2]
 				out_file = None
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file, print_table = False)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_region_file(mapTree, in_file, out_file, min_ratio = options.min_map_ratio)
 			elif len(args) == 4:
 				chain_file = args[1]
 				in_file = args[2]
 				out_file = args[3]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_region_file(mapTree, in_file, out_file, min_ratio = options.min_map_ratio)
 			else:
 				parser.print_help()
@@ -197,13 +197,13 @@ if __name__=='__main__':
 			if len(sys.argv) == 4:
 				chain_file = sys.argv[2]
 				in_file = sys.argv[3]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_gff_file(mapTree, in_file, None)
 			elif len(sys.argv) == 5:
 				chain_file = sys.argv[2]
 				in_file = sys.argv[3]
 				out_file = sys.argv[4]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_gff_file(mapTree, in_file, out_file)
 			else:
 				gff_help()
@@ -213,7 +213,7 @@ if __name__=='__main__':
 				chain_file = sys.argv[2]
 				in_file = sys.argv[3]
 				out_file = sys.argv[4]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_wig_file(mapTree, in_file, out_file, targetChromSizes, in_format = 'wiggle')
 			else:
 				wig_help()
@@ -230,7 +230,7 @@ if __name__=='__main__':
 					sys.exit(0)
 
 				out_file = sys.argv[4]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_wig_file(mapTree, in_file, out_file, targetChromSizes, in_format = 'bigwig')
 			else:
 				bigwig_help()
@@ -294,7 +294,7 @@ if __name__=='__main__':
 				in_file = args[2]
 				genome_file = args[3]
 				out_file = args[4]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_vcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles, compress = options.compression)
 			else:
 				parser.print_help()
@@ -319,7 +319,7 @@ if __name__=='__main__':
 				in_file = args[2]
 				genome_file = args[3]
 				out_file = args[4]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_gvcf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, noCompAllele = options.no_comp_alleles, compress = options.compression)
 			else:
 				parser.print_help()
@@ -332,7 +332,7 @@ if __name__=='__main__':
 				genome_file = sys.argv[4]
 				build_name = sys.argv[5]
 				out_file = sys.argv[6]
-				(mapTree,targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
+				(mapTree, targetChromSizes, sourceChromSizes) = read_chain_file(chain_file)
 				crossmap_maf_file(mapping = mapTree, infile= in_file, outfile = out_file, liftoverfile = chain_file, refgenome = genome_file, ref_name = build_name)
 			else:
 				maf_help()

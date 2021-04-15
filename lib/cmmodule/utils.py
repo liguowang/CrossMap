@@ -21,7 +21,7 @@ def parse_header( line ):
 
 def update_chromID(c_temp, c_target):
 	'''
-	Update chromsome ID to to the template
+	Update chromsome ID styles from 'c_target' to 'c_temp'.
 
 	Parameters
 	----------
