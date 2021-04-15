@@ -43,7 +43,7 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
 	# bigwig header
 	target_chroms_sorted = []
 	for k in sorted(taget_chrom_size.keys()):
-		#i_chrom = update_chromID('chr1',k)
+		i_chrom = update_chromID('chr1',k)
 		i_value = taget_chrom_size[k]
 		target_chroms_sorted.append((i_chrom, i_value))
 
