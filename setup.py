@@ -1,6 +1,6 @@
 import sys, os, platform, glob
-from distutils.core import setup
 from setuptools import *
+from distutils.core import setup
 
 """
 Setup script for CrossMap  -- Lift over genomics coordinates between assemblies
@@ -9,7 +9,7 @@ Setup script for CrossMap  -- Lift over genomics coordinates between assemblies
 
 def main():
     setup(  name = "CrossMap",
-            version = "0.5.2",
+            version = "0.5.3",
             python_requires='>=3.5',
             py_modules = [ 'psyco_full' ],
             packages = find_packages( 'lib' ),
@@ -25,7 +25,7 @@ def main():
             requires = ['cython (>=0.17)'],
             install_requires = ['cython>=0.17','pysam','bx-python','pyBigWig'], 
             description = " Lift over genomics coordinates between assemblies",
-            url = "http://crossmap.sourceforge.net/",
+            url = "https://crossmap.readthedocs.io/en/latest/",
             zip_safe = False,
             dependency_links = [],
             classifiers=[

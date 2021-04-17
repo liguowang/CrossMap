@@ -1,17 +1,8 @@
-import sys
-from time import strftime
 import pyBigWig
 from bx.intervals.intersection import Interval, Intersecter
-
 from cmmodule  import ireader
+import logging
 
-
-def printlog (mesg_lst):
-	'''
-	Print messages into stderr.
-	'''
-	msg = "@ " + strftime("%Y-%m-%d %H:%M:%S") + ": " + ' '.join(mesg_lst)
-	print(msg, file=sys.stderr)
 
 def parse_header( line ):
 	'''
@@ -265,7 +256,7 @@ def read_chain_file (chain_file, print_table = False):
 		Chromosome sizes of source genome
 	'''
 
-	printlog(["Read the chain file: ", chain_file])
+	logging.info("Read the chain file \"%s\" " % chain_file)
 	maps={}
 	target_chromSize={}
 	source_chromSize={}

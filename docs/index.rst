@@ -34,6 +34,10 @@ How CrossMap works?
 Release history
 ===================
 
+**4/16/2021: Release version 0.5.3**
+
+Add :code:`CrossMap.py viewchain` to convert chain file into block-to-block, more readable format. 
+
 **12/08/2020: Release version 0.5.2**
 
 Add '--no-comp-alleles' flag to :code:`CrossMap.py vcf` and :code:`CrossMap.py gvcf`. If set, CrossMap does not check if the "reference allele" is different from the "alternative allele".  
@@ -783,7 +787,40 @@ Example::
 
    1. Input BED file should have at least 3 columns (chrom, start, end). Additional columns will be kept as is. 
 
+
+Convert chain file 
+-------------------
+
+Typing :code:`CrossMap.py viewchain` without any arguments will print a help message::
+
+ Usage
+ -----
+   CrossMap.py  viewchain  <chain_file>
  
+ Description
+ -----------
+   print chain file into a human readable, tab-separated, 8-column file. The first
+   4 columns represent 'chrom','start','end','strand' of the source genome
+   assembly, and the last 4 columns represent  'chrom','start','end','strand' of
+   the target genome assembly.
+
+
+Example::
+
+ $CrossMap.py viewchain ../data/human/GRCh37_to_GRCh38.chain.gz >chain.tab
+ $head chain.tab
+ 1  10000 177417   +  1  10000 177417   +
+ 1  227417   267719   +  1  257666   297968   +
+ 1  317719   471368   +  1  347968   501617   -
+ 1  521368   1566075  +  1  585988   1630695  +
+ 1  1566075  1569784  +  1  1630696  1634405  +
+ 1  1569784  1570918  +  1  1634408  1635542  +
+ 1  1570918  1570922  +  1  1635546  1635550  +
+ 1  1570922  1574299  +  1  1635560  1638937  +
+ 1  1574299  1583669  +  1  1638938  1648308  +
+ 1  1583669  1583878  +  1  1648309  1648518  +
+
+
 Compare to UCSC liftover tool
 ==============================
 

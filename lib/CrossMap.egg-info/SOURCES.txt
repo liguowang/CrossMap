@@ -168,6 +168,7 @@ setup.py
 .eggs/nose-1.3.7-py3.7.egg/nose/tools/trivial.py
 bin/.DS_Store
 bin/CrossMap.py
+bin/chain.tab
 data/.DS_Store
 data/readme.txt
 data/human/GRCh37_to_GRCh38.chain.gz
@@ -251,6 +252,7 @@ lib/cmmodule/bam_cigar.py
 lib/cmmodule/bgrMerge.py
 lib/cmmodule/dotProduct.py
 lib/cmmodule/fasta.py
+lib/cmmodule/helpinfo.py
 lib/cmmodule/ireader.py
 lib/cmmodule/mapbam.py
 lib/cmmodule/mapbed.py
@@ -317,9 +319,6 @@ lib/cmmodule/__pycache__/utils.cpython-38.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-36.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-37.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-38.pyc
-scripts/GRCh37_to_GRCh38.tab
-scripts/chain_to_table.py
-test/hg19ToHg38.over.chain.gz
 test/test00_hg19.bed3
 test/test01_hg19.bed12
 test/test02_hg19.vcf

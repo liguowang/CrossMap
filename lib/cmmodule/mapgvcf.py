@@ -2,8 +2,10 @@ import os
 import pysam
 import datetime
 import re
+import logging
+import subprocess
 from cmmodule  import ireader
-from cmmodule.utils import printlog,update_chromID,revcomp_DNA
+from cmmodule.utils import update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
@@ -39,16 +41,16 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 	'''
 
 	if noCompAllele:
-		printlog(["Keep variants [reference_allele == alternative_allele] ..."])
+		logging.info("Keep variants [reference_allele == alternative_allele] ...")
 	else:
-		printlog(["Filter out variants [reference_allele == alternative_allele] ..."])
+		logging.info("Filter out variants [reference_allele == alternative_allele] ...")
 
 	#index refegenome file if it hasn't been done
 	if not os.path.exists(refgenome + '.fai'):
-		printlog(["Creating index for", refgenome])
+		logging.info("Creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
 	if os.path.getctime(refgenome + '.fai') < os.path.getctime(refgenome):
-		printlog(["Index file is older than reference genome. Re-creating index for", refgenome])
+		logging.info("Index file is older than reference genome. Re-creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
 
 	refFasta = pysam.Fastafile(refgenome)
@@ -110,7 +112,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 
 		#update contig information
 		elif line.startswith('#CHROM'):
-			printlog(["Updating contig field ... "])
+			logging.info("Updating contig field ... ")
 			target_gsize = dict(list(zip(refFasta.references, refFasta.lengths)))
 			for chr_id in sorted(target_gsize):
 				if chr_id.startswith('chr'):
@@ -131,7 +133,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 			print("##liftOverDate=<%s>" % datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)
 			print(line, file=FILE_OUT)
 			print(line, file=UNMAP)
-			printlog(["Lifting over ... "])
+			logging.info("Lifting over ... ")
 
 		else:
 			if line.startswith('#'):continue
@@ -222,14 +224,14 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 					continue
 	FILE_OUT.close()
 	UNMAP.close()
-	printlog (["Total variants:", str(total_var)])
-	printlog (["Variants failed to map:", str(failed_var)])
-	printlog (["Total non-variant regions:", str(total_region)])
-	printlog (["Non-variant regions failed to map:", str(failed_region)])
+	logging.info ("Total variants: %d" % total_var)
+	logging.info ("Variants failed to map: %d" % failed_var)
+	logging.info ("Total non-variant regions: %d" % total_region)
+	logging.info ("Non-variant regions failed to map: %d" % failed_region)
 
 	if compress:
 		try:
-			printlog(["Compressing \"%s\" ..." % outfile])
+			logging.info("Compressing \"%s\" ..." % outfile)
 			subprocess.call("gzip " + outfile, shell=True)
 		except:
 			pass

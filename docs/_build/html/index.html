@@ -47,6 +47,8 @@ It supports commonly used file formats including <a class="reference external" h
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<p><strong>4/16/2021: Release version 0.5.3</strong></p>
+<p>Add <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">viewchain</span></code> to convert chain file into block-to-block, more readable format.</p>
 <p><strong>12/08/2020: Release version 0.5.2</strong></p>
 <p>Add ‘–no-comp-alleles’ flag to <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">vcf</span></code> and <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">gvcf</span></code>. If set, CrossMap does not check if the “reference allele” is different from the “alternative allele”.</p>
 <p><strong>08/19/2020: Release version 0.5.1</strong></p>
@@ -780,6 +782,37 @@ chr9   140513444       140730578       -&gt;      chr9    137618992       137836
 </ol>
 </div>
 </div>
+<div class="section" id="convert-chain-file">
+<h2>Convert chain file<a class="headerlink" href="#convert-chain-file" title="Permalink to this headline">¶</a></h2>
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">viewchain</span></code> without any arguments will print a help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span>
+<span class="o">-----</span>
+  <span class="n">CrossMap</span><span class="o">.</span><span class="n">py</span>  <span class="n">viewchain</span>  <span class="o">&lt;</span><span class="n">chain_file</span><span class="o">&gt;</span>
+
+<span class="n">Description</span>
+<span class="o">-----------</span>
+  <span class="nb">print</span> <span class="n">chain</span> <span class="n">file</span> <span class="n">into</span> <span class="n">a</span> <span class="n">human</span> <span class="n">readable</span><span class="p">,</span> <span class="n">tab</span><span class="o">-</span><span class="n">separated</span><span class="p">,</span> <span class="mi">8</span><span class="o">-</span><span class="n">column</span> <span class="n">file</span><span class="o">.</span> <span class="n">The</span> <span class="n">first</span>
+  <span class="mi">4</span> <span class="n">columns</span> <span class="n">represent</span> <span class="s1">&#39;chrom&#39;</span><span class="p">,</span><span class="s1">&#39;start&#39;</span><span class="p">,</span><span class="s1">&#39;end&#39;</span><span class="p">,</span><span class="s1">&#39;strand&#39;</span> <span class="n">of</span> <span class="n">the</span> <span class="n">source</span> <span class="n">genome</span>
+  <span class="n">assembly</span><span class="p">,</span> <span class="ow">and</span> <span class="n">the</span> <span class="n">last</span> <span class="mi">4</span> <span class="n">columns</span> <span class="n">represent</span>  <span class="s1">&#39;chrom&#39;</span><span class="p">,</span><span class="s1">&#39;start&#39;</span><span class="p">,</span><span class="s1">&#39;end&#39;</span><span class="p">,</span><span class="s1">&#39;strand&#39;</span> <span class="n">of</span>
+  <span class="n">the</span> <span class="n">target</span> <span class="n">genome</span> <span class="n">assembly</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py viewchain ../data/human/GRCh37_to_GRCh38.chain.gz &gt;chain.tab
+$head chain.tab
+1  10000 177417   +  1  10000 177417   +
+1  227417   267719   +  1  257666   297968   +
+1  317719   471368   +  1  347968   501617   -
+1  521368   1566075  +  1  585988   1630695  +
+1  1566075  1569784  +  1  1630696  1634405  +
+1  1569784  1570918  +  1  1634408  1635542  +
+1  1570918  1570922  +  1  1635546  1635550  +
+1  1570922  1574299  +  1  1635560  1638937  +
+1  1574299  1583669  +  1  1638938  1648308  +
+1  1583669  1583878  +  1  1648309  1648518  +
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="compare-to-ucsc-liftover-tool">
 <h1>Compare to UCSC liftover tool<a class="headerlink" href="#compare-to-ucsc-liftover-tool" title="Permalink to this headline">¶</a></h1>
@@ -876,6 +909,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 <li><a class="reference internal" href="#convert-maf-format-files">Convert MAF format files</a></li>
 <li><a class="reference internal" href="#convert-gvcf-format-files">Convert GVCF format files</a></li>
 <li><a class="reference internal" href="#convert-large-genomic-regions">Convert large genomic regions</a></li>
+<li><a class="reference internal" href="#convert-chain-file">Convert chain file</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#compare-to-ucsc-liftover-tool">Compare to UCSC liftover tool</a></li>

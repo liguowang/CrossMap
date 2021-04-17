@@ -1,8 +1,9 @@
 import os
 import pysam
 import datetime
+import logging
 from cmmodule  import ireader
-from cmmodule.utils import printlog,update_chromID,revcomp_DNA
+from cmmodule.utils import update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
@@ -37,10 +38,10 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 
 	#index refegenome file if it hasn't been done
 	if not os.path.exists(refgenome + '.fai'):
-		printlog(["Creating index for", refgenome])
+		logging.info("Creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
 	if os.path.getctime(refgenome + '.fai') < os.path.getctime(refgenome):
-		printlog(["Index file is older than reference genome. Re-creating index for", refgenome])
+		logging.info("Index file is older than reference genome. Re-creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
 
 	refFasta = pysam.Fastafile(refgenome)
@@ -65,7 +66,7 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 			print("#liftOver: Program=%sv%s, Time=%s, ChainFile=%s, NewRefGenome=%s" % ("CrossMap", __version__, datetime.date.today().strftime("%B%d,%Y"),liftoverfile,refgenome ), file=FILE_OUT)
 			print(line, file=FILE_OUT)
 			print(line, file=UNMAP)
-			printlog(["Lifting over ... "])
+			logging.info("Lifting over ... ")
 		else:
 
 			fields = str.split(line,sep = '\t')
@@ -117,5 +118,5 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 				continue
 	FILE_OUT.close()
 	UNMAP.close()
-	printlog (["Total entries:", str(total)])
-	printlog (["Failed to map:", str(fail)])
+	logging.info ("Total entries: %d", total)
+	logging.info ("Failed to map: %d", fail)

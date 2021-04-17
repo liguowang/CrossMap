@@ -3,10 +3,11 @@ read compressed (.gz .bz) files
 """
 #!/usr/bin/env python
 # encoding: utf-8
-
+import sys
 import bz2
 import gzip
 import urllib
+from subprocess import Popen
 
 def nopen(f, mode="rb"):
 	if not isinstance(f, str):
@@ -21,8 +22,8 @@ def nopen(f, mode="rb"):
 		else urllib.urlopen(f) if f.startswith(("http://", "https://","ftp://")) \
 		else open(f, mode)
 
- 
+
 def reader(fname):
 	for l in nopen(fname):
 		yield l.decode('utf8').strip().replace("\r", "")
-	
+

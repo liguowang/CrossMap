@@ -1,6 +1,7 @@
 import sys
 import pysam
-from cmmodule.utils import printlog,update_chromID,revcomp_DNA
+import logging
+from cmmodule.utils import update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule  import sam_header
 from cmmodule.meta_data import __version__
@@ -113,29 +114,29 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 	if outfile_prefix is not None:
 		if file_type == 'BAM':
 			OUT_FILE = pysam.Samfile( outfile_prefix + '.bam', "wb", header = new_header )
-			printlog (["Liftover BAM file:", infile, '==>', outfile_prefix + '.bam'])
+			logging.info("Liftover BAM file \"%s\" to \"%s\"" %(infile, outfile_prefix + '.bam'))
 		elif file_type == 'CRAM':
 			OUT_FILE = pysam.Samfile( outfile_prefix + '.bam', "wb", header = new_header )
-			printlog (["Liftover CRAM file:", infile, '==>', outfile_prefix + '.bam'])
+			logging.info("Liftover CRAM file \"%s\" to \"%s\"" %(infile, outfile_prefix + '.bam'))
 		elif file_type == 'SAM':
 			OUT_FILE = pysam.Samfile( outfile_prefix + '.sam', "wh", header = new_header )
-			printlog (["Liftover SAM file:", infile, '==>',	 outfile_prefix + '.sam'])
+			logging.info("Liftover SAM file \"%s\" to \"%s\"" %(infile, outfile_prefix + '.sam'))
 		else:
-			print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
+			logging.error("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.")
 			sys.exit(1)
 	# write to screen
 	else:
 		if file_type == 'BAM':
 			OUT_FILE = pysam.Samfile( '-', "wb", header = new_header )
-			printlog (["Liftover BAM file:", infile])
+			logging.info("Liftover BAM file: %s" % infile)
 		elif file_type == 'CRAM':
 			OUT_FILE = pysam.Samfile( '-', "wb", header = new_header )
-			printlog (["Liftover CRAM file:", infile])
+			logging.info("Liftover CRAM file: %s" % infile)
 		elif file_type == 'SAM':
 			OUT_FILE = pysam.Samfile( '-', "w", header = new_header )
-			printlog (["Liftover SAM file:", infile])
+			logging.info ("Liftover SAM file: %s" % infile)
 		else:
-			print("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.", file=sys.stderr)
+			logging.error("Unknown file type! Input file must have suffix '.bam','.cram', or '.sam'.")
 			sys.exit(1)
 	QF = 0
 	NN = 0
@@ -582,39 +583,39 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 						OUT_FILE.write(new_alignment)
 						continue
 	except StopIteration:
-		printlog(["Done!"])
+		logging.info("Done!")
 	OUT_FILE.close()
 
 	if outfile_prefix is not None:
 		if file_type == "BAM" or file_type == "CRAM":
 			try:
-				printlog (['Sort "%s" and save as "%s"' % (outfile_prefix + '.bam', outfile_prefix + '.sorted.bam')])
+				logging.info('Sort "%s" and save as "%s"' % (outfile_prefix + '.bam', outfile_prefix + '.sorted.bam'))
 				pysam.sort("-o",  outfile_prefix + '.sorted.bam', outfile_prefix + '.bam')
 			except:
-				printlog(["Warning: ","output BAM file was NOT sorted"])
+				logging.warning("output BAM file was NOT sorted")
 			try:
-				printlog (['Index "%s" ...' % (outfile_prefix + '.sorted.bam')])
+				logging.info('Index "%s" ...' % (outfile_prefix + '.sorted.bam'))
 				pysam.index(outfile_prefix + '.sorted.bam',outfile_prefix + '.sorted.bam.bai')
 			except:
-				printlog(["Warning: ","output BAM file was NOT indexed."])
+				logging.warning("output BAM file was NOT indexed.")
 
-	print("Total alignments:" + str(total_item-1))
-	print("	 QC failed: " + str(QF))
+	print("\nTotal alignments:" + str(total_item-1))
+	print("\tQC failed: " + str(QF))
 	if max(NN,NU, NM, UN, UU, UM, MN, MU, MM) > 0:
-		print("	 Paired-end reads:")
-		print("\tR1 unique, R2 unique (UU): " + str(UU))
-		print("\tR1 unique, R2 unmapp (UN): " + str(UN))
-		print("\tR1 unique, R2 multiple (UM): " + str(UM))
+		print("\tPaired-end reads:")
+		print("\t\tR1 unique, R2 unique (UU): " + str(UU))
+		print("\t\tR1 unique, R2 unmapp (UN): " + str(UN))
+		print("\t\tR1 unique, R2 multiple (UM): " + str(UM))
 
-		print("\tR1 multiple, R2 multiple (MM): " + str(MM))
-		print("\tR1 multiple, R2 unique (MU): " + str(MU))
-		print("\tR1 multiple, R2 unmapped (MN): " + str(MN))
+		print("\t\tR1 multiple, R2 multiple (MM): " + str(MM))
+		print("\t\tR1 multiple, R2 unique (MU): " + str(MU))
+		print("\t\tR1 multiple, R2 unmapped (MN): " + str(MN))
 
-		print("\tR1 unmap, R2 unmap (NN): " + str(NN))
-		print("\tR1 unmap, R2 unique (NU): " + str(NU))
-		print("\tR1 unmap, R2 multiple (NM): " + str(NM))
+		print("\t\tR1 unmap, R2 unmap (NN): " + str(NN))
+		print("\t\tR1 unmap, R2 unique (NU): " + str(NU))
+		print("\t\tR1 unmap, R2 multiple (NM): " + str(NM))
 	if max(SN,SU,SM) > 0:
-		print("	 Single-end reads:")
-		print("\tUniquley mapped (SU): " +	str(SU))
-		print("\tMultiple mapped (SM): " +	str(SM))
-		print("\tUnmapped (SN): " + str(SN))
+		print("\tSingle-end reads:")
+		print("\t\tUniquley mapped (SU): " +	str(SU))
+		print("\t\tMultiple mapped (SM): " +	str(SM))
+		print("\t\tUnmapped (SN): " + str(SN))

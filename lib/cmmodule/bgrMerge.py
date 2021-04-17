@@ -2,28 +2,20 @@ import os,sys
 import subprocess
 import random
 import string
-from time import strftime
-
+import logging
 from cmmodule  import wig_reader
 from cmmodule  import myutils
 
 def randomword(length):
 	return ''.join(random.choice(string.ascii_uppercase) for _ in range(length))
 
-def printlog (mesg_lst):
-	'''print progress into stderr'''
-	if len(mesg_lst)==1:
-		msg = "@ " + strftime("%Y-%m-%d %H:%M:%S") + ": " +  mesg_lst[0]
-	else:
-		msg = "@ " + strftime("%Y-%m-%d %H:%M:%S") + ": " + ' '.join(mesg_lst)
-	print(msg, file=sys.stderr)
 
 def read_bed_by_chr(f):
 	'''input bed file'''
-	
+
 	# sort input file
 	tmp_file_name = randomword(10)
-	printlog (["Sorting bedGraph file:" + f])
+	logging.info("Sorting bedGraph file: %s" % f)
 	TMP = open(tmp_file_name,'w')
 	sort_cmd = myutils.which('sort')
 	try:
@@ -31,7 +23,7 @@ def read_bed_by_chr(f):
 	except:
 		raise Exception("Cannot find GNU \"sort\" command")
 	TMP.close()
-	
+
 	# generate list
 	ret_list=[]
 	line_num = 0
@@ -40,12 +32,12 @@ def read_bed_by_chr(f):
 			continue
 		line_num += 1
 		line = line.strip()
-		
+
 		if line_num == 1:
 			chrom = line.split()[0]
 			ret_list.append(line)
 			continue
-		
+
 		if line.split()[0] != chrom:
 			yield ret_list
 			ret_list=[]
@@ -68,11 +60,11 @@ def merge(infile):
 			score = float(score)
 			if start < 0 or end < 0 :
 				continue
-					
+
 			if start  >= top_marker and end <= int(lines[i+1].split()[1]):
 				if len(overlap_pos2val) !=0:
 					for m,n,p in wig_reader.wig_to_bgr2(overlap_pos2val):
-						yield((chr, m, n, p))			
+						yield((chr, m, n, p))
 				yield((chr, start, end, score))
 				overlap_pos2val = {}
 			else:
@@ -82,7 +74,7 @@ def merge(infile):
 					else:
 						overlap_pos2val[ind] = score
 			top_marker = max(top_marker, end)
-		
+
 		# deal with last line
 		else:
 			(last_chr, last_start, last_end, last_score) = lines[-1].split()
@@ -93,7 +85,7 @@ def merge(infile):
 			except:
 				print(last_chr, last_start,last_end)
 				pass
-	
+
 			if last_start >= top_marker:
 				if len(overlap_pos2val) !=0:
 					for m,n,p in wig_reader.wig_to_bgr2(overlap_pos2val):
@@ -106,8 +98,8 @@ def merge(infile):
 						overlap_pos2val[ind] += last_score
 					else:
 						overlap_pos2val[ind] = last_score
-		
+
 			if len(overlap_pos2val) !=0:
 				for m,n,p in wig_reader.wig_to_bgr2(overlap_pos2val):
 					yield((last_chr, m, n, p))
-			
+
