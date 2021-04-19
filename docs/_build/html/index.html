@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What is CrossMap ? &#8212; CrossMap 0.5.2 documentation</title>
+    <title>What is CrossMap ? &#8212; CrossMap 0.5.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -22,7 +22,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.5.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.5.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">What is CrossMap ?</a></li> 
       </ul>
     </div>  
@@ -47,14 +47,14 @@ It supports commonly used file formats including <a class="reference external" h
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
-<p><strong>4/16/2021: Release version 0.5.3</strong></p>
+<p><strong>4/16/2021: Release version 0.5.3/0.5.4</strong></p>
 <p>Add <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">viewchain</span></code> to convert chain file into block-to-block, more readable format.</p>
 <p><strong>12/08/2020: Release version 0.5.2</strong></p>
 <p>Add ‘–no-comp-alleles’ flag to <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">vcf</span></code> and <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">gvcf</span></code>. If set, CrossMap does not check if the “reference allele” is different from the “alternative allele”.</p>
 <p><strong>08/19/2020: Release version 0.5.1</strong></p>
 <p>In <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code>: keep additional columns (columns after the 3rd column) of the original BED file after conversion.</p>
 <p><strong>08/14/2020: Release version 0.5.0</strong></p>
-<p>Add <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> function to convert large genomic regions. Unlike the <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bed</span></code> function which splits big genomic regions, <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> tries to convert the big genomic region as a whole.</p>
+<p>Add <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> function to convert large genomic regions. Unlike the <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bed</span></code> function, which splits big genomic regions, <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> tries to convert the big genomic region as a whole.</p>
 <p><strong>07/09/2020: Release version 0.4.3</strong></p>
 <p>Structural Variants VCF files often use INFO/END field to indicate the end of a deletion. v0.4.3 updates “END” coordinate in the INFO field.</p>
 <p><strong>05/04/2020: Release version 0.4.2</strong></p>
@@ -62,14 +62,14 @@ It supports commonly used file formats including <a class="reference external" h
 <p><strong>03/24/2020: Release version 0.4.1</strong></p>
 <p>Deal with consecutive TABs in the input MAF file.</p>
 <p><strong>10/09/2019: Release version 0.3.8</strong></p>
-<p>The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC generated chain files will be permanently removed from this website and the CrossMap distributions.</p>
+<p>The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC-generated chain files will be permanently removed from this website and the CrossMap distributions.</p>
 <p><strong>07/22/2019: Release version 0.3.6</strong></p>
 <ol class="arabic simple">
 <li><p>Support MAF (mutation annotation format).</p></li>
 <li><p>Fix error “TypeError: AlignmentHeader does not support item assignment (use header.to_dict()” when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.</p></li>
 </ol>
 <p><strong>04/01/2019: Release version 0.3.4</strong></p>
-<p>Fix bugs when chromosome IDs (of the source genome) in chain file do not have ‘chr’ prefix (such as “GRCh37ToHg19.over.chain.gz”). This version also allows CrossMap to detect if a VCF mapping was inverted, and if so reverse complements the alternative allele (Thanks to Andrew Yates). Improve wording.</p>
+<p>Fix bugs when chromosome IDs (of the source genome) in chain file do not have ‘chr’ prefix (such as “GRCh37ToHg19.over.chain.gz”). This version also allows CrossMap to detect if a VCF mapping was inverted, and if so, reverse complements the alternative allele (Thanks to Andrew Yates). Improve wording.</p>
 <p><strong>01/07/2019: Release version 0.3.3</strong></p>
 <p>Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.</p>
 <p><strong>12/14/18: Release version 0.3.2</strong></p>
@@ -200,6 +200,7 @@ Usage: CrossMap.py &lt;command&gt; [options]
         maf    convert MAF (mutation annotation format) file.
         region convert big genomic regions (in BED format) such as CNV blocks.
         vcf    convert VCF file.
+   viewchain  print chain file into human readable, block-to-block format.
         wig    convert Wiggle or bedGraph format file.
 </pre></div>
 </div>
@@ -209,33 +210,33 @@ Usage: CrossMap.py &lt;command&gt; [options]
 is a tab-delimited text file describing genome regions or gene annotations.
 It consists of one line per feature, each containing 3-12 columns.
 CrossMap converts BED files with less than 12 columns to a different assembly by updating the
-chromosome and genome coordinates only; all other columns remain unchanged. Regions from old
+chromosome and genome coordinates only; all other columns remain unchanged. Regions from the old
 assembly mapping to multiple locations to the new assembly will be split.  For 12-columns BED
 files, all columns will be updated accordingly except the 4th column (name of bed line), 5th
-column (score value) and 9th column (RGB value describing the display color). 12-column BED
-files usually define multiple blocks (e.g. exons); if any of the exons fails to map to a new
+column (score value), and 9th column (RGB value describing the display color). 12-column BED
+files usually define multiple blocks (e.g., exons); if any of the exons fails to map to a new
 assembly, the whole BED line is skipped.</p>
 <p>The input BED file can be plain text file, compressed file with extension of .gz, .Z, .z,
 .bz, .bz2 and .bzip2, or even a URL pointing to accessible remote files (<a class="reference external" href="http://">http://</a>, <a class="reference external" href="https://">https://</a>
 and <a class="reference external" href="ftp://">ftp://</a>). Compressed remote files are not supported. The output is a BED format file with
-exact the same number of columns as the original one.</p>
+exactly the same number of columns as the original one.</p>
 <p>Standard <a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a> format has 12 columns, but CrossMap also supports BED-like formats:</p>
 <ul class="simple">
-<li><p>BED3: The first 3 columns (“chrom”, “start”, “end”) of BED format file.</p></li>
-<li><p>BED6: The first 6 columns (“chrom”, “start”, “end”, “name”, “score”, “strand”) of BED format file.</p></li>
-<li><p>Other: Format has at least 3 columns (“chrom”, “start”, “end”) and no more than 12 columns. All other columns are arbitrary.</p></li>
+<li><p>BED3: The first three columns (“chrom”, “start”, “end”) of the BED format file.</p></li>
+<li><p>BED6: The first six columns (“chrom”, “start”, “end”, “name”, “score”, “strand”) of the BED format file.</p></li>
+<li><p>Other: Format has at least three columns (“chrom”, “start”, “end”) and no more than 12 columns. All other columns are arbitrary.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ol class="arabic simple">
 <li><p>For BED-like formats mentioned above, CrossMap only updates the “chrom”, “start”, “end”, and “strand” columns. All other columns will be kept AS-IS.</p></li>
 <li><p>Lines starting with ‘#’, ‘browser’, ‘track’ will be skipped.</p></li>
-<li><p>Lines less than 3 columns will be skipped.</p></li>
+<li><p>Lines less than three columns will be skipped.</p></li>
 <li><p>The 2nd and 3rd columns must be integers.</p></li>
 <li><p>The “+” strand is assumed if no strand information is found.</p></li>
 <li><p>For standard BED format (12 columns). If any of the defined exon blocks cannot be uniquely mapped to target assembly, the whole entry will be skipped.</p></li>
 <li><p>The “input_chain_file” and “input_bed_file” can be regular or compressed (.gz, .Z, .z, .bz, .bz2, .bzip2) file, local file or URL (<a class="reference external" href="http://">http://</a>, <a class="reference external" href="https://">https://</a>, <a class="reference external" href="ftp://">ftp://</a>) pointing to remote file.</p></li>
-<li><p>If the output_file is not specified, results will be printed to screen (console). In this case, the original bed entries (include entries failed to convert) were also printed out.</p></li>
+<li><p>If the output_file is not specified, results will be printed to screen (console). In this case, the original bed entries (including entries failed to convert) were also printed out.</p></li>
 <li><p>If the input region cannot be consecutively mapped to the target assembly, it will be split.</p></li>
 <li><p>The *.unmap file contains regions that cannot be unambiguously converted.</p></li>
 </ol>
@@ -261,7 +262,7 @@ chr1   143911971       143912008
 </pre></div>
 </div>
 <p><strong>Example 3</strong></p>
-<p>One input region was split because it cannot be mapped consecutively to the target assembly:</p>
+<p>One input region was split because it cannot map consecutively to the target assembly:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
 chr10  81369946        81370453        +       -&gt;      chr10   81380000        81380507        +
@@ -272,11 +273,11 @@ chr10  81371412        81371432        +       (split.2:chr10:81371422:81371432:
 </pre></div>
 </div>
 <p><strong>Example 4</strong></p>
-<p><a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/bedgraph.html">BedGraph</a> format file can be converted using either <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> or <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">wig</span></code>,
+<p><a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/bedgraph.html">BedGraph</a> format file can be converted using either <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> or <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">wig</span></code>;
 however, the output formats are different:</p>
 <ul class="simple">
-<li><p>Use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> command to convert a bedGraph file, output is a <strong>bedGraph</strong> file.</p></li>
-<li><p>Use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">wig</span></code> command to convert a bedGraph file, output is a <strong>bigWig</strong> file.</p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> command to convert a bedGraph file, the output is a <strong>bedGraph</strong> file.</p></li>
+<li><p>Use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">wig</span></code> command to convert a bedGraph file, the output is a <strong>bigWig</strong> file.</p></li>
 </ul>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
 
@@ -313,13 +314,13 @@ chr2   239716679       243199373       (split.3:chr2:240205681:240319336:+)    c
 ... (split 74 times)
 </pre></div>
 </div>
-<p>If we use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">region</span></code> command to convert this 3.48Mb region. Note: “-r” (the minimum ratio of bases that must remap) is 0.85 by default:</p>
+<p>If we use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">region</span></code> command to convert this 3.48Mb region. Note: <code class="code docutils literal notranslate"><span class="pre">-r</span></code> (the minimum ratio of bases that must remap) is 0.85 by default:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed
 
 chr2   239716679       243199373       -&gt;      chr2    238808038       242183529       map_ratio=0.9622
 </pre></div>
 </div>
-<p>If we increase -r to 0.99, this region will fail:</p>
+<p>If we increase <code class="code docutils literal notranslate"><span class="pre">-r</span></code> to 0.99, this region will fail:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed -r 0.99
 
 chr2   239716679       243199373       Fail    map_ratio=0.9622
@@ -332,14 +333,14 @@ chr2   239716679       243199373       Fail    map_ratio=0.9622
 is a generic format for storing sequencing alignments, and BAM is the binary and compressed
 version of SAM (<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/25/16/2078.full">Li et al., 2009</a>).
 <a class="reference external" href="https://samtools.github.io/hts-specs/CRAMv3.pdf">CRAM</a> was designed to be an efficient reference-based
-alternative to the <a class="reference external" href="http://samtools.sourceforge.net/samtools.shtml#5">SAM</a> and BAM file formats
+alternative to the <a class="reference external" href="http://samtools.sourceforge.net/samtools.shtml#5">SAM</a> and BAM file formats.
 Most high-throughput sequencing  (HTS) alignments were in SAM/BAM format and many HTS analysis
 tools work with SAM/BAM format. CrossMap updates chromosomes, genome coordinates, header
 sections, and all SAM flags accordingly.  CrossMap’s version number is inserted into
 the header section, along with the names of the original BAM file and the chain file.  For
 pair-end sequencing, insert size is also recalculated. The input BAM file should be sorted
 and indexed properly using Samtools (<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/25/16/2078.full">Li et al., 2009</a>).
-The output format is determined by the input format and BAM output will be sorted and indexed automatically.</p>
+The output format is determined by the input format, and the BAM output will be sorted and indexed automatically.</p>
 <p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bam</span></code> without any arguments will print help a message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span><span class="p">:</span>
 <span class="n">CrossMap</span><span class="o">.</span><span class="n">py</span> <span class="n">bam</span>  <span class="o">&lt;</span><span class="n">chain_file</span><span class="o">&gt;</span>  <span class="o">&lt;</span><span class="nb">input</span><span class="o">.</span><span class="n">bam</span><span class="o">&gt;</span> <span class="p">[</span><span class="n">output_file</span><span class="p">]</span> <span class="p">[</span><span class="n">options</span><span class="p">]</span>
@@ -460,13 +461,12 @@ $ samtools view -H  test.hg18.bam
 </div>
 <div class="section" id="convert-wiggle-format-files">
 <h2>Convert Wiggle format files<a class="headerlink" href="#convert-wiggle-format-files" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a> (WIG) format is useful for
+<p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a> (WIG) format is useful in
 displaying continuous data such as GC content and the reads intensity of high-throughput sequencing data.
 BigWig is a self-indexed binary-format Wiggle file and has the advantage of supporting random access.
 Input wiggle data can be in variableStep (for data with irregular intervals) or fixedStep
 (for data with regular intervals). Regardless of the input, the output files are always in bedGraph
-format. We export files in bedGraph format because it’s more compact than wiggle format, and more importantly,
-CrossMap internally transforms wiggle into bedGraph to increase running speed.</p>
+format.</p>
 <p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">wig</span></code> without any arguments will print a help message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  wig
 
@@ -646,7 +646,7 @@ Options:
 <p class="admonition-title">Note</p>
 <ol class="arabic simple">
 <li><p>Genome coordinates and reference alleles will be updated to target assembly.</p></li>
-<li><p>Reference genome is the genome sequences of target assembly.</p></li>
+<li><p>The reference genome is the genome sequences of target assembly.</p></li>
 <li><p>If the reference genome sequence file (../database/genome/hg18.fa) was not indexed, CrossMap will automatically index it (only the first time you run CrossMap).</p></li>
 <li><p>Output files: <em>output_file</em> and <em>output_file.unmap</em>.</p></li>
 <li><p>In the output VCF file, whether the chromosome IDs contain “chr” or not depends on the format of the input VCF file.</p></li>
@@ -721,7 +721,7 @@ CrossMap.py gvcf &lt;chain_file&gt;  &lt;input.gvcf&gt;  &lt;refGenome.fa&gt;  &
 <h2>Convert large genomic regions<a class="headerlink" href="#convert-large-genomic-regions" title="Permalink to this headline">¶</a></h2>
 <p>For <strong>large genomic regions</strong> such as CNV blocks, the <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bed</span></code> will split each large region into smaller blocks that are 100% matched to the target assembly.
 <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> will NOT split large regions, instead, it will calculate the <strong>map ratio</strong> (i.e. {bases mapped to target genome} / {total bases in query region}). If the
-<strong>map ratio</strong> is larger than the threshold specified by <code class="code docutils literal notranslate"><span class="pre">-r</span></code>, the coordinates will be converted to the target genome, otherwise, fails.</p>
+<strong>map ratio</strong> is larger than the threshold specified by <code class="code docutils literal notranslate"><span class="pre">-r</span></code>, the coordinates will be converted to the target genome, otherwise, it fails.</p>
 <p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> without any arguments will print a help message:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Usage</span>
 <span class="o">-----</span>
@@ -816,7 +816,7 @@ $head chain.tab
 </div>
 <div class="section" id="compare-to-ucsc-liftover-tool">
 <h1>Compare to UCSC liftover tool<a class="headerlink" href="#compare-to-ucsc-liftover-tool" title="Permalink to this headline">¶</a></h1>
-<p>To access the accuracy of CrossMap, we randomly generated 10,000 genome intervals (download from <a class="reference external" href="https://sourceforge.net/projects/crossmap/files/hg19.rand.bed.gz/download">here</a>) with the
+<p>To assess the accuracy of CrossMap, we randomly generated 10,000 genome intervals (download from <a class="reference external" href="https://sourceforge.net/projects/crossmap/files/hg19.rand.bed.gz/download">here</a>) with the
 fixed interval size of 200 bp from hg19. Then we converted them into hg18 using CrossMap
 and <a class="reference external" href="http://genome.ucsc.edu/cgi-bin/hgLiftOver">UCSC liftover tool</a> with default configurations. We compare CrossMap
 to <a class="reference external" href="http://genome.ucsc.edu/cgi-bin/hgLiftOver">UCSC liftover tool</a> because it is the most widely
@@ -945,7 +945,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.5.2 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.5.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">What is CrossMap ?</a></li> 
       </ul>
     </div>
