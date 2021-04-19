@@ -10,9 +10,6 @@ Created on Fri Apr 16 13:51:10 2021
 @author: m102324
 """
 def print_help(lst):
-	#for k in sorted(lst):
-	#	print('	 ' + k + '\t' + lst[k], file=sys.stderr)
-	#print(file=sys.stderr)
 	for i,j in lst:
 		print('\n' + i + '\n' + '-'*len(i) + '\n' + '\n'.join(['  ' + k for k in wrap(j, width=80)]), file=sys.stderr)
 
@@ -24,7 +21,9 @@ def general_help(cmds):
 	print("Program: %s (v%s)" % ("CrossMap", __version__), file=sys.stderr)
 	print("\nDescription: \n%s" % '\n'.join('  '+i for i in wrap(desc,width=80)), file=sys.stderr)
 	print("\nUsage: CrossMap.py <command> [options]\n", file=sys.stderr)
-	print_help(cmds)
+	for k in sorted(cmds):
+		print('	 ' + k + '\t' + cmds[k], file=sys.stderr)
+	print(file=sys.stderr)
 
 def bed_help():
 	msg =[
