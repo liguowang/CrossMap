@@ -1,3 +1,6 @@
 test/test.sh
 dist/*
 build/*
+venv/
+.eggs/
+*.DS_Store
