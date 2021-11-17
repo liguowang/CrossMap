@@ -10,7 +10,7 @@ def parse_header( line ):
 	'''
 	return dict( [ field.split( '=' ) for field in line.split()[1:] ] )
 
-def update_chromID(c_temp, c_target):
+def update_chromID(c_temp, c_target, chr_style = 'a'):
 	'''
 	Update chromsome ID styles from 'c_target' to 'c_temp'.
 
@@ -21,6 +21,12 @@ def update_chromID(c_temp, c_target):
 
 	c_target : str
 		Chromosome ID that need to be updated
+
+	chr_style : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 
 	Returns
 	--------
@@ -35,16 +41,31 @@ def update_chromID(c_temp, c_target):
 	'''
 	c_temp = str(c_temp)
 	c_target = str(c_target)
-	if c_temp.startswith('chr'):
-		if c_target.startswith('chr'):
-			return c_target
-		else:
-			return ('chr' + c_target)
-	else:
+
+	#short style
+	if chr_style == 's':
 		if c_target.startswith('chr'):
 			return c_target.replace('chr','')
 		else:
 			return c_target
+	#long style
+	elif chr_style == 'l':
+		if c_target.startswith('chr'):
+			return c_target
+		else:
+			return ('chr' + c_target)
+	#as-is
+	else:
+		if c_temp.startswith('chr'):
+			if c_target.startswith('chr'):
+				return c_target
+			else:
+				return ('chr' + c_target)
+		else:
+			if c_target.startswith('chr'):
+				return c_target.replace('chr','')
+			else:
+				return c_target
 
 def revcomp_DNA(dna, extended=True):
 	'''
@@ -334,7 +355,7 @@ def read_chain_file (chain_file, print_table = False):
 	return (maps,target_chromSize, source_chromSize)
 
 
-def map_coordinates(mapping, q_chr, q_start, q_end, q_strand = '+', print_match = False):
+def map_coordinates(mapping, q_chr, q_start, q_end, q_strand = '+', print_match = False, chrom_style = 'a'):
 	'''
 	Map coordinates from source (i.e. original) assembly to target (i.e. new) assembly.
 
@@ -376,7 +397,7 @@ def map_coordinates(mapping, q_chr, q_start, q_end, q_strand = '+', print_match 
 		s_start = targets[0].start
 		s_end = targets[0].end
 		t_chrom = targets[0].value[0]
-		t_chrom = update_chromID(q_chr, t_chrom)
+		t_chrom = update_chromID(q_chr, t_chrom, chr_style = chrom_style)
 		t_start = targets[0].value[1]
 		t_end = targets[0].value[2]
 		t_strand = targets[0].value[3]
@@ -407,7 +428,7 @@ def map_coordinates(mapping, q_chr, q_start, q_end, q_strand = '+', print_match 
 			s_start = t.start
 			s_end = t.end
 			t_chrom = t.value[0]
-			t_chrom = update_chromID(q_chr, t_chrom)
+			t_chrom = update_chromID(q_chr, t_chrom, chr_style = chrom_style)
 			t_start = t.value[1]
 			t_end = t.value[2]
 			t_strand = t.value[3]

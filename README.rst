@@ -10,7 +10,7 @@ Use pip to install CrossMap
  
  or 
  
- pip3 install CrossMap	#Install CrossMap supporting Python3
+ pip3 install CrossMap
 
 
 Documentation

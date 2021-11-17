@@ -6,7 +6,7 @@ from cmmodule.utils import map_coordinates
 from cmmodule  import sam_header
 from cmmodule.meta_data import __version__
 
-def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, IS_size=200, IS_std=30.0, fold=3, addtag = True):
+def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, IS_size=200, IS_std=30.0, fold=3, addtag = True, cstyle = 'a'):
 	'''
 
 	Description
@@ -68,6 +68,12 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 			SN: unmaped
 			SM: multiple mapped
 			SU: uniquely mapped
+
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	# determine the input file format (BAM, CRAM or SAM)
@@ -106,7 +112,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 	# update chrom_size of target genome
 	target_chrom_sizes = {}
 	for n,l in chrom_size.items():
-		target_chrom_sizes[update_chromID(chrom_style, n)] = l
+		target_chrom_sizes[update_chromID(chrom_style, n, chr_style = cstyle)] = l
 
 	(new_header, name_to_id) = sam_header.bam_header_generator(orig_header = sam_ori_header, chrom_size = target_chrom_sizes, prog_name="CrossMap",prog_ver = __version__, format_ver=1.0,sort_type = 'coordinate',co=comments)
 
@@ -186,7 +192,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 					new_alignment.flag = new_alignment.flag | 0x200
 					new_alignment.reference_id = -1                       #3
 					new_alignment.reference_start = 0                     #4
-					new_alignment.mapping_quality = 255				      #5
+					new_alignment.mapping_quality = 255				       #5
 					new_alignment.cigartuples = old_alignment.cigartuples #6
 					new_alignment.next_reference_id = -1   #7
 					new_alignment.next_reference_start = 0 #8
@@ -203,7 +209,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 					new_alignment.flag = new_alignment.flag | 0x4         #2
 					new_alignment.reference_id = -1                       #3
 					new_alignment.reference_start = 0                     #4
-					new_alignment.mapping_quality = 255			          #5
+					new_alignment.mapping_quality = 255			           #5
 					new_alignment.cigartuples = old_alignment.cigartuples #6
 
 					# R1 & R2 originally unmapped
@@ -223,7 +229,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 							read2_strand = '-' if old_alignment.mate_is_reverse else '+'
 							read2_start = old_alignment.next_reference_start
 							read2_end = read2_start + 1
-							read2_maps = map_coordinates(mapping, read2_chr, read2_start, read2_end, read2_strand)
+							read2_maps = map_coordinates(mapping, read2_chr, read2_start, read2_end, read2_strand, chrom_style = cstyle)
 						except:
 							read2_maps = None
 
@@ -287,7 +293,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 						read1_strand = '-' if old_alignment.is_reverse else '+'
 						read1_start = old_alignment.reference_start
 						read1_end = old_alignment.reference_end
-						read1_maps = map_coordinates(mapping, read1_chr, read1_start, read1_end, read1_strand)
+						read1_maps = map_coordinates(mapping, read1_chr, read1_start, read1_end, read1_strand, chrom_style = cstyle)
 					except:
 						read1_maps = None
 
@@ -297,7 +303,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 							read2_strand = '-' if old_alignment.mate_is_reverse else '+'
 							read2_start = old_alignment.next_reference_start
 							read2_end = read2_start + 1
-							read2_maps = map_coordinates(mapping, read2_chr, read2_start, read2_end, read2_strand)
+							read2_maps = map_coordinates(mapping, read2_chr, read2_start, read2_end, read2_strand, chrom_style = cstyle)
 						except:
 							read2_maps = None
 					#------------------------------------
@@ -515,7 +521,7 @@ def crossmap_bam_file(mapping, chainfile, infile,  outfile_prefix, chrom_size, I
 					read_strand = '-' if old_alignment.is_reverse else '+'
 					read_start = old_alignment.reference_start
 					read_end = old_alignment.reference_end
-					read_maps = map_coordinates(mapping, read_chr, read_start, read_end, read_strand)
+					read_maps = map_coordinates(mapping, read_chr, read_start, read_end, read_strand, chrom_style = cstyle)
 
 					# (2) unmapped afte liftover
 					if read_maps is None:

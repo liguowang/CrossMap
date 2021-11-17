@@ -9,7 +9,7 @@ from cmmodule.utils import update_chromID,revcomp_DNA
 from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
-def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False, compress = False):
+def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False, compress = False, cstyle = 'a'):
 	'''
 	Convert genome coordinates in GVCF format.
 
@@ -38,6 +38,12 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 		A logical value indicates whether to compare ref_allele to alt_allele after
 		liftover. If True, the variant will be marked as "unmap" if
 		ref_allele == alt_allele.
+
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	if noCompAllele:
@@ -49,7 +55,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 	if not os.path.exists(refgenome + '.fai'):
 		logging.info("Creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
-	if os.path.getctime(refgenome + '.fai') < os.path.getctime(refgenome):
+	if os.path.getmtime(refgenome + '.fai') < os.path.getmtime(refgenome):
 		logging.info("Index file is older than reference genome. Re-creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
 
@@ -108,7 +114,9 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 		elif line.startswith('##contig'):
 			print(line, file=UNMAP)
 			if 'ID=chr' in line:
-				withChr = True
+				chr_template = 'chr1'
+			else:
+				chr_template = '1'
 
 		#update contig information
 		elif line.startswith('#CHROM'):
@@ -116,15 +124,8 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 			target_gsize = dict(list(zip(refFasta.references, refFasta.lengths)))
 			for chr_id in sorted(target_gsize):
 				if chr_id.startswith('chr'):
-					if withChr is True:
-						print("##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
-					else:
-						print("##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id.replace('chr',''), target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
-				else:
-					if withChr is True:
-						print("##contig=<ID=%s,length=%d,assembly=%s>" % ('chr' + chr_id, target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
-					else:
-						print("##contig=<ID=%s,length=%d,assembly=%s>" % (chr_id, target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
+					#if withChr is True:
+					print("##contig=<ID=%s,length=%d,assembly=%s>" % (update_chromID(chr_template, chr_id, cstyle), target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
 
 			print("##liftOverProgram=<CrossMap,version=%s,website=https://sourceforge.net/projects/crossmap>" % __version__, file=FILE_OUT)
 			print("##liftOverChainFile=<%s>" % liftoverfile, file=FILE_OUT)
@@ -152,7 +153,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 					failed_region += 1
 					continue
 
-				a = map_coordinates(mapping, chrom, start, end,'+')
+				a = map_coordinates(mapping, chrom, start, end, '+', chrom_style = cstyle)
 				if a is None:
 					print (line + "\tFail(Unmap)", file=UNMAP)
 					failed_region += 1
@@ -181,7 +182,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 				end = start + len(fields[3])	# ref_allele end
 				alt_allele = fields[4].replace(' ','').split(',')[0]	# 20  10000598    .   T   A,<NON_REF> 1754.77 .   DP=54;
 
-				a = map_coordinates(mapping, chrom, start, end,'+')
+				a = map_coordinates(mapping, chrom, start, end, '+', chrom_style = cstyle)
 				if a is None:
 					print (line + "\tFail(Unmap)", file=UNMAP)
 					failed_var += 1

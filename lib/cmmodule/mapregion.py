@@ -2,7 +2,7 @@ import sys
 from cmmodule  import ireader
 from cmmodule.utils import map_coordinates
 
-def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85):
+def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85, cstyle = 'a'):
 	'''
 	Convert large genomic regions (in bed format) between assemblies.
 	BED format: http://genome.ucsc.edu/FAQ/FAQformat.html#format1
@@ -21,6 +21,11 @@ def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85):
 	min_ratio : float, optional
 		Minimum ratio of query bases that must remap
 
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	# check if 'outfile' was set. If not set, print to screen, if set, print to file
@@ -77,7 +82,7 @@ def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85):
 		end = int(fields[2])
 		total_query_length = end - start	#used to calculate q_map_ratio
 
-		a = map_coordinates(mapping, chrom, start, end, strand)
+		a = map_coordinates(mapping, chrom, start, end, strand, chrom_style = cstyle)
 		# input: 'chr1',246974830,247024835
 		# output: [('chr1', 246974830, 246974833, '+' ), ('chr1', 248908207, 248908210, '+' ), ('chr1', 247024833, 247024835, '+'), ('chr1', 249058210, 249058212,'+')]
 		# [('chr1', 246974830, 246974833), ('chr1', 248908207, 248908210)]

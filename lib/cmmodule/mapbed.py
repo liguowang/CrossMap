@@ -4,7 +4,8 @@ from cmmodule.utils import check_bed12
 from cmmodule.utils import map_coordinates
 from cmmodule  import annoGene
 
-def crossmap_bed_file(mapping, inbed, outfile=None):
+
+def crossmap_bed_file(mapping, inbed, outfile = None, unmapfile = None, cstyle = 'a'):
 	'''
 	Convert genome coordinates (in bed format) between assemblies.
 	BED format: http://genome.ucsc.edu/FAQ/FAQformat.html#format1
@@ -20,12 +21,23 @@ def crossmap_bed_file(mapping, inbed, outfile=None):
 	outfile : str, optional
 		Prefix of output files.
 
+	unmapfile: str, optional
+		Name of file to save unmapped entries. This option will be ignored if outfile is None.
+
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	# check if 'outfile' was set. If not set, print to screen, if set, print to file
 	if outfile is not None:
 		FILE_OUT = open(outfile,'w')
-		UNMAP = open(outfile + '.unmap','w')
+		if unmapfile is not None:
+			UNMAP = open(unmapfile, 'w')
+		else:
+			UNMAP = open(outfile + '.unmap','w')
 	else:
 		pass
 
@@ -77,7 +89,7 @@ def crossmap_bed_file(mapping, inbed, outfile=None):
 			start = int(fields[1])
 			end = int(fields[2])
 
-			a = map_coordinates(mapping, chrom, start, end, strand)
+			a = map_coordinates(mapping, chrom, start, end, strand, chrom_style = cstyle)
 
 
 			try:
@@ -134,7 +146,7 @@ def crossmap_bed_file(mapping, inbed, outfile=None):
 			exons_new_pos = []
 			for e_chr, e_start, e_end in exons_old_pos:
 				# a has two elements, first is query, 2nd is target. # [('chr1', 246974830, 246974833,'+'), ('chr1', 248908207, 248908210,'+')]
-				a = map_coordinates(mapping, e_chr, e_start, e_end, strand)
+				a = map_coordinates(mapping, e_chr, e_start, e_end, strand, chrom_style = cstyle)
 				if a is None:
 					fail_flag =True
 					break

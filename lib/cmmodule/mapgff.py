@@ -1,8 +1,10 @@
 import sys
+import string
+import random
 from cmmodule  import ireader
 from cmmodule.utils import map_coordinates
 
-def crossmap_gff_file(mapping, ingff,outfile = None):
+def crossmap_gff_file(mapping, ingff,outfile = None, cstyle = 'a'):
 	'''
 	Description
 	-----------
@@ -47,11 +49,19 @@ def crossmap_gff_file(mapping, ingff,outfile = None):
 
 	outfile : str, optional
 		Prefix of output files.
+
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	if outfile is not None:
+		rand_str = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 		FILE_OUT = open(outfile,'w')
-		UNMAP = open(outfile + '.unmap', 'w')
+		UNMAP = open(outfile + '.' + rand_str + '.unmap','w')
+
 
 	for line in ireader.reader(ingff):
 		if line.startswith(('#','track','browser','visibility')):continue
@@ -77,7 +87,7 @@ def crossmap_gff_file(mapping, ingff,outfile = None):
 		strand = '-' if fields[6] == '-' else '+'
 
 		chrom = fields[0]
-		a = map_coordinates(mapping, chrom,start,end,strand)
+		a = map_coordinates(mapping, chrom, start, end, strand, chrom_style = cstyle)
 
 		if a is None:
 			if outfile is None:

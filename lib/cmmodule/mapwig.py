@@ -5,7 +5,7 @@ import pyBigWig
 from cmmodule.utils import map_coordinates,wiggleReader,bigwigReader,update_chromID
 import logging
 
-def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format, binSize=100000):
+def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format, binSize=100000, cstyle = 'a'):
 	'''
 	Description
 	-----------
@@ -36,6 +36,12 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
 
 	binSize : int
 		The chunk size when reading bigwig file in each iteration.
+
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	OUT_FILE1 = open(out_prefix + '.bgr','w')	# original bgr file
@@ -49,7 +55,7 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
 
 		for chrom, start, end, strand, score in wiggleReader (in_file):
 			chrom_style = chrom
-			maps = map_coordinates(mapping, chrom, start, end, '+')
+			maps = map_coordinates(mapping, chrom, start, end, '+',  chrom_style = cstyle)
 			if maps is None:
 				continue
 			if len(maps) == 2:
@@ -89,7 +95,7 @@ def crossmap_wig_file(mapping, in_file, out_prefix, taget_chrom_size, in_format,
 		logging.info("Liftover bigwig file %s to bedGraph file %s:" % (in_file, out_prefix + '.bgr'))
 		for chrom, start, end, score in bigwigReader(in_file):
 			chrom_style = chrom
-			maps = map_coordinates(mapping, chrom, start, end, '+')
+			maps = map_coordinates(mapping, chrom, start, end, '+',  chrom_style = cstyle)
 			try:
 				if maps is None: continue
 				if len(maps) == 2:

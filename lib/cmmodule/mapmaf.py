@@ -8,7 +8,7 @@ from cmmodule.utils import map_coordinates
 from cmmodule.meta_data import __version__
 
 
-def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_name):
+def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_name, cstyle = 'a'):
 	'''
 	Convert genome coordinates in MAF (mutation annotation foramt) format.
 
@@ -32,15 +32,22 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 
 	refgenome : file
 		The genome sequence file of 'target' assembly in FASTA format.
+
 	ref_name : str
 		The NCBI build name of the target assembly, for example, "GRCh37", "GRCh38".
+
+	cstyle : str, optional
+		Chromosome ID style. Must be one of ['a', 's', 'l'], where
+		'a' : as-is. The chromosome ID of the output file is in the same style of the input file.
+		's' : short ID, such as "1", "2", "X.
+		'l' : long ID, such as "chr1", "chr2", "chrX.
 	'''
 
 	#index refegenome file if it hasn't been done
 	if not os.path.exists(refgenome + '.fai'):
 		logging.info("Creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
-	if os.path.getctime(refgenome + '.fai') < os.path.getctime(refgenome):
+	if os.path.getmtime(refgenome + '.fai') < os.path.getmtime(refgenome):
 		logging.info("Index file is older than reference genome. Re-creating index for: %s" % refgenome)
 		pysam.faidx(refgenome)
 
@@ -78,7 +85,7 @@ def crossmap_maf_file(mapping, infile, outfile, liftoverfile, refgenome, ref_nam
 			end = int(fields[6])
 			#strand = fields[7]
 
-			a = map_coordinates(mapping, chrom, start, end,'+')
+			a = map_coordinates(mapping, chrom, start, end,'+', chrom_style = cstyle)
 
 			if a is None:
 				print(line, file=UNMAP)
