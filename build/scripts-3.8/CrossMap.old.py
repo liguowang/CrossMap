@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!python
 '''
 -------------------------------------------------------------------------------------
 CrossMap: lift over genomic coordinates between genome assemblies.

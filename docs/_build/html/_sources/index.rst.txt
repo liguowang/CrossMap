@@ -34,6 +34,10 @@ How CrossMap works?
 Release history
 ===================
 
+**11/29/2021: Release version 0.6.1**
+
+1. Remove unused modules from the lib folder.
+
 **11/16/2021: Release version 0.6.0**
 
 1. Use `argparse <https://docs.python.org/3/library/argparse.html>`_ instead of `optparse <https://docs.python.org/3/library/optparse.html>`_.

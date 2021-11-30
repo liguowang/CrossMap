@@ -167,7 +167,6 @@ setup.py
 .eggs/nose-1.3.7-py3.7.egg/nose/tools/nontrivial.py
 .eggs/nose-1.3.7-py3.7.egg/nose/tools/trivial.py
 bin/.DS_Store
-bin/CrossMap.old.py
 bin/CrossMap.py
 data/.DS_Store
 data/readme.txt
@@ -189,7 +188,7 @@ data/mouse/GRCm38_to_NCBIM36.chain.gz
 data/mouse/GRCm38_to_NCBIM37.chain.gz
 data/mouse/NCBIM36_to_GRCm38.chain.gz
 data/mouse/NCBIM37_to_GRCm38.chain.gz
-dist/.DS_Store
+docs/.DS_Store
 docs/Makefile
 docs/conf.py
 docs/crossMap_logo.png
@@ -245,13 +244,9 @@ lib/CrossMap.egg-info/requires.txt
 lib/CrossMap.egg-info/top_level.txt
 lib/__pycache__/psyco_full.cpython-38.pyc
 lib/cmmodule/BED.py
-lib/cmmodule/SAM.py
 lib/cmmodule/__init__.py
 lib/cmmodule/annoGene.py
-lib/cmmodule/bam_cigar.py
 lib/cmmodule/bgrMerge.py
-lib/cmmodule/dotProduct.py
-lib/cmmodule/fasta.py
 lib/cmmodule/ireader.py
 lib/cmmodule/mapbam.py
 lib/cmmodule/mapbed.py
@@ -262,11 +257,8 @@ lib/cmmodule/mapregion.py
 lib/cmmodule/mapvcf.py
 lib/cmmodule/mapwig.py
 lib/cmmodule/meta_data.py
-lib/cmmodule/mystat.py
 lib/cmmodule/myutils.py
-lib/cmmodule/quantile.py
 lib/cmmodule/sam_header.py
-lib/cmmodule/twoList.py
 lib/cmmodule/utils.py
 lib/cmmodule/wig_reader.py
 lib/cmmodule/wiggle.py
@@ -319,6 +311,13 @@ lib/cmmodule/__pycache__/utils.cpython-38.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-36.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-37.pyc
 lib/cmmodule/__pycache__/wig_reader.cpython-38.pyc
+test/1_out.hg38.vcf
+test/1_out.hg38.vcf.unmap
+test/2_hg38.bam.bam
+test/2_hg38.bam.sorted.bam
+test/2_hg38.bam.sorted.bam.bai
+test/GRCh37_to_GRCh38.chain.gz
+test/test.bed
 test/test00_hg19.bed3
 test/test01_hg19.bed12
 test/test02_hg19.vcf
