@@ -14,7 +14,7 @@ def main():
             py_modules = [ 'psyco_full' ],
             packages = find_packages( 'lib' ),
             package_dir = { '': 'lib' },
-            package_data = { '': ['*.ps'] },
+            package_data = {},
             scripts = glob.glob( "bin/*.py"),
             ext_modules = [],
             test_suite = 'nose.collector',
