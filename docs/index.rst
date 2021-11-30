@@ -36,7 +36,7 @@ Release history
 
 **11/29/2021: Release version 0.6.1**
 
-1. Remove unused modules from the lib folder.
+1. Same as v0.6.0. Remove unused modules from the lib folder.
 
 **11/16/2021: Release version 0.6.0**
 
