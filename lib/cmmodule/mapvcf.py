@@ -164,8 +164,8 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 				alt_alleles_updated = []
 				for alt_allele in alt_alleles:
 					if len(ref_allele) != len(alt_allele):
-						alt_allele = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
-						alt_alleles_updated.append(alt_allele)
+						tmp = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
+						alt_alleles_updated.append(tmp)
 				fields[4] = ','.join(alt_alleles_updated)
 
 
