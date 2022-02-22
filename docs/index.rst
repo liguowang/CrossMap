@@ -34,6 +34,10 @@ How CrossMap works?
 Release history
 ===================
 
+**02/22/2022: Release version 0.6.2**
+
+1. For insertions and deletions, the first nucleotide of the ALT allele (the 5th field in VCF file) is updated to the nucleotide at POS of the reference genome
+
 **11/29/2021: Release version 0.6.1**
 
 1. Same as v0.6.0. Remove unused modules from the lib folder.
