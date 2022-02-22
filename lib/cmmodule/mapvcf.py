@@ -157,6 +157,19 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 					fail += 1
 					continue
 
+				# update alt alele for indels.
+				# for insertions and deletions in a VCF file,  the first nucleotide in REF and ALT 
+				# fields correspond to the nucleotide at POS in the *reference genome*
+				ref_allele = fields[3]
+				alt_alleles = fields[4].split(',')
+				alt_alleles_updated = []
+				for alt_allele in alt_alleles:
+					if len(ref_allele) != len(alt_allele):
+						alt_allele = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
+						alt_alleles_updated.append(alt_allele)
+				fields[4] = ','.join(alt_alleles_updated)
+
+
 				# update END if any
 				fields[7] = re.sub('END\=\d+','END='+str(target_end),fields[7])
 

@@ -1,6 +1,6 @@
 import collections
 from bx.intervals import *
-from cmmodule import BED
+#from cmmodule import BED
 
 '''Compare given bed entry to reference gene model'''
 
