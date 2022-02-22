@@ -114,11 +114,11 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 			for chr_id in sorted(target_gsize):
 				print("##contig=<ID=%s,length=%d,assembly=%s>" % (update_chromID(chr_template, chr_id, cstyle), target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
 
-			print("##liftOverProgram=<CrossMap,version=%s,website=https://sourceforge.net/projects/crossmap>" % __version__, file=FILE_OUT)
-			print("##liftOverChainFile=<%s>" % liftoverfile, file=FILE_OUT)
-			print("##originalFile=<%s>" % infile, file=FILE_OUT)
-			print("##targetRefGenome=<%s>" % refgenome, file=FILE_OUT)
-			print("##liftOverDate=<%s>" % datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)
+			print("##liftOverProgram=CrossMap,version=%s,website=https://crossmap.readthedocs.io/en/latest/" % __version__, file=FILE_OUT)
+			print("##liftOverChainFile=%s" % liftoverfile, file=FILE_OUT)
+			print("##originalFile=%s" % infile, file=FILE_OUT)
+			print("##targetRefGenome=%s" % refgenome, file=FILE_OUT)
+			print("##liftOverDate=%s" % datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)
 			print(line, file=FILE_OUT)
 			print(line, file=UNMAP)
 			logging.info("Lifting over ... ")
