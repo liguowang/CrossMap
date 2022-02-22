@@ -157,7 +157,6 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 					fail += 1
 					continue
 
-				# update alt alele for indels.
 				# for insertions and deletions in a VCF file,  the first nucleotide in REF and ALT 
 				# fields correspond to the nucleotide at POS in the *reference genome*
 				ref_allele = fields[3]
