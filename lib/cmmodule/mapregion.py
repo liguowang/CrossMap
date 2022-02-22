@@ -63,7 +63,7 @@ def crossmap_region_file(mapping, inbed, outfile=None, min_ratio = 0.85, cstyle 
 				print(line + '\tInvalidEndPosition', file=UNMAP)
 			continue
 		if int(fields[1]) > int(fields[2]):
-			print("\"Start\" is larger than \"End\" coordinate is not an integer. skip " + line, file=sys.stderr)
+			print("\"Start\" is larger than \"End\" coordinate. skip " + line, file=sys.stderr)
 			if outfile:
 				print(line + '\tStart>End', file=UNMAP)
 			continue
