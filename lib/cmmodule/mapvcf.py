@@ -166,12 +166,12 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 					if len(ref_allele) != len(alt_allele):
 						tmp = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
 						alt_alleles_updated.append(tmp)
+					else:
+						alt_alleles_updated.append(alt_allele)
 				fields[4] = ','.join(alt_alleles_updated)
-
 
 				# update END if any
 				fields[7] = re.sub('END\=\d+','END='+str(target_end),fields[7])
-
 
 				if a[1][3] == '-':
 					fields[4] = revcomp_DNA(fields[4], True)
