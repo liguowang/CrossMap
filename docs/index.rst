@@ -36,8 +36,8 @@ Release history
 
 **07/12/2022: Release version 0.6.4**
 
-1. Fix bug when the input bigwig file does not have coverage signal for some chromsomes. 
-2. When the input VCF file does not have CONTIG field, use long chromosmoe ID (e.g., "chr1") as default.
+1. Fix bug when the input bigwig file does not have coverage signal for some chromosomes. 
+2. When the input VCF file does not have CONTIG field, use long chromosome ID (e.g., "chr1") as default.
 
 **03/04/2022: Release version 0.6.3**
 

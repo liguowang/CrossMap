@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: CrossMap
-Version: 0.6.3
+Version: 0.6.4
 Summary:  Lift over genomics coordinates between assemblies
 Home-page: https://crossmap.readthedocs.io/en/latest/
 Author: Liguo Wang

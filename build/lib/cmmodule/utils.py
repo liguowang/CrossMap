@@ -173,7 +173,10 @@ def bigwigReader(infile):
 	bw = pyBigWig.open(infile)
 	chrom_sizes = bw.chroms()
 	for chr_name, chr_size in list(chrom_sizes.items()):
-		for i_st, i_end, i_score in bw.intervals(chr_name, 0, chr_size):
+		intervals = bw.intervals(chr_name, 0, chr_size)
+		if intervals is None:
+			continue
+		for i_st, i_end, i_score in intervals:
 			yield(( chr_name, i_st, i_end, i_score ))
 
 def check_bed12(bedline):
