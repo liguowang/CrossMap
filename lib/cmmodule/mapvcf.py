@@ -67,6 +67,7 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 	total = 0
 	fail = 0
 
+	chr_template = 'chr1' #if there is no contig field, use this chrom ID style.
 
 	for line in ireader.reader(infile):
 		if not line.strip():
@@ -139,10 +140,13 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 				continue
 
 			if len(a) == 2:
+
 				# update chrom
 				target_chr = str(a[1][0])	#target_chr is from chain file, could be 'chr1' or '1'
 				target_start = a[1][1]
 				target_end = a[1][2]
+				target_size = target_end - target_start
+
 				fields[0] = target_chr
 
 				# update start coordinate

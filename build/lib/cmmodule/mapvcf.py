@@ -114,11 +114,11 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 			for chr_id in sorted(target_gsize):
 				print("##contig=<ID=%s,length=%d,assembly=%s>" % (update_chromID(chr_template, chr_id, cstyle), target_gsize[chr_id], os.path.basename(refgenome)), file=FILE_OUT)
 
-			print("##liftOverProgram=<CrossMap,version=%s,website=https://sourceforge.net/projects/crossmap>" % __version__, file=FILE_OUT)
-			print("##liftOverChainFile=<%s>" % liftoverfile, file=FILE_OUT)
-			print("##originalFile=<%s>" % infile, file=FILE_OUT)
-			print("##targetRefGenome=<%s>" % refgenome, file=FILE_OUT)
-			print("##liftOverDate=<%s>" % datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)
+			print("##liftOverProgram=CrossMap,version=%s,website=https://crossmap.readthedocs.io/en/latest/" % __version__, file=FILE_OUT)
+			print("##liftOverChainFile=%s" % liftoverfile, file=FILE_OUT)
+			print("##originalFile=%s" % infile, file=FILE_OUT)
+			print("##targetRefGenome=%s" % refgenome, file=FILE_OUT)
+			print("##liftOverDate=%s" % datetime.date.today().strftime("%B%d,%Y"), file=FILE_OUT)
 			print(line, file=FILE_OUT)
 			print(line, file=UNMAP)
 			logging.info("Lifting over ... ")
@@ -157,9 +157,21 @@ def crossmap_vcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompA
 					fail += 1
 					continue
 
+				# for insertions and deletions in a VCF file,  the first nucleotide in REF and ALT 
+				# fields correspond to the nucleotide at POS in the *reference genome*
+				ref_allele = fields[3]
+				alt_alleles = fields[4].split(',')
+				alt_alleles_updated = []
+				for alt_allele in alt_alleles:
+					if len(ref_allele) != len(alt_allele):
+						tmp = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
+						alt_alleles_updated.append(tmp)
+					else:
+						alt_alleles_updated.append(alt_allele)
+				fields[4] = ','.join(alt_alleles_updated)
+
 				# update END if any
 				fields[7] = re.sub('END\=\d+','END='+str(target_end),fields[7])
-
 
 				if a[1][3] == '-':
 					fields[4] = revcomp_DNA(fields[4], True)
