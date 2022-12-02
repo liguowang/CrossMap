@@ -4,6 +4,16 @@ from cmmodule  import ireader
 import logging
 
 
+def is_dna(s):
+	"""
+	Check if seq is made of DNA nucleotides.
+	"""
+	dna = set(('A','C', 'G', 'T', 'N', 'X'))
+	if set(s.upper()) <= dna:
+		return True
+	else:
+		return False
+
 def parse_header( line ):
 	'''
 	Parse the header line of wiggle file.

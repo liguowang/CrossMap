@@ -5,8 +5,7 @@ import re
 import logging
 import subprocess
 from cmmodule  import ireader
-from cmmodule.utils import update_chromID,revcomp_DNA
-from cmmodule.utils import map_coordinates
+from cmmodule.utils import update_chromID,revcomp_DNA,map_coordinates,is_dna
 from cmmodule.meta_data import __version__
 
 def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noCompAllele = False, compress = False, cstyle = 'a'):
@@ -207,15 +206,18 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile, refgenome, noComp
 						failed_var += 1
 
 
-					# for insertions and deletions in a VCF file,  the first nucleotide in REF and ALT 
+					# for insertions and deletions in a VCF file,  the first nucleotide in REF and ALT
 					# fields correspond to the nucleotide at POS in the *reference genome*
 					ref_allele = fields[3]
 					alt_alleles = fields[4].split(',')
 					alt_alleles_updated = []
 					for alt_allele in alt_alleles:
-						if len(ref_allele) != len(alt_allele):
-							tmp = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
-							alt_alleles_updated.append(tmp)
+						if is_dna(alt_allele):
+							if len(ref_allele) != len(alt_allele):
+								tmp = ref_allele[0] + alt_allele[1:] #replace the 1st nucleotide of ALT
+								alt_alleles_updated.append(tmp)
+							else:
+								alt_alleles_updated.append(alt_allele)
 						else:
 							alt_alleles_updated.append(alt_allele)
 					fields[4] = ','.join(alt_alleles_updated)
