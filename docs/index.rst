@@ -34,6 +34,11 @@ How CrossMap works?
 Release history
 ===================
 
+**07/21/2023: Release version 0.6.4**
+
+1. Fix bug when the sequence in BAM file is represented as "*"
+2. Change code style
+
 **07/12/2022: Release version 0.6.4**
 
 1. Fix bug when the input bigwig file does not have coverage signal for some chromosomes. 
@@ -134,6 +139,7 @@ A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a
 
 **UCSC chain files**
 
+ * Chain files from hs1 (T2T-CHM13) to hg38/hg19/mm10/mm9 (ore vice versa): https://hgdownload.soe.ucsc.edu/goldenPath/hs1/liftOver/ 
  * Chain files from hg38 (GRCh38) to hg19 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
  * Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/
  * Chain File from mm10 (GRCm38) to mm9 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/

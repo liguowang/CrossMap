@@ -34,6 +34,19 @@ How CrossMap works?
 Release history
 ===================
 
+**07/12/2022: Release version 0.6.4**
+
+1. Fix bug when the input bigwig file does not have coverage signal for some chromosomes. 
+2. When the input VCF file does not have CONTIG field, use long chromosome ID (e.g., "chr1") as default.
+
+**03/04/2022: Release version 0.6.3**
+
+1. Fix bug in v0.6.2. "Alternative allele is empty"
+
+**02/22/2022: Release version 0.6.2**
+
+1. For insertions and deletions, the first nucleotide of the ALT allele (the 5th field in VCF file) is updated to the nucleotide at POS of the reference genome
+
 **11/29/2021: Release version 0.6.1**
 
 1. Same as v0.6.0. Remove unused modules from the lib folder.
@@ -121,6 +134,7 @@ A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a
 
 **UCSC chain files**
 
+ * Chain files from hs1 (T2T-CHM13) to hg38/hg19/mm10/mm9 (ore vice versa): https://hgdownload.soe.ucsc.edu/goldenPath/hs1/liftOver/ 
  * Chain files from hg38 (GRCh38) to hg19 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
  * Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/
  * Chain File from mm10 (GRCm38) to mm9 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/

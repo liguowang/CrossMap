@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What is CrossMap ? &#8212; CrossMap 0.6.0 documentation</title>
+    <title>What is CrossMap ? &#8212; CrossMap 0.6.4 documentation</title>
     <link rel="stylesheet" href="_static/nature.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -22,7 +22,7 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.6.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">What is CrossMap ?</a></li> 
       </ul>
     </div>  
@@ -47,6 +47,19 @@ It supports commonly used file formats including <a class="reference external" h
 </div>
 <div class="section" id="release-history">
 <h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<p><strong>07/12/2022: Release version 0.6.4</strong></p>
+<ol class="arabic simple">
+<li><p>Fix bug when the input bigwig file does not have coverage signal for some chromosomes.</p></li>
+<li><p>When the input VCF file does not have CONTIG field, use long chromosome ID (e.g., “chr1”) as default.</p></li>
+</ol>
+<p><strong>03/04/2022: Release version 0.6.3</strong></p>
+<ol class="arabic simple">
+<li><p>Fix bug in v0.6.2. “Alternative allele is empty”</p></li>
+</ol>
+<p><strong>02/22/2022: Release version 0.6.2</strong></p>
+<ol class="arabic simple">
+<li><p>For insertions and deletions, the first nucleotide of the ALT allele (the 5th field in VCF file) is updated to the nucleotide at POS of the reference genome</p></li>
+</ol>
 <p><strong>11/29/2021: Release version 0.6.1</strong></p>
 <ol class="arabic simple">
 <li><p>Same as v0.6.0. Remove unused modules from the lib folder.</p></li>
@@ -108,6 +121,7 @@ It supports commonly used file formats including <a class="reference external" h
 <p><strong>UCSC chain files</strong></p>
 <blockquote>
 <div><ul class="simple">
+<li><p>Chain files from hs1 (T2T-CHM13) to hg38/hg19/mm10/mm9 (ore vice versa): <a class="reference external" href="https://hgdownload.soe.ucsc.edu/goldenPath/hs1/liftOver/">https://hgdownload.soe.ucsc.edu/goldenPath/hs1/liftOver/</a></p></li>
 <li><p>Chain files from hg38 (GRCh38) to hg19 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/</a></p></li>
 <li><p>Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/</a></p></li>
 <li><p>Chain File from mm10 (GRCm38) to mm9 and all other organisms: <a class="reference external" href="http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/">http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/</a></p></li>
@@ -1057,12 +1071,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.6.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.6.4 documentation</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">What is CrossMap ?</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2021, Liguo Wang.
+        &#169; Copyright 2014-2023, Liguo Wang. All Rights Reserved.
       Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
     </div>
   </body>
