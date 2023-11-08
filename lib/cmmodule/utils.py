@@ -104,7 +104,7 @@ def revcomp_DNA(dna, extended=True):
         complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A', 'Y': 'R',
                       'R': 'Y', 'S': 'W', 'W': 'S', 'K': 'M', 'M': 'K',
                       'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D', 'N': 'N',
-                      '.': '.', '*': '*'}
+                      '.': '.', '*': '*', '-': '-'}
     else:
         complement = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A',
                       'N': ' N', 'X': 'X'}
@@ -115,8 +115,11 @@ def revcomp_DNA(dna, extended=True):
         seqs = seq.split(',')
         comp_seqs = []
         for s in seqs:
-            comp_seqs.append(
-                ''.join([complement[base] for base in reversed(s)]))
+            if s in complement:
+                comp_seqs.append(
+                    ''.join([complement[base] for base in reversed(s)]))
+            else:
+                comp_seqs.append(s)
         return ','.join(comp_seqs)
 
 
