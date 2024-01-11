@@ -1,0 +1,2 @@
+[console_scripts]
+CrossMap = cmmodule:crossmap
