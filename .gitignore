@@ -2,3 +2,6 @@ test/*
 dist/*
 build/*
 docs/_build/*
+.gitignore
+PKG-INFO
+setup.cfg
