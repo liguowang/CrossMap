@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "CrossMap"
+version = "0.6.6"
+authors = [
+  {name="Liguo Wang", email="wangliguo78@gmail.com"},
+]
+maintainers = [
+  {name = "Liguo Wang", email = "wangliguo78@gmail.com"}
+]
+description = "CrossMap -- Lift over genomics coordinates between assemblies."
+readme = "README.rst"
+license = {file = "LICENSE.txt"}
+requires-python = ">=3.8"
+#[tool.setuptools.packages.find]
+#where = ["src"]
+#include = ["dmc"]
+dependencies = [
+  'pysam',
+  'bx-python',
+  'pyBigWig',
+]
+classifiers=[
+	"Programming Language :: Python :: 3",
+	'Development Status :: 4 - Beta',
+	"License :: OSI Approved :: MIT License",
+	'Environment :: Console',
+	'Intended Audience :: Science/Research',
+	'Operating System :: MacOS :: MacOS X',
+	'Operating System :: POSIX',
+	'Topic :: Scientific/Engineering :: Bio-Informatics',
+]
+
+keywords = ["liftover", "genome", "coordinates"]
+
+[project.scripts]
+CrossMap = "cmmodule:crossmap"
+
+[project.urls]
+Documentation = "https://crossmap.readthedocs.io/en/latest/"
+Repository = "https://github.com/liguowang/CrossMap.git"
+Issues = "https://github.com/liguowang/CrossMap/issues"
