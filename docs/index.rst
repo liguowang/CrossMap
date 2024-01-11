@@ -34,6 +34,11 @@ How CrossMap works?
 Release history
 ===================
 
+**01/11/2024: Release version 0.6.6**
+
+1. Fix bugs for VCF varaints liftover.
+2. Handle non-DNA ALT alleles such as <DEL>
+
 **07/21/2023: Release version 0.6.4**
 
 1. Fix bug when the sequence in BAM file is represented as "*"
