@@ -1,3 +1,4 @@
 test/*
 dist/*
+build/*
 docs/_build/*
