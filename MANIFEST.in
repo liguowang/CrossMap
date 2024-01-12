@@ -1,10 +1,8 @@
+include pyproject.toml
 include MANIFEST.in
-include README.txt
-include PKG-INFO
 include LICENSE.txt
+include README.rst
 
-include distribute_setup.py
-recursive-include lib *.pyx
-recursive-include lib *.pxd
-recursive-include lib *.py
-recursive-include bin *
+include setup.py
+include chain_files/*
+recursive-include src *.py
