@@ -1,52 +1,142 @@
-
 <!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What is CrossMap ? &#8212; CrossMap 0.6.4 documentation</title>
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/language_data.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>What is CrossMap ? &mdash; CrossMap documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=fe7df9b0"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" /> 
-  </head><body>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.6.4 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">What is CrossMap ?</a></li> 
-      </ul>
-    </div>  
+</head>
 
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: white" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            epical
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">What is CrossMap ?</a></li>
+<li><a class="reference internal" href="#how-crossmap-works">How CrossMap works?</a></li>
+<li><a class="reference internal" href="#release-history">Release history</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#install-from-pypi">Install from PyPI</a></li>
+<li><a class="reference internal" href="#install-from-github">Install from GitHub</a></li>
+<li><a class="reference internal" href="#upgrade">Upgrade</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#input-and-output">Input and Output</a><ul>
+<li><a class="reference internal" href="#chain-file">Chain file</a></li>
+<li><a class="reference internal" href="#user-input-file">User Input file</a></li>
+<li><a class="reference internal" href="#output-file">Output file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#convert-bed-format-files">Convert BED format files</a></li>
+<li><a class="reference internal" href="#convert-bam-cram-sam-format-files">Convert BAM/CRAM/SAM format files</a></li>
+<li><a class="reference internal" href="#convert-wiggle-format-files">Convert Wiggle format files</a></li>
+<li><a class="reference internal" href="#convert-bigwig-format-files">Convert BigWig format files</a></li>
+<li><a class="reference internal" href="#convert-gff-gtf-format-files">Convert GFF/GTF format files</a></li>
+<li><a class="reference internal" href="#convert-vcf-format-files">Convert VCF format files</a></li>
+<li><a class="reference internal" href="#convert-maf-format-files">Convert MAF format files</a></li>
+<li><a class="reference internal" href="#convert-gvcf-format-files">Convert GVCF format files</a></li>
+<li><a class="reference internal" href="#convert-large-genomic-regions">Convert large genomic regions</a></li>
+<li><a class="reference internal" href="#view-chain-file">View chain file</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#compare-to-ucsc-liftover-tool">Compare to UCSC liftover tool</a></li>
+<li><a class="reference internal" href="#citation">Citation</a></li>
+<li><a class="reference internal" href="#license">LICENSE</a></li>
+<li><a class="reference internal" href="#contact">Contact</a></li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: white" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">epical</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">What is CrossMap ?</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
   <div class="toctree-wrapper compound">
 </div>
 <a class="reference internal image-reference" href="_images/logo.png"><img alt="alternate text" src="_images/logo.png" style="width: 375.0px; height: 75.0px;" /></a>
-<div class="section" id="what-is-crossmap">
-<h1>What is CrossMap ?<a class="headerlink" href="#what-is-crossmap" title="Permalink to this headline">¶</a></h1>
+<section id="what-is-crossmap">
+<h1>What is CrossMap ?<a class="headerlink" href="#what-is-crossmap" title="Link to this heading"></a></h1>
 <p>CrossMap is a program for genome coordinates conversion between <em>different assemblies</em>
 (such as <a class="reference external" href="http://www.ncbi.nlm.nih.gov/assembly/2928/">hg18 (NCBI36)</a>   &lt;=&gt; <a class="reference external" href="http://www.ncbi.nlm.nih.gov/assembly/2758/">hg19 (GRCh37)</a>).
 It supports commonly used file formats including <a class="reference external" href="https://samtools.github.io/hts-specs/SAMv1.pdf">BAM</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/CRAM_(file_format)">CRAM</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/SAM_(file_format)">SAM</a>, <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a>, <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/bigWig.html">BigWig</a>, <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a>, <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format3">GFF</a>, <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format4">GTF</a>, <a class="reference external" href="https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/">MAF</a> <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.2.pdf">VCF</a>, and <a class="reference external" href="https://sites.google.com/site/gvcftools/home/about-gvcf">gVCF</a>.</p>
-</div>
-<div class="section" id="how-crossmap-works">
-<h1>How CrossMap works?<a class="headerlink" href="#how-crossmap-works" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="how-crossmap-works">
+<h1>How CrossMap works?<a class="headerlink" href="#how-crossmap-works" title="Link to this heading"></a></h1>
 <a class="reference internal image-reference" href="_images/howitworks.png"><img alt="alternate text" src="_images/howitworks.png" style="width: 510.0px; height: 212.5px;" /></a>
+</section>
+<section id="release-history">
+<h1>Release history<a class="headerlink" href="#release-history" title="Link to this heading"></a></h1>
+<p><strong>01/11/2024: Release version 0.7.0</strong></p>
+<ol class="arabic simple">
+<li><p>Fix bugs for VCF varaints liftover.</p></li>
+<li><p>Handle non-DNA ALT alleles such as &lt;DEL&gt;</p></li>
+<li><p>Use <a class="reference external" href="https://packaging.python.org/en/latest/guides/writing-pyproject-toml/">pyproject.toml</a> to replace “setup.py”.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>From v0.7.0 onwards, the main program <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span></code> is now renamed to <code class="code docutils literal notranslate"><span class="pre">CrossMap</span></code>
+due to the restriction on using “.” in the script name in the “pyproject.toml” file.
+To ensure compatibility with the previous pipelines, please include the following line in
+your <code class="docutils literal notranslate"><span class="pre">~/.bashrc</span></code> file.</p>
 </div>
-<div class="section" id="release-history">
-<h1>Release history<a class="headerlink" href="#release-history" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">alias</span> <span class="pre">CrossMap.py='CrossMap'</span></code></p>
+<p><strong>07/21/2023: Release version 0.6.4</strong></p>
+<ol class="arabic simple">
+<li><p>Fix bug when the sequence in BAM file is represented as “*”</p></li>
+<li><p>Change code style</p></li>
+</ol>
 <p><strong>07/12/2022: Release version 0.6.4</strong></p>
 <ol class="arabic simple">
 <li><p>Fix bug when the input bigwig file does not have coverage signal for some chromosomes.</p></li>
@@ -102,21 +192,26 @@ It supports commonly used file formats including <a class="reference external" h
 <li><p>v0.3.0 or newer will Support Python3. Previous versions support Python2.7.*</p></li>
 <li><p>add <a class="reference external" href="https://github.com/deeptools/pyBigWig">pyBigWig</a> as a dependency.</p></li>
 </ol>
-</div>
-<div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python3</span>
-<span class="n">pip3</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python3</span>
-
-<span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span>  <span class="c1">#Install CrossMap supporting Python2.7.*</span>
-<span class="n">pip2</span> <span class="n">install</span> <span class="n">CrossMap</span> <span class="o">--</span><span class="n">upgrade</span>        <span class="c1">#upgrade CrossMap supporting Python2.7.*</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="input-and-output">
-<h1>Input and Output<a class="headerlink" href="#input-and-output" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="chain-file">
-<h2>Chain file<a class="headerlink" href="#chain-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h1>
+<section id="install-from-pypi">
+<h2>Install from PyPI<a class="headerlink" href="#install-from-pypi" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">CrossMap</span></code></p>
+</section>
+<section id="install-from-github">
+<h2>Install from GitHub<a class="headerlink" href="#install-from-github" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">git+https://github.com/liguowang/CrossMap.git</span></code></p>
+</section>
+<section id="upgrade">
+<h2>Upgrade<a class="headerlink" href="#upgrade" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pip3</span> <span class="pre">install</span> <span class="pre">CrossMap</span> <span class="pre">--upgrade</span></code></p>
+</section>
+</section>
+<section id="input-and-output">
+<h1>Input and Output<a class="headerlink" href="#input-and-output" title="Link to this heading"></a></h1>
+<section id="chain-file">
+<h2>Chain file<a class="headerlink" href="#chain-file" title="Link to this heading"></a></h2>
 <p>A <a class="reference external" href="https://genome.ucsc.edu/goldenPath/help/chain.html">chain file</a> describes a pairwise alignment between two reference assemblies. <a class="reference external" href="https://genome.ucsc.edu/">UCSC</a> and <a class="reference external" href="https://uswest.ensembl.org/index.html">Ensembl</a> chain files are available:</p>
 <p><strong>UCSC chain files</strong></p>
 <blockquote>
@@ -135,9 +230,9 @@ It supports commonly used file formats including <a class="reference external" h
 <li><p>Other organisms: <a class="reference external" href="ftp://ftp.ensembl.org/pub/assembly_mapping/">ftp://ftp.ensembl.org/pub/assembly_mapping/</a></p></li>
 </ul>
 </div></blockquote>
-</div>
-<div class="section" id="user-input-file">
-<h2>User Input file<a class="headerlink" href="#user-input-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="user-input-file">
+<h2>User Input file<a class="headerlink" href="#user-input-file" title="Link to this heading"></a></h2>
 <p>CrossMap supports the following file formats.</p>
 <ol class="arabic simple">
 <li><p><a class="reference external" href="http://samtools.sourceforge.net/SAMv1.pdf">BAM</a>, <a class="reference external" href="https://samtools.github.io/hts-specs/CRAMv3.pdf">CRAM</a>, or <a class="reference external" href="http://samtools.sourceforge.net/SAMv1.pdf/">SAM</a></p></li>
@@ -149,15 +244,11 @@ It supports commonly used file formats including <a class="reference external" h
 <li><p><a class="reference external" href="https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format">GVCF</a></p></li>
 <li><p><a class="reference external" href="https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/">MAF</a></p></li>
 </ol>
-</div>
-<div class="section" id="output-file">
-<h2>Output file<a class="headerlink" href="#output-file" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="output-file">
+<h2>Output file<a class="headerlink" href="#output-file" title="Link to this heading"></a></h2>
 <p>The format of output files depends on the input</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 14%" />
-<col style="width: 86%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Input_format</p></th>
 <th class="head"><p>Output_format</p></th>
@@ -199,14 +290,14 @@ It supports commonly used file formats including <a class="reference external" h
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="usage">
-<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Run <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">-h</span></code> or <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">--help</span></code> print help message</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py -h
+</section>
+</section>
+<section id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h1>
+<p>Run <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">-h</span></code> or <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">--help</span></code> print help message</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap -h
 
-usage: CrossMap.py [-h] [-v] {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
+usage: CrossMap [-h] [-v] {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
 
 CrossMap (v0.6.0) is a program to convert (liftover) genome coordinates between different reference
 assemblies (e.g., from human GRCh37/hg19 to GRCh38/hg38 or vice versa). Supported file formats: BAM,
@@ -243,8 +334,8 @@ optional arguments:
 https://crossmap.readthedocs.io/en/latest/
 </pre></div>
 </div>
-<div class="section" id="convert-bed-format-files">
-<h2>Convert BED format files<a class="headerlink" href="#convert-bed-format-files" title="Permalink to this headline">¶</a></h2>
+<section id="convert-bed-format-files">
+<h2>Convert BED format files<a class="headerlink" href="#convert-bed-format-files" title="Link to this heading"></a></h2>
 <p>A <a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format1">BED</a> (Browser Extensible Data) file
 is a tab-delimited text file describing genome regions or gene annotations.
 It consists of one line per feature, each containing 3-12 columns.
@@ -280,10 +371,10 @@ exactly the same number of columns as the original one.</p>
 <li><p>The *.unmap file contains regions that cannot be unambiguously converted.</p></li>
 </ol>
 </div>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bed</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed  -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bed  -h
 
-usage: CrossMap.py bed [-h] [--chromid {a,s,l}] [--unmap-file UNMAP_FILE]
+usage: CrossMap bed [-h] [--chromid {a,s,l}] [--unmap-file UNMAP_FILE]
                        input.chain input.bed [out_bed]
 
 positional arguments:
@@ -309,7 +400,7 @@ optional arguments:
 </div>
 <p><strong>Example 1</strong></p>
 <p>run <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> with <strong>no</strong> <em>output_file</em>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
 # Conversion results were printed to screen directly (column1-3 are hg18 based, column5-7 are hg19 based)::
 chr1   142614848       142617697       -&gt;      chr1    143903503       143906352
@@ -319,7 +410,7 @@ chr1   142623313       142623350       -&gt;      chr1    143911971       143912
 </div>
 <p><strong>Example 2</strong></p>
 <p>run <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> with <em>output_file</em> (test.hg19.bed3) specified:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
 
 $ cat test.hg19.bed3
 chr1   143903503       143906352
@@ -329,7 +420,7 @@ chr1   143911971       143912008
 </div>
 <p><strong>Example 3</strong></p>
 <p>One input region was split because it cannot map consecutively to the target assembly:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
 chr10  81369946        81370453        +       -&gt;      chr10   81380000        81380507        +
 chr10  81370483        81371363        +       -&gt;      chr10   81380539        81381419        +
@@ -345,7 +436,7 @@ however, the output formats are different:</p>
 <li><p>Use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> command to convert a bedGraph file, the output is a <strong>bedGraph</strong> file.</p></li>
 <li><p>Use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">wig</span></code> command to convert a bedGraph file, the output is a <strong>bigWig</strong> file.</p></li>
 </ul>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bed hg19ToHg38.over.chain.gz 4_hg19.bgr
 
 chrX   5873316 5873391 2.0     -&gt;      chrX    5955275 5955350 2.0
 chrX   5873673 5873710 0.8     -&gt;      chrX    5955632 5955669 0.8
@@ -355,7 +446,7 @@ chrX   5873929 5874004 1.5     -&gt;      chrX    5955888 5955963 1.5
 chrX   5874230 5874471 0.3     -&gt;      chrX    5956189 5956430 0.3
 chrX   5874471 5874518 0.9     -&gt;      chrX    5956430 5956477 0.9
 
-$ python3 CrossMap.py wig hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
+$ python3 CrossMap wig hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
 @ 2018-11-06 00:09:11: Read chain_file:  hg19ToHg38.over.chain.gz
 @ 2018-11-06 00:09:12: Liftover wiggle file: 4_hg19.bgr ==&gt; output_hg38.bgr
 @ 2018-11-06 00:09:12: Merging overlapped entries in bedGraph file ...
@@ -372,7 +463,7 @@ chr2   239716679       243199373
 </pre></div>
 </div>
 <p>If we use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> command to convert this 3.48 Mb region. It will be split into 74 small blocks:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py bed GRCh37_to_GRCh38.chain.gz  test.bed
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap bed GRCh37_to_GRCh38.chain.gz  test.bed
 
 chr2   239716679       243199373       (split.1:chr2:239716679:239801978:+)    chr2    238808038       238893337
 chr2   239716679       243199373       (split.2:chr2:239831978:240205681:+)    chr2    238910282       239283985
@@ -381,20 +472,20 @@ chr2   239716679       243199373       (split.3:chr2:240205681:240319336:+)    c
 </pre></div>
 </div>
 <p>If we use <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">region</span></code> command to convert this 3.48Mb region. Note: <code class="code docutils literal notranslate"><span class="pre">-r</span></code> (the minimum ratio of bases that must remap) is 0.85 by default:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap region GRCh37_to_GRCh38.chain.gz  test.bed
 
 chr2   239716679       243199373       -&gt;      chr2    238808038       242183529       map_ratio=0.9622
 </pre></div>
 </div>
 <p>If we increase <code class="code docutils literal notranslate"><span class="pre">-r</span></code> to 0.99, this region will fail:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed -r 0.99
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap region GRCh37_to_GRCh38.chain.gz  test.bed -r 0.99
 
 chr2   239716679       243199373       Fail    map_ratio=0.9622
 </pre></div>
 </div>
-</div>
-<div class="section" id="convert-bam-cram-sam-format-files">
-<span id="bam-conversion"></span><h2>Convert BAM/CRAM/SAM format files<a class="headerlink" href="#convert-bam-cram-sam-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-bam-cram-sam-format-files">
+<span id="bam-conversion"></span><h2>Convert BAM/CRAM/SAM format files<a class="headerlink" href="#convert-bam-cram-sam-format-files" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="http://samtools.sourceforge.net/samtools.shtml#5">SAM</a> (Sequence Alignment Map) format
 is a generic format for storing sequencing alignments, and BAM is the binary and compressed
 version of SAM (<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/25/16/2078.full">Li et al., 2009</a>).
@@ -407,10 +498,10 @@ the header section, along with the names of the original BAM file and the chain 
 pair-end sequencing, insert size is also recalculated. The input BAM file should be sorted
 and indexed properly using Samtools (<a class="reference external" href="http://bioinformatics.oxfordjournals.org/content/25/16/2078.full">Li et al., 2009</a>).
 The output format is determined by the input format, and the BAM output will be sorted and indexed automatically.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bam</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bam -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bam</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bam -h
 
-usage: CrossMap.py bam [-h] [-m INSERT_SIZE] [-s INSERT_SIZE_STDEV] [-t INSERT_SIZE_FOLD] [-a]
+usage: CrossMap bam [-h] [-m INSERT_SIZE] [-s INSERT_SIZE_STDEV] [-t INSERT_SIZE_FOLD] [-a]
                        [--chromid {a,s,l}]
                        input.chain input.bam [out_bam]
 
@@ -447,7 +538,7 @@ optional arguments:
 <p>Convert BAM from hg19 to hg18:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span># add optional tags using &#39;-a&#39; (recommend always use &#39;-a&#39; option)
 
-$ CrossMap.py bam -a ../data/hg19ToHg18.over.chain.gz test.hg19.bam test.hg18
+$ CrossMap bam -a ../data/hg19ToHg18.over.chain.gz test.hg19.bam test.hg18
 Insert size = 200.000000
 Insert size stdev = 30.000000
 Number of stdev from the mean = 3.000000
@@ -539,19 +630,19 @@ $ samtools view -H  test.hg18.bam
 <li><p>Optional fields in the alignment section will not update.</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="convert-wiggle-format-files">
-<h2>Convert Wiggle format files<a class="headerlink" href="#convert-wiggle-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-wiggle-format-files">
+<h2>Convert Wiggle format files<a class="headerlink" href="#convert-wiggle-format-files" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="http://genome.ucsc.edu/goldenPath/help/wiggle.html">Wiggle</a> (WIG) format is useful in
 displaying continuous data such as GC content and the reads intensity of high-throughput sequencing data.
 BigWig is a self-indexed binary-format Wiggle file and has the advantage of supporting random access.
 Input wiggle data can be in variableStep (for data with irregular intervals) or fixedStep
 (for data with regular intervals). Regardless of the input, the output files are always in bedGraph
 format.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">wig</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  wig -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">wig</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap  wig -h
 
-usage: CrossMap.py wig [-h] [--chromid {a,s,l}] input.chain input.wig out_wig
+usage: CrossMap wig [-h] [--chromid {a,s,l}] input.chain input.wig out_wig
 
 positional arguments:
   input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -576,17 +667,17 @@ optional arguments:
 <p class="admonition-title">Note</p>
 <p>To improve performance, this script calls <a class="reference external" href="http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html">GNU “sort”</a> command internally. If the “sort” command is not callable, CrossMap will exit.</p>
 </div>
-</div>
-<div class="section" id="convert-bigwig-format-files">
-<h2>Convert BigWig format files<a class="headerlink" href="#convert-bigwig-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-bigwig-format-files">
+<h2>Convert BigWig format files<a class="headerlink" href="#convert-bigwig-format-files" title="Link to this heading"></a></h2>
 <p>If an input file is in BigWig format, the output is BigWig format if UCSC’s
 ‘<a class="reference external" href="http://hgdownload.cse.ucsc.edu/admin/exe/">wigToBigWig</a>’ executable can be found;
 otherwise, the output file will be in bedGraph format.</p>
 <p>After v0.3.0, UCSC’s <code class="code docutils literal notranslate"><span class="pre">wigToBigWig</span></code> command is no longer needed.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bigwig</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py bigwig -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bigwig</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap bigwig -h
 
-usage: CrossMap.py bigwig [-h] [--chromid {a,s,l}] input.chain input.bw output.bw
+usage: CrossMap bigwig [-h] [--chromid {a,s,l}] input.chain input.bw output.bw
 
 positional arguments:
   input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -603,7 +694,7 @@ optional arguments:
 </pre></div>
 </div>
 <p>Example (Convert BigWig file from hg18 to hg19):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py bigwig  hg19ToHg18.over.chain.gz  test.hg19.bw test.hg18
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap bigwig  hg19ToHg18.over.chain.gz  test.hg19.bw test.hg18
 @ 2013-11-17 22:12:42: Read chain_file:  ../data/hg19ToHg18.over.chain.gz
 @ 2013-11-17 22:12:44: Liftover bigwig file: test.hg19.bw ==&gt; test.hg18.bgr
 @ 2013-11-17 22:15:38: Merging overlapped entries in bedGraph file ...
@@ -615,19 +706,19 @@ optional arguments:
 <p class="admonition-title">Note</p>
 <p>To improve performance, this script calls <a class="reference external" href="http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html">GNU “sort”</a> command internally. If “sort” command does not exist, CrossMap will exit.</p>
 </div>
-</div>
-<div class="section" id="convert-gff-gtf-format-files">
-<h2>Convert GFF/GTF format files<a class="headerlink" href="#convert-gff-gtf-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-gff-gtf-format-files">
+<h2>Convert GFF/GTF format files<a class="headerlink" href="#convert-gff-gtf-format-files" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format3">GFF</a> (General Feature Format) is another
 plain text file used to describe gene structure. <a class="reference external" href="http://genome.ucsc.edu/FAQ/FAQformat.html#format4">GTF</a>
 (Gene Transfer Format) is a refined version of GTF. The first eight fields are the same as
 GFF. Plain text, compressed plain text, and URLs pointing to remote files are all supported.
 Only chromosome and genome coordinates are updated. The format of the output is determined from
 the input.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">gff</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  gff -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">gff</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap  gff -h
 
-usage: CrossMap.py gff [-h] [--chromid {a,s,l}] input.chain input.gff [out_gff]
+usage: CrossMap gff [-h] [--chromid {a,s,l}] input.chain input.gff [out_gff]
 
 positional arguments:
   input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -649,7 +740,7 @@ optional arguments:
 </pre></div>
 </div>
 <p>Example (Convert GTF file from hg19 to hg18):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ python CrossMap gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf
 @ 2013-11-17 20:44:47: Read chain_file:  ../data/hg19ToHg18.over.chain.gz
 
 $ head test.hg19.gtf
@@ -685,19 +776,19 @@ chr1   hg19_refGene    exon    10113360        10113458        0.000000        +
 <li><p>If no output file was specified, the output will be printed to screen (console). In this case, items that failed to convert are also printed out.</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="convert-vcf-format-files">
-<h2>Convert VCF format files<a class="headerlink" href="#convert-vcf-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-vcf-format-files">
+<h2>Convert VCF format files<a class="headerlink" href="#convert-vcf-format-files" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41">VCF</a>
 (variant call format) is a flexible and extendable line-oriented text format developed by
 the <a class="reference external" href="http://www.1000genomes.org/">1000 Genome Project</a>. It is useful for representing single
 nucleotide variants, indels, copy number variants, and structural variants. Chromosomes,
 coordinates, and reference alleles are updated to a new assembly, and all the other fields
 are not changed.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">vcf</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  vcf -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">vcf</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap vcf -h
 
-usage: CrossMap.py vcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
+usage: CrossMap vcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
                        input.chain input.vcf refgenome.fa out_vcf
 
 positional arguments:
@@ -723,7 +814,7 @@ optional arguments:
 </pre></div>
 </div>
 <p>Example: filter out variants [reference_allele == alternative_allele]:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  vcf  GRCh37_to_GRCh38.chain.gz  test02_hg19.vcf  hg38.fa  out.hg38.vcf
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap vcf GRCh37_to_GRCh38.chain.gz test02_hg19.vcf hg38.fa out.hg38.vcf
 @ 2020-12-08 22:33:16: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
 @ 2020-12-08 22:33:17: Filter out variants [reference_allele == alternative_allele] ...
 @ 2020-12-08 22:33:17: Updating contig field ...
@@ -733,7 +824,7 @@ optional arguments:
 </pre></div>
 </div>
 <p>Example: Keep variants [reference_allele == alternative_allele]. Turn on <code class="code docutils literal notranslate"><span class="pre">--no-comp-allele</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  vcf  GRCh37_to_GRCh38.chain.gz  test02_hg19.vcf  hg38.fa  out.hg38.vcf --no-comp-allele
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap vcf GRCh37_to_GRCh38.chain.gz test02_hg19.vcf hg38.fa out.hg38.vcf --no-comp-allele
 @ 2020-12-08 22:36:51: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
 @ 2020-12-08 22:36:51: Keep variants [reference_allele == alternative_allele] ...
 @ 2020-12-08 22:36:51: Updating contig field ...
@@ -759,17 +850,17 @@ optional arguments:
 <li><p>Fail(Unmap) : Unable to map this location to the target assembly.</p></li>
 <li><p>Fail(KeyError) : Unable to find the contig ID (or chromosome ID) from the reference genome sequence (of the target assembly).</p></li>
 </ul>
-</div>
-<div class="section" id="convert-maf-format-files">
-<h2>Convert MAF format files<a class="headerlink" href="#convert-maf-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-maf-format-files">
+<h2>Convert MAF format files<a class="headerlink" href="#convert-maf-format-files" title="Link to this heading"></a></h2>
 <p><a class="reference external" href="https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format/">MAF</a>
 (mutation annotation format) files are tab-delimited
 files that contain somatic and/or germline mutation annotations. Please do not confuse
 with the <a class="reference external" href="https://genome.ucsc.edu/FAQ/FAQformat.html#format5">Multiple Alignment Format</a>.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">maf</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  maf -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">maf</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap  maf -h
 
-usage: CrossMap.py maf [-h] [--chromid {a,s,l}] input.chain input.maf refgenome.fa build_name out_maf
+usage: CrossMap maf [-h] [--chromid {a,s,l}] input.chain input.maf refgenome.fa build_name out_maf
 
 positional arguments:
   input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -790,14 +881,14 @@ optional arguments:
                      &quot;chrX&quot;); &quot;s&quot; = &quot;short style&quot; (eg. &quot;1&quot;, &quot;X&quot;).
 </pre></div>
 </div>
-</div>
-<div class="section" id="convert-gvcf-format-files">
-<h2>Convert GVCF format files<a class="headerlink" href="#convert-gvcf-format-files" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="convert-gvcf-format-files">
+<h2>Convert GVCF format files<a class="headerlink" href="#convert-gvcf-format-files" title="Link to this heading"></a></h2>
 <p>GVCF file format is described in <a class="reference external" href="https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format">here</a>.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">gvcf</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  gvcf -h
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">gvcf</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap  gvcf -h
 
-usage: CrossMap.py gvcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
+usage: CrossMap gvcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
                         input.chain input.gvcf refgenome.fa out_gvcf
 
 positional arguments:
@@ -823,7 +914,7 @@ optional arguments:
 </pre></div>
 </div>
 <p>Example (Convert GVCF file from hg19 to hg38):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap.py  gvcf  GRCh37_to_GRCh38.chain.gz  test10_hg19.gvcf   hg38.fa  out.hg38.gvcf
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ CrossMap gvcf GRCh37_to_GRCh38.chain.gz test10_hg19.gvcf hg38.fa out.hg38.gvcf
 @ 2020-12-08 22:19:44: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
 @ 2020-12-08 22:19:44: Filter out variants [reference_allele == alternative_allele] ...
 @ 2020-12-08 22:19:44: Updating contig field ...
@@ -834,14 +925,14 @@ optional arguments:
 @ 2020-12-08 22:19:44: Non-variant regions failed to map: 0
 </pre></div>
 </div>
-</div>
-<div class="section" id="convert-large-genomic-regions">
-<h2>Convert large genomic regions<a class="headerlink" href="#convert-large-genomic-regions" title="Permalink to this headline">¶</a></h2>
-<p>For <strong>large genomic regions</strong> such as CNV blocks, the <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">bed</span></code> will split each large region into smaller blocks that are 100% matched to the target assembly.
-<code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span></code> will NOT split large regions, instead, it will calculate the <strong>map ratio</strong> (i.e. {bases mapped to target genome} / {total bases in query region}). If the
+</section>
+<section id="convert-large-genomic-regions">
+<h2>Convert large genomic regions<a class="headerlink" href="#convert-large-genomic-regions" title="Link to this heading"></a></h2>
+<p>For <strong>large genomic regions</strong> such as CNV blocks, the <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">bed</span></code> will split each large region into smaller blocks that are 100% matched to the target assembly.
+<code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">region</span></code> will NOT split large regions, instead, it will calculate the <strong>map ratio</strong> (i.e. {bases mapped to target genome} / {total bases in query region}). If the
 <strong>map ratio</strong> is larger than the threshold specified by <code class="code docutils literal notranslate"><span class="pre">-r</span></code>, the coordinates will be converted to the target genome, otherwise, it fails.</p>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">region</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>usage: CrossMap.py region [-h] [--chromid {a,s,l}] [-r MIN_MAP_RATIO] input.chain input.bed [out_bed]
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">region</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>usage: CrossMap region [-h] [--chromid {a,s,l}] [-r MIN_MAP_RATIO] input.chain input.bed [out_bed]
 
 positional arguments:
   input.chain           Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -864,7 +955,7 @@ optional arguments:
 </pre></div>
 </div>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py region  GRCh37_to_GRCh38.chain.gz test11_hg19_region.bed
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap region  GRCh37_to_GRCh38.chain.gz test11_hg19_region.bed
 
 @ 2020-08-14 16:46:04: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
 chr1   0       2500000 -&gt;      chr1    10000   2568561 map_ratio=0.9360
@@ -908,11 +999,11 @@ chr9   140513444       140730578       -&gt;      chr9    137618992       137836
 <li><p>Input BED file should have at least 3 columns (chrom, start, end). Additional columns will be kept as is.</p></li>
 </ol>
 </div>
-</div>
-<div class="section" id="view-chain-file">
-<h2>View chain file<a class="headerlink" href="#view-chain-file" title="Permalink to this headline">¶</a></h2>
-<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap.py</span> <span class="pre">viewchain</span> <span class="pre">-h</span></code> will print help message:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">CrossMap</span><span class="o">.</span><span class="n">py</span> <span class="n">viewchain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="nb">input</span><span class="o">.</span><span class="n">chain</span>
+</section>
+<section id="view-chain-file">
+<h2>View chain file<a class="headerlink" href="#view-chain-file" title="Link to this heading"></a></h2>
+<p>Typing <code class="code docutils literal notranslate"><span class="pre">CrossMap</span> <span class="pre">viewchain</span> <span class="pre">-h</span></code> will print help message:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">CrossMap</span> <span class="n">viewchain</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="nb">input</span><span class="o">.</span><span class="n">chain</span>
 
 <span class="n">positional</span> <span class="n">arguments</span><span class="p">:</span>
   <span class="nb">input</span><span class="o">.</span><span class="n">chain</span>  <span class="n">Chain</span> <span class="n">file</span> <span class="p">(</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">genome</span><span class="o">.</span><span class="n">ucsc</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">goldenPath</span><span class="o">/</span><span class="n">help</span><span class="o">/</span><span class="n">chain</span><span class="o">.</span><span class="n">html</span><span class="p">)</span> <span class="n">describes</span> <span class="n">pairwise</span>
@@ -924,7 +1015,7 @@ chr9   140513444       140730578       -&gt;      chr9    137618992       137836
 </pre></div>
 </div>
 <p>Example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap.py viewchain ../data/human/GRCh37_to_GRCh38.chain.gz &gt;chain.tab
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$CrossMap viewchain ../data/human/GRCh37_to_GRCh38.chain.gz &gt;chain.tab
 $head chain.tab
 1  10000 177417   +  1  10000 177417   +
 1  227417   267719   +  1  257666   297968   +
@@ -938,10 +1029,10 @@ $head chain.tab
 1  1583669  1583878  +  1  1648309  1648518  +
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="compare-to-ucsc-liftover-tool">
-<h1>Compare to UCSC liftover tool<a class="headerlink" href="#compare-to-ucsc-liftover-tool" title="Permalink to this headline">¶</a></h1>
+</section>
+</section>
+<section id="compare-to-ucsc-liftover-tool">
+<h1>Compare to UCSC liftover tool<a class="headerlink" href="#compare-to-ucsc-liftover-tool" title="Link to this heading"></a></h1>
 <p>To assess the accuracy of CrossMap, we randomly generated 10,000 genome intervals (download from <a class="reference external" href="https://sourceforge.net/projects/crossmap/files/hg19.rand.bed.gz/download">here</a>) with the
 fixed interval size of 200 bp from hg19. Then we converted them into hg18 using CrossMap
 and <a class="reference external" href="http://genome.ucsc.edu/cgi-bin/hgLiftOver">UCSC liftover tool</a> with default configurations. We compare CrossMap
@@ -951,11 +1042,6 @@ used tool to convert genome coordinates.</p>
 intervals. All failed intervals are exactly the same except for one region (chr2 90542908 90543108).
 UCSC failed to convert it because this region needs to be split twice:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 29%" />
-<col style="width: 30%" />
-<col style="width: 40%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Original (hg19)</p></th>
 <th class="head"><p>Split (hg19)</p></th>
@@ -980,13 +1066,13 @@ UCSC failed to convert it because this region needs to be split twice:</p>
 <p>For genome intervals that were successfully converted to hg18, the start and end coordinates are
 exactly the same between UCSC conversion and CrossMap conversion.</p>
 <a class="reference internal image-reference" href="_images/CrossMap_vs_UCSC.png"><img alt="CrossMap_vs_UCSC_liftover.png" src="_images/CrossMap_vs_UCSC.png" style="width: 700.0px; height: 400.0px;" /></a>
-</div>
-<div class="section" id="citation">
-<h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="citation">
+<h1>Citation<a class="headerlink" href="#citation" title="Link to this heading"></a></h1>
 <p><a class="reference external" href="https://pubmed.ncbi.nlm.nih.gov/24351709/">Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., &amp; Wang, L. (2013). CrossMap: a versatile tool for coordinate conversion between genome assemblies. Bioinformatics (Oxford, England), btt730</a></p>
-</div>
-<div class="section" id="license">
-<h1>LICENSE<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="license">
+<h1>LICENSE<a class="headerlink" href="#license" title="Link to this heading"></a></h1>
 <p>CrossMap is distributed under <a class="reference external" href="http://www.gnu.org/copyleft/gpl.html">GNU General Public License</a></p>
 <p>This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -998,86 +1084,51 @@ General Public License for more details. You should have received a copy of the 
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 02110-1301 USA</p>
-</div>
-<div class="section" id="contact">
-<h1>Contact<a class="headerlink" href="#contact" title="Permalink to this headline">¶</a></h1>
+</section>
+<section id="contact">
+<h1>Contact<a class="headerlink" href="#contact" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>Wang.Liguo AT mayo.edu</p></li>
 </ul>
-</div>
+</section>
 
 
-            <div class="clearer"></div>
+           </div>
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="#">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">What is CrossMap ?</a></li>
-<li><a class="reference internal" href="#how-crossmap-works">How CrossMap works?</a></li>
-<li><a class="reference internal" href="#release-history">Release history</a></li>
-<li><a class="reference internal" href="#installation">Installation</a></li>
-<li><a class="reference internal" href="#input-and-output">Input and Output</a><ul>
-<li><a class="reference internal" href="#chain-file">Chain file</a></li>
-<li><a class="reference internal" href="#user-input-file">User Input file</a></li>
-<li><a class="reference internal" href="#output-file">Output file</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#usage">Usage</a><ul>
-<li><a class="reference internal" href="#convert-bed-format-files">Convert BED format files</a></li>
-<li><a class="reference internal" href="#convert-bam-cram-sam-format-files">Convert BAM/CRAM/SAM format files</a></li>
-<li><a class="reference internal" href="#convert-wiggle-format-files">Convert Wiggle format files</a></li>
-<li><a class="reference internal" href="#convert-bigwig-format-files">Convert BigWig format files</a></li>
-<li><a class="reference internal" href="#convert-gff-gtf-format-files">Convert GFF/GTF format files</a></li>
-<li><a class="reference internal" href="#convert-vcf-format-files">Convert VCF format files</a></li>
-<li><a class="reference internal" href="#convert-maf-format-files">Convert MAF format files</a></li>
-<li><a class="reference internal" href="#convert-gvcf-format-files">Convert GVCF format files</a></li>
-<li><a class="reference internal" href="#convert-large-genomic-regions">Convert large genomic regions</a></li>
-<li><a class="reference internal" href="#view-chain-file">View chain file</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#compare-to-ucsc-liftover-tool">Compare to UCSC liftover tool</a></li>
-<li><a class="reference internal" href="#citation">Citation</a></li>
-<li><a class="reference internal" href="#license">LICENSE</a></li>
-<li><a class="reference internal" href="#contact">Contact</a></li>
-</ul>
+          <footer>
 
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script>$('#searchbox').show(0);</script>
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Liguo Wang.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
-    <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="nav-item nav-item-0"><a href="#">CrossMap 0.6.4 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">What is CrossMap ?</a></li> 
-      </ul>
-    </div>
-    <div class="footer" role="contentinfo">
-        &#169; Copyright 2014-2023, Liguo Wang. All Rights Reserved.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.1.2.
-    </div>
-  </body>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+    <!-- Theme Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-XXXXXXX-1"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'UA-XXXXXXX-1', {
+          'anonymize_ip': false,
+      });
+    </script> 
+
+</body>
 </html>

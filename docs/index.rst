@@ -34,10 +34,20 @@ How CrossMap works?
 Release history
 ===================
 
-**01/11/2024: Release version 0.6.6**
+**01/11/2024: Release version 0.7.0**
 
 1. Fix bugs for VCF varaints liftover.
 2. Handle non-DNA ALT alleles such as <DEL>
+3. Use `pyproject.toml <https://packaging.python.org/en/latest/guides/writing-pyproject-toml/>`_ to replace "setup.py".
+
+.. Note::
+
+   From v0.7.0 onwards, the main program :code:`CrossMap.py` is now renamed to :code:`CrossMap` 
+   due to the restriction on using "." in the script name in the "pyproject.toml" file.
+   To ensure compatibility with the previous pipelines, please include the following line in 
+   your ``~/.bashrc`` file. 
+
+``alias CrossMap.py='CrossMap'``
 
 **07/21/2023: Release version 0.6.4**
 
@@ -121,16 +131,24 @@ Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not p
 1. v0.3.0 or newer will Support Python3. Previous versions support Python2.7.\*
 2. add `pyBigWig <https://github.com/deeptools/pyBigWig>`_ as a dependency.
 
+
 Installation
 ==================
 
-::
+Install from PyPI
+------------------
 
- pip3 install CrossMap	#Install CrossMap supporting Python3
- pip3 install CrossMap --upgrade	#upgrade CrossMap supporting Python3
+``pip3 install CrossMap``
 
- pip2 install CrossMap	#Install CrossMap supporting Python2.7.*
- pip2 install CrossMap --upgrade	#upgrade CrossMap supporting Python2.7.*
+Install from GitHub
+-------------------
+ 
+``pip3 install git+https://github.com/liguowang/CrossMap.git``
+
+Upgrade
+--------
+
+``pip3 install CrossMap --upgrade``
 
 
 Input and Output
@@ -196,12 +214,12 @@ MAF				MAF (Genome coordinates and reference alleles will be updated)
 Usage
 =====
 
-Run :code:`CrossMap.py -h` or :code:`CrossMap.py --help` print help message
+Run :code:`CrossMap -h` or :code:`CrossMap --help` print help message
 ::
 
- $ CrossMap.py -h
+ $ CrossMap -h
 
- usage: CrossMap.py [-h] [-v] {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
+ usage: CrossMap [-h] [-v] {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
 
  CrossMap (v0.6.0) is a program to convert (liftover) genome coordinates between different reference
  assemblies (e.g., from human GRCh37/hg19 to GRCh38/hg38 or vice versa). Supported file formats: BAM,
@@ -275,11 +293,11 @@ Standard `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`__ format has 
    10. The \*.unmap file contains regions that cannot be unambiguously converted.
 
 
-Typing :code:`CrossMap.py bed -h` will print help message::
+Typing :code:`CrossMap bed -h` will print help message::
 
- $ CrossMap.py bed  -h
+ $ CrossMap bed  -h
 
- usage: CrossMap.py bed [-h] [--chromid {a,s,l}] [--unmap-file UNMAP_FILE]
+ usage: CrossMap bed [-h] [--chromid {a,s,l}] [--unmap-file UNMAP_FILE]
                         input.chain input.bed [out_bed]
 
  positional arguments:
@@ -306,7 +324,7 @@ Typing :code:`CrossMap.py bed -h` will print help message::
 
 run :code:`CrossMap bed` with **no** *output_file*::
 
- $ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
+ $ CrossMap bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
  # Conversion results were printed to screen directly (column1-3 are hg18 based, column5-7 are hg19 based)::
  chr1	142614848	142617697	->	chr1	143903503	143906352
@@ -317,7 +335,7 @@ run :code:`CrossMap bed` with **no** *output_file*::
 
 run :code:`CrossMap bed` with *output_file* (test.hg19.bed3) specified::
 
- $ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
+ $ CrossMap bed hg18ToHg19.over.chain.gz test.hg18.bed3 test.hg19.bed3
 
  $ cat test.hg19.bed3
  chr1	143903503	143906352
@@ -328,7 +346,7 @@ run :code:`CrossMap bed` with *output_file* (test.hg19.bed3) specified::
 
 One input region was split because it cannot map consecutively to the target assembly::
 
- $ CrossMap.py bed hg18ToHg19.over.chain.gz test.hg18.bed3
+ $ CrossMap bed hg18ToHg19.over.chain.gz test.hg18.bed3
 
  chr10	81369946	81370453	+	->	chr10	81380000	81380507	+
  chr10	81370483	81371363	+	->	chr10	81380539	81381419	+
@@ -347,7 +365,7 @@ however, the output formats are different:
 
 ::
 
- $ CrossMap.py bed hg19ToHg38.over.chain.gz 4_hg19.bgr
+ $ CrossMap bed hg19ToHg38.over.chain.gz 4_hg19.bgr
 
  chrX	5873316	5873391	2.0	->	chrX	5955275	5955350	2.0
  chrX	5873673	5873710	0.8	->	chrX	5955632	5955669	0.8
@@ -357,7 +375,7 @@ however, the output formats are different:
  chrX	5874230	5874471	0.3	->	chrX	5956189	5956430	0.3
  chrX	5874471	5874518	0.9	->	chrX	5956430	5956477	0.9
 
- $ python3 CrossMap.py wig hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
+ $ python3 CrossMap wig hg19ToHg38.over.chain.gz 4_hg19.bgr output_hg38
  @ 2018-11-06 00:09:11: Read chain_file:  hg19ToHg38.over.chain.gz
  @ 2018-11-06 00:09:12: Liftover wiggle file: 4_hg19.bgr ==> output_hg38.bgr
  @ 2018-11-06 00:09:12: Merging overlapped entries in bedGraph file ...
@@ -375,7 +393,7 @@ Use :code:`CrossMap region` command to convert large genomic regions (such as `C
 
 If we use :code:`CrossMap bed` command to convert this 3.48 Mb region. It will be split into 74 small blocks::
 
- $CrossMap.py bed GRCh37_to_GRCh38.chain.gz  test.bed
+ $CrossMap bed GRCh37_to_GRCh38.chain.gz  test.bed
 
  chr2	239716679	243199373	(split.1:chr2:239716679:239801978:+)	chr2	238808038	238893337
  chr2	239716679	243199373	(split.2:chr2:239831978:240205681:+)	chr2	238910282	239283985
@@ -384,13 +402,13 @@ If we use :code:`CrossMap bed` command to convert this 3.48 Mb region. It will b
 
 If we use :code:`CrossMap region` command to convert this 3.48Mb region. Note: :code:`-r` (the minimum ratio of bases that must remap) is 0.85 by default::
 
- $CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed
+ $CrossMap region GRCh37_to_GRCh38.chain.gz  test.bed
 
  chr2	239716679	243199373	->	chr2	238808038	242183529	map_ratio=0.9622
 
 If we increase :code:`-r` to 0.99, this region will fail::
 
- $CrossMap.py region GRCh37_to_GRCh38.chain.gz  test.bed -r 0.99
+ $CrossMap region GRCh37_to_GRCh38.chain.gz  test.bed -r 0.99
 
  chr2	239716679	243199373	Fail	map_ratio=0.9622
 
@@ -413,11 +431,11 @@ and indexed properly using Samtools (`Li et al., 2009 <http://bioinformatics.oxf
 The output format is determined by the input format, and the BAM output will be sorted and indexed automatically.
 
 
-Typing :code:`CrossMap.py bam -h` will print help message::
+Typing :code:`CrossMap bam -h` will print help message::
 
- $ CrossMap.py bam -h
+ $ CrossMap bam -h
 
- usage: CrossMap.py bam [-h] [-m INSERT_SIZE] [-s INSERT_SIZE_STDEV] [-t INSERT_SIZE_FOLD] [-a]
+ usage: CrossMap bam [-h] [-m INSERT_SIZE] [-s INSERT_SIZE_STDEV] [-t INSERT_SIZE_FOLD] [-a]
                         [--chromid {a,s,l}]
                         input.chain input.bam [out_bam]
 
@@ -456,7 +474,7 @@ Convert BAM from hg19 to hg18::
 
  # add optional tags using '-a' (recommend always use '-a' option)
 
- $ CrossMap.py bam -a ../data/hg19ToHg18.over.chain.gz test.hg19.bam test.hg18
+ $ CrossMap bam -a ../data/hg19ToHg18.over.chain.gz test.hg19.bam test.hg18
  Insert size = 200.000000
  Insert size stdev = 30.000000
  Number of stdev from the mean = 3.000000
@@ -560,11 +578,11 @@ Input wiggle data can be in variableStep (for data with irregular intervals) or 
 format.
 
 
-Typing :code:`CrossMap.py wig -h` will print help message::
+Typing :code:`CrossMap wig -h` will print help message::
 
- $ CrossMap.py  wig -h
+ $ CrossMap  wig -h
 
- usage: CrossMap.py wig [-h] [--chromid {a,s,l}] input.chain input.wig out_wig
+ usage: CrossMap wig [-h] [--chromid {a,s,l}] input.chain input.wig out_wig
 
  positional arguments:
    input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -597,11 +615,11 @@ otherwise, the output file will be in bedGraph format.
 
 After v0.3.0, UCSC's :code:`wigToBigWig` command is no longer needed.
 
-Typing :code:`CrossMap.py bigwig -h` will print help message::
+Typing :code:`CrossMap bigwig -h` will print help message::
 
- $ CrossMap.py bigwig -h
+ $ CrossMap bigwig -h
 
- usage: CrossMap.py bigwig [-h] [--chromid {a,s,l}] input.chain input.bw output.bw
+ usage: CrossMap bigwig [-h] [--chromid {a,s,l}] input.chain input.bw output.bw
 
  positional arguments:
    input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -619,7 +637,7 @@ Typing :code:`CrossMap.py bigwig -h` will print help message::
 
 Example (Convert BigWig file from hg18 to hg19)::
 
- $ python CrossMap.py bigwig  hg19ToHg18.over.chain.gz  test.hg19.bw test.hg18
+ $ python CrossMap bigwig  hg19ToHg18.over.chain.gz  test.hg19.bw test.hg18
  @ 2013-11-17 22:12:42: Read chain_file:  ../data/hg19ToHg18.over.chain.gz
  @ 2013-11-17 22:12:44: Liftover bigwig file: test.hg19.bw ==> test.hg18.bgr
  @ 2013-11-17 22:15:38: Merging overlapped entries in bedGraph file ...
@@ -640,11 +658,11 @@ GFF. Plain text, compressed plain text, and URLs pointing to remote files are al
 Only chromosome and genome coordinates are updated. The format of the output is determined from
 the input.
 
-Typing :code:`CrossMap.py gff -h` will print help message::
+Typing :code:`CrossMap gff -h` will print help message::
 
- $ CrossMap.py  gff -h
+ $ CrossMap  gff -h
 
- usage: CrossMap.py gff [-h] [--chromid {a,s,l}] input.chain input.gff [out_gff]
+ usage: CrossMap gff [-h] [--chromid {a,s,l}] input.chain input.gff [out_gff]
 
  positional arguments:
    input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -667,7 +685,7 @@ Typing :code:`CrossMap.py gff -h` will print help message::
 
 Example (Convert GTF file from hg19 to hg18)::
 
- $ python CrossMap.py gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf
+ $ python CrossMap gff  hg19ToHg18.over.chain.gz test.hg19.gtf test.hg18.gtf
  @ 2013-11-17 20:44:47: Read chain_file:  ../data/hg19ToHg18.over.chain.gz
 
  $ head test.hg19.gtf
@@ -711,11 +729,11 @@ nucleotide variants, indels, copy number variants, and structural variants. Chro
 coordinates, and reference alleles are updated to a new assembly, and all the other fields
 are not changed.
 
-Typing :code:`CrossMap.py vcf -h` will print help message::
+Typing :code:`CrossMap vcf -h` will print help message::
 
- $ CrossMap.py  vcf -h
+ $ CrossMap vcf -h
 
- usage: CrossMap.py vcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
+ usage: CrossMap vcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
                         input.chain input.vcf refgenome.fa out_vcf
 
  positional arguments:
@@ -741,7 +759,7 @@ Typing :code:`CrossMap.py vcf -h` will print help message::
 
 Example: filter out variants [reference_allele == alternative_allele]::
 
- $ CrossMap.py  vcf  GRCh37_to_GRCh38.chain.gz  test02_hg19.vcf  hg38.fa  out.hg38.vcf
+ $ CrossMap vcf GRCh37_to_GRCh38.chain.gz test02_hg19.vcf hg38.fa out.hg38.vcf
  @ 2020-12-08 22:33:16: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
  @ 2020-12-08 22:33:17: Filter out variants [reference_allele == alternative_allele] ...
  @ 2020-12-08 22:33:17: Updating contig field ...
@@ -751,7 +769,7 @@ Example: filter out variants [reference_allele == alternative_allele]::
 
 Example: Keep variants [reference_allele == alternative_allele]. Turn on :code:`--no-comp-allele`::
 
- $ CrossMap.py  vcf  GRCh37_to_GRCh38.chain.gz  test02_hg19.vcf  hg38.fa  out.hg38.vcf --no-comp-allele
+ $ CrossMap vcf GRCh37_to_GRCh38.chain.gz test02_hg19.vcf hg38.fa out.hg38.vcf --no-comp-allele
  @ 2020-12-08 22:36:51: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
  @ 2020-12-08 22:36:51: Keep variants [reference_allele == alternative_allele] ...
  @ 2020-12-08 22:36:51: Updating contig field ...
@@ -785,11 +803,11 @@ files that contain somatic and/or germline mutation annotations. Please do not c
 with the `Multiple Alignment Format <https://genome.ucsc.edu/FAQ/FAQformat.html#format5>`_.
 
 
-Typing :code:`CrossMap.py maf -h` will print help message::
+Typing :code:`CrossMap maf -h` will print help message::
 
- $ CrossMap.py  maf -h
+ $ CrossMap  maf -h
 
- usage: CrossMap.py maf [-h] [--chromid {a,s,l}] input.chain input.maf refgenome.fa build_name out_maf
+ usage: CrossMap maf [-h] [--chromid {a,s,l}] input.chain input.maf refgenome.fa build_name out_maf
 
  positional arguments:
    input.chain        Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -815,11 +833,11 @@ Convert GVCF format files
 
 GVCF file format is described in `here <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`_.
 
-Typing :code:`CrossMap.py gvcf -h` will print help message::
+Typing :code:`CrossMap gvcf -h` will print help message::
 
- $ CrossMap.py  gvcf -h
+ $ CrossMap  gvcf -h
 
- usage: CrossMap.py gvcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
+ usage: CrossMap gvcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
                          input.chain input.gvcf refgenome.fa out_gvcf
 
  positional arguments:
@@ -846,7 +864,7 @@ Typing :code:`CrossMap.py gvcf -h` will print help message::
 
 Example (Convert GVCF file from hg19 to hg38)::
 
- $ CrossMap.py  gvcf  GRCh37_to_GRCh38.chain.gz  test10_hg19.gvcf   hg38.fa  out.hg38.gvcf
+ $ CrossMap gvcf GRCh37_to_GRCh38.chain.gz test10_hg19.gvcf hg38.fa out.hg38.gvcf
  @ 2020-12-08 22:19:44: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
  @ 2020-12-08 22:19:44: Filter out variants [reference_allele == alternative_allele] ...
  @ 2020-12-08 22:19:44: Updating contig field ...
@@ -860,13 +878,13 @@ Convert large genomic regions
 ------------------------------
 
 
-For **large genomic regions** such as CNV blocks, the :code:`CrossMap.py bed` will split each large region into smaller blocks that are 100% matched to the target assembly.
-:code:`CrossMap.py region` will NOT split large regions, instead, it will calculate the **map ratio** (i.e. {bases mapped to target genome} / {total bases in query region}). If the
+For **large genomic regions** such as CNV blocks, the :code:`CrossMap bed` will split each large region into smaller blocks that are 100% matched to the target assembly.
+:code:`CrossMap region` will NOT split large regions, instead, it will calculate the **map ratio** (i.e. {bases mapped to target genome} / {total bases in query region}). If the
 **map ratio** is larger than the threshold specified by :code:`-r`, the coordinates will be converted to the target genome, otherwise, it fails.
 
-Typing :code:`CrossMap.py region -h` will print help message::
+Typing :code:`CrossMap region -h` will print help message::
 
- usage: CrossMap.py region [-h] [--chromid {a,s,l}] [-r MIN_MAP_RATIO] input.chain input.bed [out_bed]
+ usage: CrossMap region [-h] [--chromid {a,s,l}] [-r MIN_MAP_RATIO] input.chain input.bed [out_bed]
 
  positional arguments:
    input.chain           Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes
@@ -890,7 +908,7 @@ Typing :code:`CrossMap.py region -h` will print help message::
 
 Example::
 
- $CrossMap.py region  GRCh37_to_GRCh38.chain.gz test11_hg19_region.bed
+ $CrossMap region  GRCh37_to_GRCh38.chain.gz test11_hg19_region.bed
 
  @ 2020-08-14 16:46:04: Read the chain file:  ../data/human/GRCh37_to_GRCh38.chain.gz
  chr1	0	2500000	->	chr1	10000	2568561	map_ratio=0.9360
@@ -935,9 +953,9 @@ Example::
 View chain file
 -------------------
 
-Typing :code:`CrossMap.py viewchain -h` will print help message::
+Typing :code:`CrossMap viewchain -h` will print help message::
 
- usage: CrossMap.py viewchain [-h] input.chain
+ usage: CrossMap viewchain [-h] input.chain
 
  positional arguments:
    input.chain  Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html) describes pairwise
@@ -950,7 +968,7 @@ Typing :code:`CrossMap.py viewchain -h` will print help message::
 
 Example::
 
- $CrossMap.py viewchain ../data/human/GRCh37_to_GRCh38.chain.gz >chain.tab
+ $CrossMap viewchain ../data/human/GRCh37_to_GRCh38.chain.gz >chain.tab
  $head chain.tab
  1  10000 177417   +  1  10000 177417   +
  1  227417   267719   +  1  257666   297968   +
