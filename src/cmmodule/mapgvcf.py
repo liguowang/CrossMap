@@ -199,9 +199,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                 chrom = fields[0]
                 start = int(fields[1])-1  # 0 based
                 ref_allele_size = len(fields[3])
-                end = start + ref_allele_size
-                # 20  10000598    .   T   A,<NON_REF> 1754.77 .   DP=54;
-                # alt_allele = fields[4].replace(' ', '').split(',')[0]
+                end = start + 1  # liftover the 1st position of REF
 
                 a = map_coordinates(
                     mapping, chrom, start, end, '+', chrom_style=cstyle)
@@ -214,10 +212,12 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                     # update chrom
                     # target_chr is from chain file, could be 'chr1' or '1'
                     target_chr = str(a[1][0])
-                    target_start = a[1][1]
-                    target_end = a[1][2]
-                    if (target_end - target_start) != ref_allele_size:
+                    if a[1][3] == '-':
+                        target_end = a[1][1]
                         target_start = target_end - ref_allele_size
+                    else: 
+                        target_start = a[1][1]
+                        target_end = target_start + ref_allele_size
 
                     fields[0] = target_chr
                     fields[1] = target_start + 1
