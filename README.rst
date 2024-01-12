@@ -1,4 +1,4 @@
-|bioconda| |usegalaxy-eu|
+|docs-pass| |bioconda| |usegalaxy-eu|
 
 Installation
 ==================
@@ -25,7 +25,7 @@ https://crossmap.readthedocs.io/en/latest/
 
 
 
-.. image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
+.. |docs-pass| image:: https://readthedocs.org/projects/ansicolortags/badge/?version=latest
     :target: https://epical.readthedocs.io/?badge=latest
 
 .. |bioconda| image:: https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=flat
