@@ -1,6 +1,5 @@
 LICENSE.txt
 MANIFEST.in
-PKG-INFO
 README.rst
 pyproject.toml
 setup.py
