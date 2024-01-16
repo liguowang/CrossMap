@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'epical'
+project = 'CrossMap'
 copyright = '2024, Liguo Wang'
 author = 'Liguo Wang'
 release = '0.7.0'
