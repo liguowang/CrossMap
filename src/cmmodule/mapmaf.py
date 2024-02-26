@@ -122,7 +122,7 @@ def crossmap_maf_file(mapping, infile, outfile,
                 try:
                     target_chr = update_chromID(
                         refFasta.references[0], target_chr)
-                    fields[10] = refFasta.fetch(
+                    fields[9] = refFasta.fetch(
                         target_chr, target_start, target_end).upper()
                 except:
                     print(line, file=UNMAP)
