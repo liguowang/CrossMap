@@ -477,7 +477,7 @@ def read_chain_file(chain_file, print_table=False):
     return(maps, target_chromSize, source_chromSize)
 
 
-def map_coordinates(mapping, q_chr, q_start, q_end, 
+def map_coordinates(mapping, q_chr, q_start, q_end,
                     q_strand='+', print_match=False, chrom_style='a'):
     '''
     Map coordinates from source (i.e. original) assembly to target \

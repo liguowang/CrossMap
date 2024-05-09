@@ -103,7 +103,6 @@ def crossmap_bed_file(mapping, inbed,
             a = map_coordinates(
                 mapping, chrom, start, end, strand, chrom_style=cstyle)
 
-
             try:
                 if (a is None) or (len(a) % 2 != 0):
                     if outfile is None:

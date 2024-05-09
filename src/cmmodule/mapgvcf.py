@@ -76,7 +76,6 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
     failed_var = 0
     total_region = 0
     failed_region = 0
-    withChr = False  # check if the VCF data lines use 'chr1' or '1'
 
     for line in ireader.reader(infile):
         if not line.strip():
@@ -140,7 +139,8 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                            os.path.basename(refgenome)),
                         file=FILE_OUT)
 
-            print("##liftOverProgram=<CrossMap,version=%s,website=https://sourceforge.net/projects/crossmap>" % __version__, file=FILE_OUT)
+            print("##liftOverProgram=<CrossMap,version=%s"
+                  % __version__, file=FILE_OUT)
             print("##liftOverChainFile=<%s>" % liftoverfile, file=FILE_OUT)
             print("##originalFile=<%s>" % infile, file=FILE_OUT)
             print("##targetRefGenome=<%s>" % refgenome, file=FILE_OUT)
@@ -154,7 +154,6 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
         else:
             if line.startswith('#'):
                 continue
-
             # process non-variant region
             if 'END=' in line:
                 fields = str.split(line, maxsplit=8)
@@ -196,11 +195,23 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
             else:
                 fields = str.split(line, maxsplit=7)
                 total_var += 1
+                # original coordinates of variants
                 chrom = fields[0]
-                start = int(fields[1])-1  # 0 based
+                start = int(fields[1])-1     # 0 based
+                end = start + 1  # Only liftover the **First position** of REF
                 ref_allele_size = len(fields[3])
-                end = start + 1  # liftover the 1st position of REF
+                alt_allele_size = len(fields[4])
+                # allele_diff is used to tell the variant type:
+                # substitution, insertion or deletion
+                allele_diff = alt_allele_size - ref_allele_size
+                if allele_diff == 0:
+                    v_type = 'sub'
+                elif allele_diff > 0:
+                    v_type = 'ins'
+                else:
+                    v_type = 'del'
 
+                # Note, only convert the first position of REF allele
                 a = map_coordinates(
                     mapping, chrom, start, end, '+', chrom_style=cstyle)
                 if a is None:
@@ -209,31 +220,56 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                     continue
 
                 if len(a) == 2:
-                    # update chrom
-                    # target_chr is from chain file, could be 'chr1' or '1'
-                    target_chr = str(a[1][0])
-                    if a[1][3] == '-':
-                        target_end = a[1][1]
-                        target_start = target_end - ref_allele_size
-                    else: 
-                        target_start = a[1][1]
-                        target_end = target_start + ref_allele_size
+                    target_chr = a[1][0]
+                    target_start = a[1][1]
+                    target_end = a[1][2]
+                    target_strand = a[1][3]
 
+                    # update fields[0]: chrom
                     fields[0] = target_chr
-                    fields[1] = target_start + 1
 
-                    # update ref allele
-                    target_chr = update_chromID(refFasta.references[0], target_chr)
+                    # map to reverse strand
+                    if target_strand == '-':
+                        # For substitution (SNP), the REF allele is 1 nt
+                        if v_type == 'sub':
+                            ref_allele_start = target_start
+                            ref_allele_end = target_end
+                        # For insertion, the REF allele is 1 also nt
+                        elif v_type == 'ins':
+                            ref_allele_start = target_start
+                            ref_allele_end = target_end
+                        # For deletion, the REF allele is longer than 1 nt
+                        elif v_type == 'del':
+                            ref_allele_start = target_start - ref_allele_size
+                            ref_allele_end = ref_allele_start + ref_allele_size
+                    # map to forward strand
+                    elif target_strand == '+':
+                        if v_type == 'sub':
+                            ref_allele_start = target_start
+                            ref_allele_end = target_end
+                        elif v_type == 'ins':
+                            ref_allele_start = target_start
+                            ref_allele_end = target_end
+                        elif v_type == 'del':
+                            ref_allele_start = target_start
+                            ref_allele_end = ref_allele_start + ref_allele_size
+
+                    # update field[3] (REF)
+                    target_chr = update_chromID(
+                        refFasta.references[0], target_chr)
                     try:
                         fields[3] = refFasta.fetch(
-                            target_chr, target_start, target_end).upper()
+                            target_chr, ref_allele_start, ref_allele_end).upper()
                     except:
-                        print(line + "\tFail(No_targetRef)", file=UNMAP)
+                        print(line + "\tFail(KeyError)", file=UNMAP)
                         failed_var += 1
-                    
+                        continue
+                    # update fields[1]: postion of the REF
+                    fields[1] = ref_allele_start + 1
+
                     if len(fields[3]) == 0:
                         print(line + "\tFail(KeyError)", file=UNMAP)
-                        fail += 1
+                        failed_var += 1
                         continue
 
                     # for insertions and deletions in a VCF file,
@@ -249,14 +285,16 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                             if len(ref_allele) != len(alt_allele):
                                 # replace the 1st nucleotide of ALT
                                 if a[1][3] == '-':
-                                   tmp = ref_allele[0] + revcomp_DNA(alt_allele[1:], True)
+                                    tmp = ref_allele[0] + revcomp_DNA(
+                                        alt_allele[1:], True)
                                 else:
-                                   tmp = ref_allele[0] + alt_allele[1:]
+                                    tmp = ref_allele[0] + alt_allele[1:]
                                 alt_alleles_updated.append(tmp)
                             # substitutions
                             else:
                                 if a[1][3] == '-':
-                                    alt_alleles_updated.append(revcomp_DNA(alt_allele, True))
+                                    alt_alleles_updated.append(
+                                        revcomp_DNA(alt_allele, True))
                                 else:
                                     alt_alleles_updated.append(alt_allele)
                         else:
