@@ -177,6 +177,7 @@ def crossmap_vcf_file(mapping, infile, outfile,
                 print(line + "\tFail(Unmap)", file=UNMAP)
                 fail += 1
                 continue
+
             # one to one match
             if len(a) == 2:
                 target_chr = a[1][0]
