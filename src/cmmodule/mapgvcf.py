@@ -299,6 +299,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                                     alt_alleles_updated.append(alt_allele)
                         else:
                             alt_alleles_updated.append(alt_allele)
+                    alt_alleles_updated = [i for i in alt_alleles_updated if i != ref_allele]
                     fields[4] = ','.join(alt_alleles_updated)
 
                     # update END if any
