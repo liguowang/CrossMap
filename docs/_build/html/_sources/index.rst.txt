@@ -28,6 +28,30 @@ How CrossMap works?
 Release history
 ===================
 
+**07/17/2024: Release version 0.7.3**
+
+1. Fix bugs for VCF (and gVCF) liftover. For variants with multiple ALT alleles, remove the ALT allele that is the same as the REF allele.
+
+**05/09/2024: Release version 0.7.2**
+
+1. Fix bugs for VCF (and gVCF) liftover. When insertion/deletion variants were mapped to the reverse region of the target assembly, their REF alleles need to update. 
+
+.. code-block:: text
+
+ # Input VCF (header was not shown)
+ # These are hg19/GRCh37 based varants. They will map to the reverse region on hg38/GRCh38 
+ chr7    61879851        rs1223781306    A       AC      .       .       .
+ chr1    145382743       rs782203468     G       GA      .       .       .
+ chr1    144852392       indel.6062      AC      A       .       .       .
+ chr1    145698920       indel.6189      TGCTTGGGGTGCTTACG       T       .       .       .
+
+ # Output (Note their REF alleles were different from input)
+ chr7    62217710        rs1223781306    T       TG      .       .       .
+ chr1    146052257       rs782203468     C       CT      .       .       .
+ chr1    149032049       indel.6062      GG      G       .       .       .
+ chr1    145736150       indel.6189      CCGTAAGCACCCCAAGC       C       .       .       .
+
+
 **01/11/2024: Release version 0.7.0**
 
 1. Fix bugs for VCF varaints liftover.
