@@ -240,7 +240,7 @@ Run :code:`CrossMap -h` or :code:`CrossMap --help` print help message
  usage: CrossMap [-h] [-v]
                  {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
 
- CrossMap (v0.7.0) is a program to convert (liftover) genome coordinates
+ CrossMap (v0.7.3) is a program to convert (liftover) genome coordinates
  between different reference assemblies (e.g., from human GRCh37/hg19 to
  GRCh38/hg38 or vice versa). Supported file formats: BAM, BED, BigWig, CRAM,
  GFF, GTF, GVCF, MAF (mutation annotation format), SAM, Wiggle, and VCF.

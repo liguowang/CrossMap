@@ -36,10 +36,15 @@ def update_chromID(c_temp, c_target, chr_style='a'):
 
     chr_style : str, optional
         Chromosome ID style. Must be one of ['a', 's', 'l'], where
-        'a' : as-is. The chromosome ID of the output file is in the same \
-            style of the input file.
+        'a' : as-is. The chromosome ID of the target is written to the output file in the same \
+            style of the template chromosome ID (which comes from the query). This is a \
+            per-function call effect, and, thus, it is applied individually to each \
+            query-ID/target-ID pair presented in any given input record. The output \
+            file may have mixed styles if the input file has mixed styles. 
         's' : short ID, such as "1", "2", "X.
         'l' : long ID, such as "chr1", "chr2", "chrX.
+        'n' : no-touchy. The chromosome ID is left completely unchanged. \
+            c_temp is completely ignored.
 
     Returns
     --------
@@ -55,8 +60,11 @@ def update_chromID(c_temp, c_target, chr_style='a'):
     c_temp = str(c_temp)
     c_target = str(c_target)
 
+    # no touchy
+    if chr_style == 'n':
+        return c_target
     # short style
-    if chr_style == 's':
+    elif chr_style == 's':
         if c_target.startswith('chr'):
             return c_target.replace('chr', '')
         else:
@@ -502,6 +510,18 @@ def map_coordinates(mapping, q_chr, q_start, q_end,
 
     print_match : bool
         Print match table.
+
+    chrom_style : str, optional
+        Chromosome ID style. Must be one of ['a', 's', 'l', 'n'], where
+        'a' : as-is. The chromosome ID of the output is in the same style
+            of the input query chromosome ID. This is applied invidivually
+            to each query-ID/target-ID pair (as found in any given input 
+            to this function). If this function is called multiple times
+            with different query-ID styles, the aggregated outputs will
+            also have mixed styles.
+        's' : short ID, such as "1", "2", "X.
+        'l' : long ID, such as "chr1", "chr2", "chrX.
+        'n' : no-touchy. do not change modify the Chromosome ID in any way.
     '''
 
     matches = []

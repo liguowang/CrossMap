@@ -30,7 +30,7 @@ __contributor__ = "Liguo Wang, Hao Zhao"
 __copyright__ = "Copyleft"
 __credits__ = []
 __license__ = "GPLv2"
-__version__ = "0.7.0"
+__version__ = "0.7.3"
 __maintainer__ = "Liguo Wang"
 __email__ = "wangliguo78@gmail.com"
 __status__ = "Production"
@@ -88,9 +88,18 @@ def crossmap():
         BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation annotation \
         format), SAM, Wiggle, and VCF.' % (__version__)
 
-    chromid_help = 'The style of chromosome IDs. "a" = "as-is"; "l" = \
-        "long style" (eg. \"chr1\", \"chrX\"); "s" = "short style" \
-        (eg. \"1\", \"X\").'
+    chromid_help = 'The style of the output chromosome IDs. "a" = "as-is", \
+        "l" = "long style", "s" = "short style", and "n" = "no-touchy". \
+        As-is: The chromosome ID of the target is written to the output file in \
+        the same style of the query chromosome ID. This is applied individually \
+        to each query-ID/target-ID pair (as found in any given input record). \
+        The output file may have mixed styles if the input file has mixed \
+        styles. Long style: "chr" appears at the beginning of the chromosome ID \
+        (e.g., "chr1", "chrX"); the "chr" will be prepended if needed. Short \
+        style: "chr" does not appear at the beginning of the chromosome ID \
+        (e.g., "1", "X"); any "chr" prefix will be removed if needed. \
+        No-touchy: The chromosome ID is left completely unchanged.'
+
     chain_help = 'Chain file \
         (https://genome.ucsc.edu/goldenPath/help/chain.html) describes \
         pairwise alignments between two genomes. The input chain file can be \
@@ -137,7 +146,7 @@ def crossmap():
     parser_bed.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -149,6 +158,20 @@ def crossmap():
         default=None,
         help="file to save unmapped entries. This will be ignored if \
             [out_bed] was not provided.")
+    parser_bed.add_argument(
+        '--naive-bed-parsing',
+        action="store_true",
+        dest="naive_bed_parsing",
+        help="Perform \"naive\" parsing on the input BED file. Focus \
+            on the first 3 columns (chr, start, end) without making \
+            assumptions about the expected format or content of the \
+            other columns. This can serve as a workaround to provide \
+            a BED file with a number of columns matching the number \
+            of columns in a well-defined format (e.g., BED12) \
+            without conforming to that format's requirements. Note \
+            that for any given entry, a column with \"+\" or \"-\" \
+            will still be searched for in an attempt to determine \
+            the orientation.")
 
     # create the parser for the "bam" sub-command
     parser_bam = sub_parsers.add_parser(
@@ -211,7 +234,7 @@ def crossmap():
     parser_bam.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -246,7 +269,7 @@ def crossmap():
     parser_gff.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -279,7 +302,7 @@ def crossmap():
     parser_wig.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -307,7 +330,7 @@ def crossmap():
     parser_bigwig.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -344,7 +367,7 @@ def crossmap():
     parser_vcf.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -389,7 +412,7 @@ def crossmap():
     parser_gvcf.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -448,7 +471,7 @@ def crossmap():
     parser_maf.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -481,7 +504,7 @@ def crossmap():
     parser_region.add_argument(
         '--chromid',
         type=str,
-        choices=['a', 's', 'l'],
+        choices=['a', 's', 'l', 'n'],
         dest="cstyle",
         default='a',
         help=chromid_help)
@@ -524,7 +547,8 @@ def crossmap():
                 inbed=args.in_bed,
                 outfile=out_file,
                 unmapfile=args.unmap_file,
-                cstyle=args.cstyle)
+                cstyle=args.cstyle,
+                naive_bed_parsing=args.naive_bed_parsing)
 
         elif command == 'bam':
             out_file = args.out_bam

@@ -6,7 +6,7 @@ from cmmodule import annoGene
 
 
 def crossmap_bed_file(mapping, inbed,
-                      outfile=None, unmapfile=None, cstyle='a'):
+                      outfile=None, unmapfile=None, cstyle='a', naive_bed_parsing=False):
     '''
     Convert genome coordinates (in bed format) between assemblies.
     BED format: http://genome.ucsc.edu/FAQ/FAQformat.html#format1
@@ -32,6 +32,11 @@ def crossmap_bed_file(mapping, inbed,
             of the input file.
         's' : short ID, such as "1", "2", "X.
         'l' : long ID, such as "chr1", "chr2", "chrX.
+        'n' : no-touchy. do not change modify the Chromosome ID in any way.
+    
+    naive_bed_parsing : bool, optional
+        Parse inbed with simpler assumptions (as if the file had <12 columns,
+        even if it has >=12 columns)
     '''
 
     # check if 'outfile' was set. If not set, print to screen,
@@ -86,8 +91,15 @@ def crossmap_bed_file(mapping, inbed,
                 print(line + '\tStart>End', file=UNMAP)
             continue
 
-        # deal with bed less than 12 columns
-        if len(fields) < 12:
+        # deal with bed less than 12 columns, which uses less assumptions
+        # about format and content of various columns. It focuses on the first
+        # 3 columns (chrom, start, end). It also searches for strand
+        # information by looking for a field (one of the columns) containing
+        # exactly a '+' or '-'. The strand info will be kept from the latest
+        # (right-most) occurance of such information. This lesser-set of
+        # assumptions can also be used for files with 12+ columns if
+        # naive_bed_parsing is set to True.
+        if len(fields) < 12 or naive_bed_parsing:
             # try to reset strand
             try:
                 for f in fields:
@@ -159,8 +171,9 @@ def crossmap_bed_file(mapping, inbed,
                     print(line + '\tFail', file=UNMAP)
                 continue
 
-        # deal with bed12 and bed12+8 (genePred format)
-        if len(fields) == 12 or len(fields) == 20:
+        # deal with bed12 and bed12+8 (genePred format). naive_bed_parsing must
+        # be False (or we'd need an `elif` here)
+        if ( len(fields) == 12 or len(fields) == 20 ) and not naive_bed_parsing:
             strand = fields[5]
             if strand not in ['+', '-']:
                 raise Exception(
