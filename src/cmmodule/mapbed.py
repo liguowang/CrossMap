@@ -32,7 +32,7 @@ def crossmap_bed_file(mapping, inbed,
             of the input file.
         's' : short ID, such as "1", "2", "X.
         'l' : long ID, such as "chr1", "chr2", "chrX.
-        'n' : no-touchy. do not change modify the Chromosome ID in any way.
+        'n' : no-change. do not modify the Chromosome ID in any way.
     
     naive_bed_parsing : bool, optional
         Parse inbed with simpler assumptions (as if the file had <12 columns,

@@ -89,7 +89,7 @@ def crossmap():
         format), SAM, Wiggle, and VCF.' % (__version__)
 
     chromid_help = 'The style of the output chromosome IDs. "a" = "as-is", \
-        "l" = "long style", "s" = "short style", and "n" = "no-touchy". \
+        "l" = "long style", "s" = "short style", and "n" = "no-change". \
         As-is: The chromosome ID of the target is written to the output file in \
         the same style of the query chromosome ID. This is applied individually \
         to each query-ID/target-ID pair (as found in any given input record). \
@@ -98,7 +98,7 @@ def crossmap():
         (e.g., "chr1", "chrX"); the "chr" will be prepended if needed. Short \
         style: "chr" does not appear at the beginning of the chromosome ID \
         (e.g., "1", "X"); any "chr" prefix will be removed if needed. \
-        No-touchy: The chromosome ID is left completely unchanged.'
+        No-change: The chromosome ID is left completely unchanged.'
 
     chain_help = 'Chain file \
         (https://genome.ucsc.edu/goldenPath/help/chain.html) describes \

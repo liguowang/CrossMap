@@ -43,7 +43,7 @@ def update_chromID(c_temp, c_target, chr_style='a'):
             file may have mixed styles if the input file has mixed styles. 
         's' : short ID, such as "1", "2", "X.
         'l' : long ID, such as "chr1", "chr2", "chrX.
-        'n' : no-touchy. The chromosome ID is left completely unchanged. \
+        'n' : no-change. The chromosome ID is left completely unchanged. \
             c_temp is completely ignored.
 
     Returns
@@ -60,7 +60,7 @@ def update_chromID(c_temp, c_target, chr_style='a'):
     c_temp = str(c_temp)
     c_target = str(c_target)
 
-    # no touchy
+    # no change
     if chr_style == 'n':
         return c_target
     # short style
@@ -521,7 +521,7 @@ def map_coordinates(mapping, q_chr, q_start, q_end,
             also have mixed styles.
         's' : short ID, such as "1", "2", "X.
         'l' : long ID, such as "chr1", "chr2", "chrX.
-        'n' : no-touchy. do not change modify the Chromosome ID in any way.
+        'n' : no-change. do not modify the Chromosome ID in any way.
     '''
 
     matches = []
