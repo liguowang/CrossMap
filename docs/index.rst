@@ -455,7 +455,7 @@ Use :code:`CrossMap region` command to convert large genomic regions (such as `C
  $ cat Test4.hg19.bed
  chr2	239716679	243199373  # A large genomic interval of 3.48 Mb
  
-If use the :code:`CrossMap bed`command to liftover, this interval will be split 74 times.
+If use the :code:`CrossMap bed` command to liftover, this interval will be split 74 times.
 
 .. code-block:: text
 
@@ -473,7 +473,7 @@ Use the :code:`CrossMap region` command to liftover. By defualt :code:`r = 0.85`
 
  $ CrossMap region GRCh37_to_GRCh38.chain.gz Test4.hg19.bed
  2024-01-12 09:15:24 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- chr2    239716679   243199373   ->  chr2    238808038   242183529   map_ratio=0.9
+ chr2    239716679   243199373   ->  chr2    238808038   242183529   map_ratio=0.9622
 
 If we set :code:`r = 0.99`, this region will fail.
 
