@@ -9,7 +9,7 @@
 project = 'CrossMap'
 copyright = '2024, Liguo Wang'
 author = 'Liguo Wang'
-release = '0.7.0'
+release = '0.7.3'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
