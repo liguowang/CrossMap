@@ -372,6 +372,12 @@ def crossmap():
         default='a',
         help=chromid_help)
     parser_vcf.add_argument(
+        "--ref-consistent",
+        action="store_true",
+        dest="ref_consistent",
+        help="If set, CrossMap will check if reference allele is consistent \
+            during liftover.")
+    parser_vcf.add_argument(
         "--no-comp-alleles",
         action="store_true",
         dest="no_comp_alleles",
@@ -420,6 +426,12 @@ def crossmap():
         "out_gvcf",
         type=str,
         help='Output gVCF file.')
+    parser_gvcf.add_argument(
+        "--ref-consistent",
+        action="store_true",
+        dest="ref_consistent",
+        help="If set, CrossMap will check if reference allele is consistent \
+            during liftover.")
     parser_gvcf.add_argument(
         "--no-comp-alleles",
         action="store_true",
@@ -629,6 +641,7 @@ def crossmap():
                 outfile=args.out_vcf,
                 liftoverfile=args.chain,
                 refgenome=args.in_refgenome,
+                refconsistent=args.ref_consistent,
                 noCompAllele=args.no_comp_alleles,
                 compress=args.compression,
                 cstyle=args.cstyle)
@@ -644,6 +657,7 @@ def crossmap():
                 outfile=args.out_gvcf,
                 liftoverfile=args.chain,
                 refgenome=args.in_refgenome,
+                refconsistent=args.ref_consistent,
                 noCompAllele=args.no_comp_alleles,
                 compress=args.compression,
                 cstyle=args.cstyle)
