@@ -25,1009 +25,1315 @@ How CrossMap works?
    :alt: alternate text
 
 
-Release history
-===================
+Release History
+===============
 
-**07/17/2024: Release version 0.7.3**
+**10/30/2025: Version 0.7.4**
 
-1. Fix bugs for VCF (and gVCF) liftover. For variants with multiple ALT alleles, remove the ALT allele that is the same as the REF allele.
+1. Fixed issue where removing the only ALT allele left the “ALT” field empty.  
+   - In this case, the variant will now be written to the *unmapped variant file*.
 
-**05/09/2024: Release version 0.7.2**
+**07/17/2024: Version 0.7.3**
 
-1. Fix bugs for VCF (and gVCF) liftover. When insertion/deletion variants were mapped to the reverse region of the target assembly, their REF alleles need to update. 
+1. Fixed bugs in VCF and gVCF liftover.  
+   - For variants with multiple ALT alleles, remove the ALT allele that is identical to the REF allele.
+
+**05/09/2024: Version 0.7.2**
+
+1. Fixed bugs in VCF and gVCF liftover.  
+   - When insertion/deletion variants are mapped to the reverse strand of the target assembly, their REF alleles are now correctly updated.
 
 .. code-block:: text
 
- # Input VCF (header was not shown)
- # These are hg19/GRCh37 based varants. They will map to the reverse region on hg38/GRCh38 
- chr7    61879851        rs1223781306    A       AC      .       .       .
- chr1    145382743       rs782203468     G       GA      .       .       .
- chr1    144852392       indel.6062      AC      A       .       .       .
- chr1    145698920       indel.6189      TGCTTGGGGTGCTTACG       T       .       .       .
+   # Input VCF (header not shown)
+   # These are hg19/GRCh37-based variants. They map to the reverse region on hg38/GRCh38.
+   chr7    61879851        rs1223781306    A       AC      .       .       .
+   chr1    145382743       rs782203468     G       GA      .       .       .
+   chr1    144852392       indel.6062      AC      A       .       .       .
+   chr1    145698920       indel.6189      TGCTTGGGGTGCTTACG       T       .       .       .
 
- # Output (Note their REF alleles were different from input)
- chr7    62217710        rs1223781306    T       TG      .       .       .
- chr1    146052257       rs782203468     C       CT      .       .       .
- chr1    149032049       indel.6062      GG      G       .       .       .
- chr1    145736150       indel.6189      CCGTAAGCACCCCAAGC       C       .       .       .
+   # Output (Note that REF alleles differ from input)
+   chr7    62217710        rs1223781306    T       TG      .       .       .
+   chr1    146052257       rs782203468     C       CT      .       .       .
+   chr1    149032049       indel.6062      GG      G       .       .       .
+   chr1    145736150       indel.6189      CCGTAAGCACCCCAAGC       C       .       .       .
 
+**01/11/2024: Version 0.7.0**
 
-**01/11/2024: Release version 0.7.0**
+1. Fixed bugs in VCF variant liftover.  
+2. Added handling for non-DNA ALT alleles (e.g., ``<DEL>``).  
+3. Replaced ``setup.py`` with `pyproject.toml <https://packaging.python.org/en/latest/guides/writing-pyproject-toml/>`_.
 
-1. Fix bugs for VCF varaints liftover.
-2. Handle non-DNA ALT alleles such as <DEL>
-3. Use `pyproject.toml <https://packaging.python.org/en/latest/guides/writing-pyproject-toml/>`_ to replace "setup.py".
+.. note::
 
-.. Note::
+   Starting from v0.7.0, the main program :code:`CrossMap.py` has been renamed to :code:`CrossMap`  
+   due to restrictions on using "." in script names under ``pyproject.toml``.  
+   To maintain backward compatibility, add the following line to your ``~/.bashrc`` file:
 
-   From v0.7.0 onwards, the main program :code:`CrossMap.py` is now renamed to :code:`CrossMap` 
-   due to the restriction on using "." in the script name in the "pyproject.toml" file.
-   To ensure compatibility with the previous pipelines, please include the following line in 
-   your ``~/.bashrc`` file. 
+   ``alias CrossMap.py='CrossMap'``
 
-``alias CrossMap.py='CrossMap'``
+**07/21/2023: Version 0.6.4**
 
-**07/21/2023: Release version 0.6.4**
+1. Fixed bug when the sequence in a BAM file is represented as "*".  
+2. Updated code style.
 
-1. Fix bug when the sequence in BAM file is represented as "*"
-2. Change code style
+**07/12/2022: Version 0.6.4**
 
-**07/12/2022: Release version 0.6.4**
+1. Fixed bug where input BigWig files lacked coverage signals for some chromosomes.  
+2. If a VCF file has no CONTIG field, the long chromosome ID (e.g., “chr1”) is now used by default.
 
-1. Fix bug when the input bigwig file does not have coverage signal for some chromosomes. 
-2. When the input VCF file does not have CONTIG field, use long chromosome ID (e.g., "chr1") as default.
+**03/04/2022: Version 0.6.3**
 
-**03/04/2022: Release version 0.6.3**
+1. Fixed bug in v0.6.2 where the alternative allele was empty.
 
-1. Fix bug in v0.6.2. "Alternative allele is empty"
+**02/22/2022: Version 0.6.2**
 
-**02/22/2022: Release version 0.6.2**
+1. For insertions and deletions, the first nucleotide of the ALT allele (the 5th VCF field) is now updated to the nucleotide at the POS of the reference genome.
 
-1. For insertions and deletions, the first nucleotide of the ALT allele (the 5th field in VCF file) is updated to the nucleotide at POS of the reference genome
+**11/29/2021: Version 0.6.1**
 
-**11/29/2021: Release version 0.6.1**
+1. Same as v0.6.0, but removes unused modules from the ``lib`` folder.
 
-1. Same as v0.6.0. Remove unused modules from the lib folder.
+**11/16/2021: Version 0.6.0**
 
-**11/16/2021: Release version 0.6.0**
+1. Switched from `optparse <https://docs.python.org/3/library/optparse.html>`_ to `argparse <https://docs.python.org/3/library/argparse.html>`_.  
+2. Uses :code:`os.path.getmtime` instead of :code:`os.path.getctime` for checking FASTA file timestamps.  
+3. Added ``--unmap-file`` option to the :code:`CrossMap.py bed` command.
 
-1. Use `argparse <https://docs.python.org/3/library/argparse.html>`_ instead of `optparse <https://docs.python.org/3/library/optparse.html>`_.
-2. Use :code:`os.path.getmtime` instead of :code:`os.path.getctime` to check the timestamps of fasta file and its index file.
-3. Add '--unmap-file' option to :code:`CrossMap.py bed` command.
+**04/16/2021: Version 0.5.3 / 0.5.4**
 
-**4/16/2021: Release version 0.5.3/0.5.4**
+- Added :code:`CrossMap.py viewchain` command to convert a chain file into a more readable, block-to-block format.
 
-Add :code:`CrossMap.py viewchain` to convert chain file into block-to-block, more readable format.
+**12/08/2020: Version 0.5.2**
 
-**12/08/2020: Release version 0.5.2**
+- Added ``--no-comp-alleles`` flag to :code:`CrossMap.py vcf` and :code:`CrossMap.py gvcf`.  
+  If set, CrossMap will not check whether the reference and alternative alleles differ.
 
-Add '--no-comp-alleles' flag to :code:`CrossMap.py vcf` and :code:`CrossMap.py gvcf`. If set, CrossMap does not check if the "reference allele" is different from the "alternative allele".
+**08/19/2020: Version 0.5.1**
 
-**08/19/2020: Release version 0.5.1**
+- In :code:`CrossMap.py region`, additional columns (beyond the 3rd) in BED files are now preserved after conversion.
 
-In :code:`CrossMap.py region`: keep additional columns (columns after the 3rd column) of the original BED file after conversion.
+**08/14/2020: Version 0.5.0**
 
-**08/14/2020: Release version 0.5.0**
+- Added :code:`CrossMap.py region` function to convert large genomic regions as a whole.  
+  Unlike :code:`CrossMap.py bed`, which splits large regions, this function processes them intact.
 
-Add :code:`CrossMap.py region` function to convert large genomic regions. Unlike the :code:`CrossMap.py bed` function, which splits big genomic regions, :code:`CrossMap.py region` tries to convert the big genomic region as a whole.
+**07/09/2020: Version 0.4.3**
 
-**07/09/2020: Release version 0.4.3**
+- Structural Variant VCF files often use the INFO/END field to indicate deletion endpoints.  
+  Version 0.4.3 updates the “END” coordinate accordingly.
 
-Structural Variants VCF files often use INFO/END field to indicate the end of a deletion. v0.4.3 updates "END" coordinate in the INFO field.
+**05/04/2020: Version 0.4.2**
 
-**05/04/2020: Release version 0.4.2**
+- Added support for `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`__ file conversion.
 
-Support `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`__ file conversion.
+**03/24/2020: Version 0.4.1**
 
-**03/24/2020: Release version 0.4.1**
+- Fixed issue with consecutive TAB characters in input MAF files.
 
-Deal with consecutive TABs in the input MAF file.
+**10/09/2019: Version 0.3.8**
 
-**10/09/2019: Release version 0.3.8**
+- UCSC chain files are now permanently removed, per request from UCSC, as they retain University of California copyright.
 
-The University of California holds the copyrights in the UCSC chain files. As requested by UCSC, all UCSC-generated chain files will be permanently removed from this website and the CrossMap distributions.
+**07/22/2019: Version 0.3.6**
 
-**07/22/2019: Release version 0.3.6**
+1. Added support for MAF (Mutation Annotation Format).  
+2. Fixed ``TypeError: AlignmentHeader does not support item assignment (use header.to_dict())`` error in BAM liftover.  
+   - Users no longer need to downgrade ``pysam`` to 0.13.0.
 
-1. Support MAF (mutation annotation format).
-2. Fix error "TypeError: AlignmentHeader does not support item assignment (use header.to_dict()" when lifting over BAM files. User does not need to downgrade pysam to 0.13.0 to lift over BAM files.
+**04/01/2019: Version 0.3.4**
 
-**04/01/2019: Release version 0.3.4**
+- Fixed bugs where chromosome IDs in chain files lacked a “chr” prefix.  
+- Added detection for inverted mappings and automatic reverse-complement of ALT alleles (thanks to Andrew Yates).  
+- Improved wording.
 
-Fix bugs when chromosome IDs (of the source genome) in chain file do not have 'chr' prefix (such as "GRCh37ToHg19.over.chain.gz"). This version also allows CrossMap to detect if a VCF mapping was inverted, and if so, reverse complements the alternative allele (Thanks to Andrew Yates). Improve wording.
+**01/07/2019: Version 0.3.3**
 
-**01/07/2019: Release version 0.3.3**
+- Identical to Version 0.3.2.  
+  Released because ``CrossMap-0.3.2.tar.gz`` was corrupted on PyPI.
 
-Version 0.3.3 is exactly the same as Version 0.3.2. The reason to release this version is that CrossMap-0.3.2.tar.gz was broken when uploading to pypi.
+**12/14/2018: Version 0.3.2**
 
-**12/14/18: Release version 0.3.2**
+- Fixed *KeyError* (e.g., ``KeyError: "sequence 'b'7_KI270803v1_alt'' not present"``).  
+  - This occurred when a locus mapped to an “alternative,” “unplaced,” or “unlocalized” contig absent in ``target_ref.fa``.  
+  - Such loci are now skipped and saved to the “.unmap” file.
 
-Fix the key error problem (e.g  *KeyError: "sequence 'b'7_KI270803v1_alt'' not present"*). This error happens when a locus from the original assembly is mapped to an "alternative", "unplaced" or "unlocalized" contig in the target assembly, and this "target contig" does not exist in your target_ref.fa. In version 0.3.2, such loci will be silently skipped and saved to the ".unmap" file.
+**11/05/2018: Version 0.3.0**
 
-**11/05/18: Release version 0.3.0**
-
-1. v0.3.0 or newer will Support Python3. Previous versions support Python2.7.\*
-2. add `pyBigWig <https://github.com/deeptools/pyBigWig>`_ as a dependency.
+1. Added Python 3 support (v0.3.0 and later).  
+   - Previous versions supported only Python 2.7.\*  
+2. Added dependency: `pyBigWig <https://github.com/deeptools/pyBigWig>`_.
 
 
 Installation
-==================
+============
 
 Install from PyPI
-------------------
+-----------------
 
-``pip3 install CrossMap``
+To install the latest stable release from PyPI:
+
+.. code-block:: bash
+
+   pip install CrossMap
 
 Install from GitHub
 -------------------
- 
-``pip3 install git+https://github.com/liguowang/CrossMap.git``
+
+To install the latest development version directly from GitHub:
+
+.. code-block:: bash
+
+   pip install git+https://github.com/liguowang/CrossMap.git
 
 Upgrade
---------
+-------
 
-``pip3 install CrossMap --upgrade``
+To upgrade an existing installation to the newest version:
+
+.. code-block:: bash
+
+   pip install --upgrade CrossMap
+
+Uninstall
+---------
+
+.. code-block:: bash
+
+   pip uninstall CrossMap
 
 
 Input and Output
-=================
+================
 
-Chain file
------------
+Chain File
+----------
 
-A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a pairwise alignment between two reference assemblies. `UCSC <https://genome.ucsc.edu/>`_ and `Ensembl <https://uswest.ensembl.org/index.html>`_ chain files are available:
+A `chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_ describes a pairwise alignment between two reference genome assemblies.  
+These files are required by :code:`CrossMap` to map genomic coordinates between assemblies.  
 
+Chain files are available from both `UCSC <https://genome.ucsc.edu/>`_ and `Ensembl <https://uswest.ensembl.org/index.html>`_.
 
-**UCSC chain files**
+**UCSC Chain Files**
 
- * Chain files from hs1 (T2T-CHM13) to hg38/hg19/mm10/mm9 (ore vice versa): https://hgdownload.soe.ucsc.edu/goldenPath/hs1/liftOver/ 
- * Chain files from hg38 (GRCh38) to hg19 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
- * Chain File from hg19 (GRCh37) to hg17/hg18/hg38 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/
- * Chain File from mm10 (GRCm38) to mm9 and all other organisms: http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/
+* **From hs1 (T2T-CHM13)** to hg38, hg19, mm10, or mm9 (and vice versa):  
+  https://hgdownload.soe.ucsc.edu/goldenPath/hs1/liftOver/
 
-**Ensembl chain files**
+* **From hg38 (GRCh38)** to hg19 and other organisms:  
+  http://hgdownload.soe.ucsc.edu/goldenPath/hg38/liftOver/
 
- * Human to Human: ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/
- * Mouse to Mouse: ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/
- * Other organisms: ftp://ftp.ensembl.org/pub/assembly_mapping/
+* **From hg19 (GRCh37)** to hg17, hg18, hg38, and other organisms:  
+  http://hgdownload.soe.ucsc.edu/goldenPath/hg19/liftOver/
 
+* **From mm10 (GRCm38)** to mm9 and other organisms:  
+  http://hgdownload.soe.ucsc.edu/goldenPath/mm10/liftOver/
 
-User Input file
-----------------
+**Ensembl Chain Files**
 
-CrossMap supports the following file formats.
+* **Human to Human:**  
+  ftp://ftp.ensembl.org/pub/assembly_mapping/homo_sapiens/
 
-1. `BAM <http://samtools.sourceforge.net/SAMv1.pdf>`__, `CRAM <https://samtools.github.io/hts-specs/CRAMv3.pdf>`__, or `SAM <http://samtools.sourceforge.net/SAMv1.pdf/>`__
-2. `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`__ or BED-like. (BED file must have at least 'chrom', 'start', 'end')
-3. `Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`__ ("variableStep", "fixedStep" and "bedGraph" formats are supported)
+* **Mouse to Mouse:**  
+  ftp://ftp.ensembl.org/pub/assembly_mapping/mus_musculus/
+
+* **Other organisms:**  
+  ftp://ftp.ensembl.org/pub/assembly_mapping/
+
+User Input File
+---------------
+
+CrossMap supports the following input file formats:
+
+1. `BAM <http://samtools.sourceforge.net/SAMv1.pdf>`__, 
+   `CRAM <https://samtools.github.io/hts-specs/CRAMv3.pdf>`__, or 
+   `SAM <http://samtools.sourceforge.net/SAMv1.pdf>`__
+
+2. `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`__ or BED-like formats  
+   (The BED file must contain at least the fields: *chrom*, *start*, and *end*.)
+
+3. `Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`__  
+   (*variableStep*, *fixedStep*, and *bedGraph* formats are supported.)
+
 4. `BigWig <http://genome.ucsc.edu/goldenPath/help/bigWig.html>`__
-5. `GFF <http://genome.ucsc.edu/FAQ/FAQformat.html#format3>`__ or `GTF <http://genome.ucsc.edu/FAQ/FAQformat.html#format4>`__
+
+5. `GFF <http://genome.ucsc.edu/FAQ/FAQformat.html#format3>`__ or 
+   `GTF <http://genome.ucsc.edu/FAQ/FAQformat.html#format4>`__
+
 6. `VCF <http://vcftools.sourceforge.net/index.html>`__
+
 7. `GVCF <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`__
+
 8. `MAF <https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/>`__
 
 
-Output file
+Output File
 -----------
 
-The format of output files depends on the input
+The output file format depends on the input file type:
 
-==============  =========================================================================================
-Input_format        Output_format
-==============  =========================================================================================
-BED             BED (Genome coordinates will be updated)
-BAM             BAM (Genome coordinates, header section, all SAM flags, insert size will be updated)
-CRAM			BAM (require pysam >= 0.8.2)
-SAM             SAM (Genome coordinates, header section, all SAM flags, insert size will be updated)
-Wiggle          BigWig
-BigWig          BigWig
-GFF		        GFF (Genome coordinates will be updated to the target assembly)
-GTF             GTF (Genome coordinates will be updated to the target assembly)
-VCF             VCF (header section, Genome coordinates, reference alleles will be updated)
-GVCF			GVCF (header section, Genome coordinates, reference alleles will be updated)
-MAF				MAF (Genome coordinates and reference alleles will be updated)
-==============  =========================================================================================
++---------------+----------------------------------------------------------------------------------------------+
+| Input Format  | Output Format                                                                                |
++===============+==============================================================================================+
+| BED           | BED (genome coordinates will be updated)                                                     |
++---------------+----------------------------------------------------------------------------------------------+
+| BAM           | BAM (genome coordinates, header section, all SAM flags, and insert sizes will be updated)    |
++---------------+----------------------------------------------------------------------------------------------+
+| CRAM          | BAM (requires ``pysam >= 0.8.2``)                                                            |
++---------------+----------------------------------------------------------------------------------------------+
+| SAM           | SAM (genome coordinates, header section, all SAM flags, and insert sizes will be updated)    |
++---------------+----------------------------------------------------------------------------------------------+
+| Wiggle        | BigWig                                                                                       |
++---------------+----------------------------------------------------------------------------------------------+
+| BigWig        | BigWig                                                                                       |
++---------------+----------------------------------------------------------------------------------------------+
+| GFF           | GFF (genome coordinates will be updated to the target assembly)                              |
++---------------+----------------------------------------------------------------------------------------------+
+| GTF           | GTF (genome coordinates will be updated to the target assembly)                              |
++---------------+----------------------------------------------------------------------------------------------+
+| VCF           | VCF (header section, genome coordinates, and reference alleles will be updated)              |
++---------------+----------------------------------------------------------------------------------------------+
+| GVCF          | GVCF (header section, genome coordinates, and reference alleles will be updated)             |
++---------------+----------------------------------------------------------------------------------------------+
+| MAF           | MAF (genome coordinates and reference alleles will be updated)                               |
++---------------+----------------------------------------------------------------------------------------------+
 
+Usage Information
+=================
 
-Usage
-=====
+To display the help message, run:
 
-Run :code:`CrossMap -h` or :code:`CrossMap --help` print help message
-::
+.. code-block:: bash
 
- $ CrossMap -h
+   CrossMap -h
 
- usage: CrossMap [-h] [-v]
-                 {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
+**Example output:**
 
- CrossMap (v0.7.3) is a program to convert (liftover) genome coordinates
- between different reference assemblies (e.g., from human GRCh37/hg19 to
- GRCh38/hg38 or vice versa). Supported file formats: BAM, BED, BigWig, CRAM,
- GFF, GTF, GVCF, MAF (mutation annotation format), SAM, Wiggle, and VCF.
+.. code-block:: text
 
- positional arguments:
+   usage: CrossMap [-h] [-v]
+                   {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain} ...
+
+   CrossMap (v0.7.3) is a program for converting (lifting over) genome coordinates
+   between different reference assemblies (e.g., from human GRCh37/hg19 to
+   GRCh38/hg38, or vice versa).
+
+   Supported file formats: BAM, BED, BigWig, CRAM, GFF, GTF, GVCF, MAF (mutation
+   annotation format), SAM, Wiggle, and VCF.
+
+**Positional arguments:**
+
+.. code-block:: text
+
    {bed,bam,gff,wig,bigwig,vcf,gvcf,maf,region,viewchain}
-                         sub-command help
-     bed                 converts BED, bedGraph or other BED-like files. Only
-                         genome coordinates (i.e., the first 3 columns) will be
-                         updated. Regions mapped to multiple locations to the
-                         new assembly will be split. Use the "region" command
-                         to liftover large genomic regions. Use the "wig"
-                         command if you need bedGraph/bigWig output.
-     bam                 converts BAM, CRAM, or SAM format file. Genome
-                         coordinates, header section, all SAM flags, insert
-                         size will be updated.
-     gff                 converts GFF or GTF format file. Genome coordinates
-                         will be updated.
-     wig                 converts Wiggle or bedGraph format file. Genome
-                         coordinates will be updated.
-     bigwig              converts BigWig file. Genome coordinates will be
-                         updated.
-     vcf                 converts VCF file. Genome coordinates, header section,
-                         reference alleles will be updated.
-     gvcf                converts GVCF file. Genome coordinates, header
-                         section, reference alleles will be updated.
-     maf                 converts MAF (mutation annotation format) file. Genome
-                         coordinates and reference alleles will be updated.
-     region              converts big genomic regions (in BED format) such as
-                         CNV blocks. Genome coordinates will be updated.
-     viewchain           prints out the content of a chain file into a human
-                         readable, block-to-block format.
+                           sub-command help
 
- options:
-   -h, --help            show this help message and exit
-   -v, --version         show program's version number and exit
+     bed         Convert BED, bedGraph, or other BED-like files.
+                 Only genome coordinates (the first 3 columns) will be updated.
+                 Regions mapped to multiple locations in the new assembly will be split.
+                 Use the "region" command for large genomic regions, or "wig"
+                 for bedGraph/BigWig output.
 
- https://crossmap.readthedocs.io/en/latest/
+     bam         Convert BAM, CRAM, or SAM format files.
+                 Genome coordinates, header section, all SAM flags, and insert sizes
+                 will be updated.
 
-Convert BED format files
+     gff         Convert GFF or GTF format files.
+                 Genome coordinates will be updated.
+
+     wig         Convert Wiggle or bedGraph format files.
+                 Genome coordinates will be updated.
+
+     bigwig      Convert BigWig files.
+                 Genome coordinates will be updated.
+
+     vcf         Convert VCF files.
+                 Genome coordinates, header section, and reference alleles will be updated.
+
+     gvcf        Convert GVCF files.
+                 Genome coordinates, header section, and reference alleles will be updated.
+
+     maf         Convert MAF (Mutation Annotation Format) files.
+                 Genome coordinates and reference alleles will be updated.
+
+     region      Convert large genomic regions (in BED format), such as CNV blocks.
+                 Genome coordinates will be updated.
+
+     viewchain   Display the content of a chain file in a human-readable,
+                 block-to-block format.
+
+
+Convert BED Format Files
 ------------------------
+
 A `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`_ (Browser Extensible Data) file
-is a tab-delimited text file describing genome regions or gene annotations.
-It consists of one line per feature, each containing 3-12 columns.
-CrossMap converts BED files with less than 12 columns to a different assembly by updating the
-chromosome and genome coordinates only; all other columns remain unchanged. Regions from the old
-assembly mapping to multiple locations to the new assembly will be split.  For 12-columns BED
-files, all columns will be updated accordingly except the 4th column (name of bed line), 5th
-column (score value), and 9th column (RGB value describing the display color). 12-column BED
-files usually define multiple blocks (e.g., exons); if any of the exons fails to map to a new
-assembly, the whole BED line is skipped.
+is a tab-delimited text file describing genomic regions or gene annotations.
+Each line represents one feature and may contain between **3 and 12 columns**.
 
-The input BED file can be plain text file, compressed file with extension of .gz, .Z, .z,
-.bz, .bz2 and .bzip2, or even a URL pointing to accessible remote files (http://, https://
-and ftp://). Compressed remote files are not supported. The output is a BED format file with
-exactly the same number of columns as the original one.
+CrossMap converts BED files between reference assemblies by updating chromosome and coordinate
+information while keeping other fields intact.
 
-Standard `BED <http://genome.ucsc.edu/FAQ/FAQformat.html#format1>`__ format has 12 columns, but CrossMap also supports BED-like formats:
+- For **BED files with fewer than 12 columns**, only the chromosome and coordinate fields are updated.  
+- For **12-column BED files**, all columns are updated **except**:
+  - **4th column:** feature name  
+  - **5th column:** score  
+  - **9th column:** RGB display color  
 
-* BED3: The first three columns ("chrom", "start", "end") of the BED format file.
-* BED6: The first six columns ("chrom", "start", "end", "name", "score", "strand") of the BED format file.
-* Other: Format has at least three columns ("chrom", "start", "end") and no more than 12 columns. All other columns are arbitrary.
+If any exon block in a 12-column BED file fails to map to the target assembly, the entire line
+will be skipped. Regions from the source assembly mapping to multiple positions in the target
+assembly are split into separate entries.
 
-.. NOTE::
+Input and Output
+~~~~~~~~~~~~~~~~
 
-   1. For BED-like formats mentioned above, CrossMap only updates the "chrom", "start", "end", and "strand" columns. All other columns will be kept AS-IS.
-   2.  Lines starting with '#', 'browser', 'track' will be skipped.
-   3.  Lines less than three columns will be skipped.
-   4.  The 2nd and 3rd columns must be integers.
-   5.  The "+" strand is assumed if no strand information is found.
-   6.  For standard BED format (12 columns). If any of the defined exon blocks cannot be uniquely mapped to target assembly, the whole entry will be skipped.
-   7. The "input_chain_file" and "input_bed_file" can be regular or compressed (.gz, .Z, .z, .bz, .bz2, .bzip2) file, local file or URL (http://, https://, ftp://) pointing to remote file.
-   8. If the output_file is not specified, results will be printed to screen (console). In this case, the original bed entries (including entries failed to convert) were also printed out.
-   9. If the input region cannot be consecutively mapped to the target assembly, it will be split.
-   10. The \*.unmap file contains regions that cannot be unambiguously converted.
+The input BED file can be one of the following:
 
+- Plain text file  
+- Compressed file with extensions: ``.gz``, ``.Z``, ``.z``, ``.bz``, ``.bz2``, or ``.bzip2``  
+- URL pointing to an accessible remote file (``http://``, ``https://``, or ``ftp://``)
 
-Typing :code:`CrossMap bed -h` will print help message::
+**Note:** compressed *remote* files are **not supported**.
 
- $ CrossMap bed  -h
- usage: CrossMap bed [-h] [--chromid {a,s,l}] [--unmap-file UNMAP_FILE]
-                     input.chain input.bed [out_bed]
+The output is a BED-format file with the **same number of columns** as the input.
 
- positional arguments:
-   input.chain           Chain file
-                         (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                         describes pairwise alignments between two genomes. The
-                         input chain file can be a plain text file or
-                         compressed (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.bed             The input BED file. The first 3 columns must be
-                         “chrom”, “start”, and “end”. The input BED file can be
-                         plain text file, compressed file with extension of
-                         .gz, .Z, .z, .bz, .bz2 and .bzip2, or even a URL
-                         pointing to accessible remote files (http://, https://
-                         and ftp://). Compressed remote files are not
-                         supported.
-   out_bed               Output BED file. if argument is missing, CrossMap will
-                         write BED file to the STDOUT.
+BED Variants Supported
+~~~~~~~~~~~~~~~~~~~~~~
 
- options:
-   -h, --help            show this help message and exit
-   --chromid {a,s,l}     The style of chromosome IDs. "a" = "as-is"; "l" =
-                         "long style" (eg. "chr1", "chrX"); "s" = "short style"
-                         (eg. "1", "X").
-   --unmap-file UNMAP_FILE
-                         file to save unmapped entries. This will be ignored if
-                         [out_bed] was not provided.
+Standard BED format has 12 columns, but CrossMap also supports BED-like variants:
 
-**Example 1**
+- **BED3:** first three columns — ``chrom``, ``start``, ``end``  
+- **BED6:** first six columns — ``chrom``, ``start``, ``end``, ``name``, ``score``, ``strand``  
+- **Other BED-like formats:** between 3 and 12 columns, where extra columns are arbitrary
 
-run :code:`CrossMap bed` with no output file.
-Results were printed to screen.
+.. note::
+
+   1. For BED-like formats, CrossMap updates only the ``chrom``, ``start``, ``end``, and ``strand`` fields.  
+      All other columns are preserved *as-is*.  
+   2. Lines beginning with ``#``, ``browser``, or ``track`` are ignored.  
+   3. Lines containing fewer than three columns are skipped.  
+   4. The 2nd and 3rd columns must be integers.  
+   5. The ``+`` strand is assumed if no strand information is provided.  
+   6. For standard 12-column BED files, if any exon block cannot be uniquely mapped, the entire entry is skipped.  
+   7. Both ``input_chain_file`` and ``input_bed_file`` may be regular or compressed files  
+      (``.gz``, ``.Z``, ``.z``, ``.bz``, ``.bz2``, ``.bzip2``) and may also be local or remote URLs.  
+   8. If ``output_file`` is not specified, CrossMap prints results to the console.  
+      In this case, original (unconverted) entries are also printed.  
+   9. If an input region cannot be mapped contiguously to the target assembly, it is split.  
+   10. The ``*.unmap`` file contains entries that could not be unambiguously converted.
+
+Command Help
+~~~~~~~~~~~~
+
+To view command-line help for BED conversion, run :code:`CrossMap bed -h`
 
 .. code-block:: text
 
- $cat Test1.hg19.bed
- 
- chr1   65886334    66103176
- chr3    112251353   112280810
- chr5    54408798    54469005
- chr7    107204401   107218968
- 
- $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test1.hg19.bed
+   usage: CrossMap bed [-h] [--chromid {a,s,l}] [--unmap-file UNMAP_FILE]
+                       input.chain input.bed [out_bed]
 
- 2024-01-12 08:36:35 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- chr1   65886334    66103176    ->  chr1    65420651    65637493
- chr3   112251353   112280810   ->  chr3    112532506   112561963
- chr5   54408798    54469005    ->  chr5    55112970    55173177
- chr7   107204401   107218968   ->  chr7    107563956   107578523
+   positional arguments:
+     input.chain           Chain file
+                           (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                           Describes pairwise alignments between two genomes.
+                           The chain file may be plain text or compressed
+                           (.gz, .Z, .z, .bz, .bz2, .bzip2).
 
-.. Note ::
-   The first 3 columns are hg19-based coordinates. The last 3 columns are hg38-based coordinates.
+     input.bed             Input BED file. The first 3 columns must be
+                           “chrom”, “start”, and “end”.
+                           Supports plain text, compressed (.gz, .bz2, etc.),
+                           or URL sources (http://, https://, ftp://).
+                           Compressed remote files are not supported.
 
-**Example 2**
+     out_bed               Output BED file.
+                           If omitted, CrossMap writes to STDOUT.
 
-run :code:`CrossMap bed` with output file specified. 
-Results (genomic coordinates after liftover) were saved to the file "output.hg38"
+   options:
+     -h, --help            Show this help message and exit
+     --chromid {a,s,l}     Style of chromosome IDs:
+                             a = as-is
+                             l = long style (e.g., "chr1", "chrX")
+                             s = short style (e.g., "1", "X")
+     --unmap-file UNMAP_FILE
+                           File to save unmapped entries.
+                           Ignored if [out_bed] is not provided.
 
-.. code-block:: text
+Example 1 — Run Without Output File
+-----------------------------------
 
- $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test1.hg19.bed output.hg38
- 2024-01-12 08:35:56 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+Running :code:`CrossMap bed` without specifying an output file prints the results to the screen.
 
- $ cat output.hg38
- chr1    65420651    65637493
- chr3    112532506   112561963
- chr5    55112970    55173177
- chr7    107563956   107578523
+.. code-block:: bash
 
-.. Note ::
-   Genomic intervals failed to map will be saved to file "output.hg38.unmap".
+   $ cat Test1.hg19.bed
 
-**Example 3**
+   chr1   65886334   66103176
+   chr3   112251353  112280810
+   chr5   54408798   54469005
+   chr7   107204401  107218968
 
-Input regions will be split if they cannot map consecutively to the target assembly.
+   $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test1.hg19.bed
 
-.. code-block:: text
- 
- $ cat Test2.hg19.bed
- chr20  21106623    21227258
- chr22  30792929    30821291
+   2024-01-12 08:36:35 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   chr1   65886334   66103176   ->  chr1   65420651   65637493
+   chr3   112251353  112280810  ->  chr3   112532506  112561963
+   chr5   54408798   54469005   ->  chr5   55112970   55173177
+   chr7   107204401  107218968  ->  chr7   107563956  107578523
 
- $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test2.hg19.bed
- 2024-01-12 08:53:10 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- chr20  21106623    21227258    (split.1:chr20:21106623:21144549:+) chr20   21125982    21163908
- chr20  21106623    21227258    (split.2:chr20:21144549:21176014:+) chr20   21163909    21195374
- chr20  21106623    21227258    (split.3:chr20:21176014:21186161:+) chr20   21195375    21205522
- chr20  21106623    21227258    (split.4:chr20:21186161:21227258:+) chr20   21205523    21246620
- chr22  30792929    30821291    (split.1:chr22:30792929:30819612:+) chr22   30396940    30423623
- chr22  30792929    30821291    (split.2:chr22:30819615:30821291:+) chr22   30423627    30425303
-
-.. Note ::
-   The first 3 columns are hg19-based coordinates. The last 3 columns are hg38-based coordinates.
-
-**Example 4**
-
-`BedGraph <https://genome.ucsc.edu/goldenPath/help/bedgraph.html>`_ format file can be converted using either :code:`CrossMap bed` or :code:`CrossMap wig`;
-however, the output formats are different:
-
-* When using :code:`CrossMap bed` command to convert a bedGraph file, the output is a **bedGraph** file.
-* When using :code:`CrossMap wig` command to convert a bedGraph file, the output is a **bigWig** file.
-
-.. code-block:: text
-
- $ head -3 Test3.hg19.bgr
- chrX   2705083 2705158 1.0
- chrX    2813094 2813169 0.9
- chrX    2813169 2814363 0.1
- ...
-
- $ CrossMap bed hg19ToHg38.over.chain.gz Test3.hg19.bgr
- 2024-01-12 09:05:05 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz
- chrX    2705083 2705158 1.0 ->  chrX    2787042 2787117 1.0
- chrX    2813094 2813169 0.9 ->  chrX    2895053 2895128 0.9
- chrX    2813169 2814363 0.1 ->  chrX    2895128 2896322 0.1
- ...
-
- $ CrossMap wig  GRCh37_to_GRCh38.chain.gz  Test3.hg19.bgr output.hg38
- 2024-01-12 09:09:52 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- 2024-01-12 09:09:52 [INFO]  Liftover wiggle file "Test3.hg19.bgr" to bedGraph file "output.hg38.bgr"
- 2024-01-12 09:09:52 [INFO]  Merging overlapped entries in bedGraph file
- 2024-01-12 09:09:52 [INFO]  Sorting bedGraph file: output.hg38.bgr
- 2024-01-12 09:09:52 [INFO]  Writing header to "output.hg38.bw" ...
- 2024-01-12 09:09:52 [INFO]  Writing entries to "output.hg38.bw" ...
-
-**Example 5**
-
-Use :code:`CrossMap region` command to convert large genomic regions (such as `CNV <https://en.wikipedia.org/wiki/Copy_number_variation>`_ blocks) in BED format.
-
-.. code-block:: text
-
- $ cat Test4.hg19.bed
- chr2	239716679	243199373  # A large genomic interval of 3.48 Mb
- 
-If use the :code:`CrossMap bed` command to liftover, this interval will be split 74 times.
-
-.. code-block:: text
-
- $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test4.hg19.bed
- 2024-01-12 09:12:45 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- chr2	239716679	243199373	(split.1:chr2:239716679:239801978:+)	chr2	238808038	238893337
- chr2	239716679	243199373	(split.2:chr2:239831978:240205681:+)	chr2	238910282	239283985
- chr2	239716679	243199373	(split.3:chr2:240205681:240319336:+)	chr2	239283986	239397641
- ... (split 74 times)
+.. note::
+   The first three columns represent **hg19-based coordinates**, while the last three columns are **hg38-based coordinates**.
 
 
-Use the :code:`CrossMap region` command to liftover. By defualt :code:`r = 0.85`.
+Example 2 — Save Output to File
+-------------------------------
 
-.. code-block:: text
+When an output file is specified, CrossMap saves the converted results to that file.
 
- $ CrossMap region GRCh37_to_GRCh38.chain.gz Test4.hg19.bed
- 2024-01-12 09:15:24 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- chr2    239716679   243199373   ->  chr2    238808038   242183529   map_ratio=0.9622
+.. code-block:: bash
 
-If we set :code:`r = 0.99`, this region will fail.
+   $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test1.hg19.bed output.hg38
+   2024-01-12 08:35:56 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
 
-.. code-block:: text
+   $ cat output.hg38
+   chr1   65420651   65637493
+   chr3   112532506  112561963
+   chr5   55112970   55173177
+   chr7   107563956  107578523
 
- $ CrossMap region GRCh37_to_GRCh38.chain.gz Test4.hg19.bed -r 0.99
- 2024-01-12 09:18:53 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- chr2    239716679   243199373   Fail    map_ratio=0.9622
+.. note::
+   Genomic intervals that **fail to map** will be saved in a separate file named ``output.hg38.unmap``.
 
+
+Example 3 — Split Non-Contiguous Mappings
+-----------------------------------------
+
+If an input region cannot be mapped **contiguously** to the target assembly, it is automatically split.
+
+.. code-block:: bash
+
+   $ cat Test2.hg19.bed
+   chr20  21106623   21227258
+   chr22  30792929   30821291
+
+   $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test2.hg19.bed
+   2024-01-12 08:53:10 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   chr20  21106623   21227258  (split.1:chr20:21106623:21144549:+)  chr20  21125982  21163908
+   chr20  21106623   21227258  (split.2:chr20:21144549:21176014:+)  chr20  21163909  21195374
+   chr20  21106623   21227258  (split.3:chr20:21176014:21186161:+)  chr20  21195375  21205522
+   chr20  21106623   21227258  (split.4:chr20:21186161:21227258:+)  chr20  21205523  21246620
+   chr22  30792929   30821291  (split.1:chr22:30792929:30819612:+)  chr22  30396940  30423623
+   chr22  30792929   30821291  (split.2:chr22:30819615:30821291:+)  chr22  30423627  30425303
+
+.. note::
+   As before, the first three columns are **hg19-based**, and the last three are **hg38-based**.
+
+
+Example 4 — Converting bedGraph Files
+-------------------------------------
+
+A `bedGraph <https://genome.ucsc.edu/goldenPath/help/bedgraph.html>`_ file can be converted using either
+:code:`CrossMap bed` or :code:`CrossMap wig`. The choice of command determines the output format:
+
+* Using :code:`CrossMap bed` → output is a **bedGraph** file.  
+* Using :code:`CrossMap wig` → output is a **BigWig** file.
+
+.. code-block:: bash
+
+   $ head -3 Test3.hg19.bgr
+   chrX   2705083   2705158   1.0
+   chrX   2813094   2813169   0.9
+   chrX   2813169   2814363   0.1
+   ...
+
+   $ CrossMap bed hg19ToHg38.over.chain.gz Test3.hg19.bgr
+   2024-01-12 09:05:05 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   chrX   2705083   2705158   1.0  ->  chrX   2787042   2787117   1.0
+   chrX   2813094   2813169   0.9  ->  chrX   2895053   2895128   0.9
+   chrX   2813169   2814363   0.1  ->  chrX   2895128   2896322   0.1
+   ...
+
+   $ CrossMap wig GRCh37_to_GRCh38.chain.gz Test3.hg19.bgr output.hg38
+   2024-01-12 09:09:52 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   2024-01-12 09:09:52 [INFO]  Liftover wiggle file "Test3.hg19.bgr" to bedGraph file "output.hg38.bgr"
+   2024-01-12 09:09:52 [INFO]  Merging overlapped entries in bedGraph file
+   2024-01-12 09:09:52 [INFO]  Sorting bedGraph file: output.hg38.bgr
+   2024-01-12 09:09:52 [INFO]  Writing header to "output.hg38.bw" ...
+   2024-01-12 09:09:52 [INFO]  Writing entries to "output.hg38.bw" ...
+
+
+Example 5 — Converting Large Genomic Regions
+--------------------------------------------
+
+Use :code:`CrossMap region` to convert large genomic regions (e.g.,  
+`CNV <https://en.wikipedia.org/wiki/Copy_number_variation>`_ blocks) from one assembly to another.
+
+.. code-block:: bash
+
+   $ cat Test4.hg19.bed
+   chr2   239716679   243199373   # A large genomic interval of ~3.48 Mb
+
+If you use the :code:`CrossMap bed` command, this interval will be split multiple times:
+
+.. code-block:: bash
+
+   $ CrossMap bed GRCh37_to_GRCh38.chain.gz Test4.hg19.bed
+   2024-01-12 09:12:45 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   chr2   239716679   243199373   (split.1:chr2:239716679:239801978:+)   chr2   238808038   238893337
+   chr2   239716679   243199373   (split.2:chr2:239831978:240205681:+)   chr2   238910282   239283985
+   chr2   239716679   243199373   (split.3:chr2:240205681:240319336:+)   chr2   239283986   239397641
+   ... (split 74 times)
+
+To lift over the region **as a whole**, use the :code:`CrossMap region` command.  
+By default, :code:`r = 0.85`.
+
+.. code-block:: bash
+
+   $ CrossMap region GRCh37_to_GRCh38.chain.gz Test4.hg19.bed
+   2024-01-12 09:15:24 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   chr2   239716679   243199373   ->   chr2   238808038   242183529   map_ratio=0.9622
+
+If we increase the required mapping ratio to :code:`r = 0.99`, the region fails to lift over:
+
+.. code-block:: bash
+
+   $ CrossMap region GRCh37_to_GRCh38.chain.gz Test4.hg19.bed -r 0.99
+   2024-01-12 09:18:53 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   chr2   239716679   243199373   Fail   map_ratio=0.9622
 
 .. _bam_conversion:
 
-Convert BAM/CRAM/SAM format files
----------------------------------
-`SAM <http://samtools.sourceforge.net/samtools.shtml#5>`_ (Sequence Alignment Map) format
-is a generic format for storing sequencing alignments, and BAM is the binary and compressed
-version of SAM (`Li et al., 2009 <http://bioinformatics.oxfordjournals.org/content/25/16/2078.full>`_).
-`CRAM <https://samtools.github.io/hts-specs/CRAMv3.pdf>`_ was designed to be an efficient reference-based
-alternative to the `SAM <http://samtools.sourceforge.net/samtools.shtml#5>`_ and BAM file formats.
-Most high-throughput sequencing  (HTS) alignments were in SAM/BAM format and many HTS analysis
-tools work with SAM/BAM format. CrossMap updates chromosomes, genome coordinates, header
-sections, and all SAM flags accordingly.  CrossMap's version number is inserted into
-the header section, along with the names of the original BAM file and the chain file.  For
-pair-end sequencing, insert size is also recalculated. The input BAM file should be sorted
-and indexed properly using Samtools (`Li et al., 2009 <http://bioinformatics.oxfordjournals.org/content/25/16/2078.full>`_).
-The output format is determined by the input format, and the BAM output will be sorted and indexed automatically.
+Convert BAM / CRAM / SAM Format Files
+-------------------------------------
+
+The `SAM <http://samtools.sourceforge.net/SAMv1.pdf>`_ (Sequence Alignment/Map) format
+is a widely used text-based format for storing sequence alignments.
+`BAM <http://samtools.sourceforge.net/SAMv1.pdf>`_ is its binary, compressed version
+(`Li et al., 2009 <http://bioinformatics.oxfordjournals.org/content/25/16/2078.full>`_),
+while `CRAM <https://samtools.github.io/hts-specs/CRAMv3.pdf>`_ provides a more efficient,
+reference-based alternative.
+
+Most high-throughput sequencing (HTS) alignments are stored in SAM/BAM/CRAM format,
+and many downstream bioinformatics tools rely on these formats.
+CrossMap performs **liftover of alignment files** by updating:
+
+- Chromosome names  
+- Genome coordinates  
+- SAM header section (including version, chain file, and original file name)  
+- All SAM flags and pairing information  
+
+For paired-end reads, insert sizes are automatically recalculated.
+The input BAM file **must be sorted and indexed** (e.g., using
+`Samtools <http://bioinformatics.oxfordjournals.org/content/25/16/2078.full>`_).
+
+The output format is determined by the input format:
+- SAM → SAM  
+- BAM → BAM (sorted and indexed automatically)  
+- CRAM → BAM (requires ``pysam >= 0.8.2``)
 
 
-Typing :code:`CrossMap bam -h` will print help message::
+Command Help
+~~~~~~~~~~~~
 
- $ CrossMap bam -h
+To view the help message for BAM/CRAM/SAM conversion, run :code:`CrossMap bam -h`
 
- usage: CrossMap bam [-h] [-m INSERT_SIZE] [-s INSERT_SIZE_STDEV]
-                     [-t INSERT_SIZE_FOLD] [-a] [--chromid {a,s,l}]
-                     input.chain input.bam [out_bam]
+.. code-block:: text
 
- positional arguments:
-   input.chain           Chain file
-                         (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                         describes pairwise alignments between two genomes. The
-                         input chain file can be a plain text file or
-                         compressed (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.bam             Input BAM file (https://genome.ucsc.edu/FAQ/FAQformat.
-                         html#format5.1).
-   out_bam               Output BAM file. if argument is missing, CrossMap will
-                         write BAM file to the STDOUT.
+   usage: CrossMap bam [-h] [-m INSERT_SIZE] [-s INSERT_SIZE_STDEV]
+                       [-t INSERT_SIZE_FOLD] [-a] [--chromid {a,s,l}]
+                       input.chain input.bam [out_bam]
 
- options:
-   -h, --help            show this help message and exit
-   -m INSERT_SIZE, --mean INSERT_SIZE
-                         Average insert size of pair-end sequencing (bp).
-   -s INSERT_SIZE_STDEV, --stdev INSERT_SIZE_STDEV
-                         Stanadard deviation of insert size.
-   -t INSERT_SIZE_FOLD, --times INSERT_SIZE_FOLD
-                         A mapped pair is considered as "proper pair" if both
-                         ends mapped to different strand and the distance
-                         between them is less then '-t' * stdev from the mean.
-   -a, --append-tags     Add tag to each alignment in BAM file. Tags for pair-
-                         end alignments include: QF = QC failed, NN = both
-                         read1 and read2 unmapped, NU = read1 unmapped, read2
-                         unique mapped, NM = read1 unmapped, multiple mapped,
-                         UN = read1 uniquely mapped, read2 unmap, UU = both
-                         read1 and read2 uniquely mapped, UM = read1 uniquely
-                         mapped, read2 multiple mapped, MN = read1 multiple
-                         mapped, read2 unmapped, MU = read1 multiple mapped,
-                         read2 unique mapped, MM = both read1 and read2
-                         multiple mapped. Tags for single-end alignments
-                         include: QF = QC failed, SN = unmaped, SM = multiple
-                         mapped, SU = uniquely mapped.
-   --chromid {a,s,l}     The style of chromosome IDs. "a" = "as-is"; "l" =
-                         "long style" (eg. "chr1", "chrX"); "s" = "short style"
-                         (eg. "1", "X").
+   positional arguments:
+     input.chain           Chain file
+                           (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                           Describes pairwise alignments between two genomes.
+                           May be plain text or compressed (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.bam             Input BAM file (https://genome.ucsc.edu/FAQ/FAQformat.html#format5.1).
+     out_bam               Output BAM file. If omitted, CrossMap writes to STDOUT.
 
-**Example**
+   options:
+     -h, --help            Show this help message and exit
+     -m, --mean INSERT_SIZE
+                           Average insert size for paired-end sequencing (bp).
+     -s, --stdev INSERT_SIZE_STDEV
+                           Standard deviation of insert size.
+     -t, --times INSERT_SIZE_FOLD
+                           A pair is considered "properly paired" if both reads
+                           map to opposite strands and the distance between them
+                           is less than ‘-t × stdev’ from the mean.
+     -a, --append-tags     Add mapping status tags to each alignment.
+                           See tag definitions below.
+     --chromid {a,s,l}     Style of chromosome IDs:
+                              a = as-is  
+                              l = long (e.g., "chr1", "chrX")  
+                              s = short (e.g., "1", "X")
 
-.. code:: text
 
- $ CrossMap bam -a GRCh37_to_GRCh38.chain.gz Test5.hg19.bam output.hg38
- Add tags: True
- Insert size = 200.000000
- Insert size stdev = 30.000000
- Number of stdev from the mean = 3.000000
- Add tags to each alignment = True
- 2024-01-12 09:29:11 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- [E::idx_find_and_load] Could not retrieve index file for 'Test5.hg19.bam'
- 2024-01-12 09:29:11 [INFO]  Liftover BAM file "Test5.hg19.bam" to "output.hg38.bam"
- 2024-01-12 09:29:15 [INFO]  Done!
- 2024-01-12 09:29:15 [INFO]  Sort "output.hg38.bam" and save as "output.hg38.sorted.bam"
- 2024-01-12 09:29:15 [INFO]  Index "output.hg38.sorted.bam" ... 
- 
- Total alignments:99914
-     QC failed: 0
-     Paired-end reads:
-         R1 unique, R2 unique (UU): 96035
-         R1 unique, R2 unmapp (UN): 3638
-         R1 unique, R2 multiple (UM): 0
-         R1 multiple, R2 multiple (MM): 0
-         R1 multiple, R2 unique (MU): 230
-         R1 multiple, R2 unmapped (MN): 11
-         R1 unmap, R2 unmap (NN): 0
-         R1 unmap, R2 unique (NU): 0
-         R1 unmap, R2 multiple (NM): 0
+Example
+~~~~~~~
 
-**Optional tags:**
+.. code-block:: bash
 
-Q
-  QC. QC failed.
-N
-  Unmapped. Originally unmapped or originally mapped but failed to lift over to new assembly.
-M
-  Multiple mapped. Alignment can be lifted over to multiple places.
-U
-  Unique mapped. Alignment can be lifted over to only 1 place.
+   $ CrossMap bam -a GRCh37_to_GRCh38.chain.gz Test5.hg19.bam output.hg38
+   Add tags: True
+   Insert size = 200.000000
+   Insert size stdev = 30.000000
+   Number of stdev from the mean = 3.000000
+   Add tags to each alignment = True
+   2024-01-12 09:29:11 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   [E::idx_find_and_load] Could not retrieve index file for 'Test5.hg19.bam'
+   2024-01-12 09:29:11 [INFO]  Liftover BAM file "Test5.hg19.bam" to "output.hg38.bam"
+   2024-01-12 09:29:15 [INFO]  Done!
+   2024-01-12 09:29:15 [INFO]  Sort "output.hg38.bam" and save as "output.hg38.sorted.bam"
+   2024-01-12 09:29:15 [INFO]  Index "output.hg38.sorted.bam" ...
 
-**Tags for pair-end sequencing include:**
+   Total alignments: 99,914
+       QC failed: 0
+       Paired-end reads:
+           R1 unique, R2 unique (UU): 96035
+           R1 unique, R2 unmapped (UN): 3638
+           R1 unique, R2 multiple (UM): 0
+           R1 multiple, R2 multiple (MM): 0
+           R1 multiple, R2 unique (MU): 230
+           R1 multiple, R2 unmapped (MN): 11
+           R1 unmapped, R2 unmapped (NN): 0
+           R1 unmapped, R2 unique (NU): 0
+           R1 unmapped, R2 multiple (NM): 0
 
-- QF = QC failed
-- NN = both read1 and read2 unmapped
-- NU = read1 unmapped, read2 unique mapped
-- NM = read1 unmapped, multiple mapped
-- UN = read1 uniquely mapped, read2 unmap
-- UU = both read1 and read2 uniquely mapped
-- UM = read1 uniquely mapped, read2 multiple mapped
-- MN = read1 multiple mapped, read2 unmapped
-- MU = read1 multiple mapped, read2 unique mapped
-- MM = both read1 and read2 multiple mapped
 
-**Tags for single-end sequencing include:**
+Tag Definitions
+~~~~~~~~~~~~~~~
 
-- QF = QC failed
-- SN = unmaped
-- SM = multiple mapped
-- SU = uniquely mapped
+**General Tags**
+
++-----------+--------------------------------------------------------------+
+| **Tag**   | **Meaning**                                                  |
++===========+==============================================================+
+| Q         | QC failed.                                                   |
++-----------+--------------------------------------------------------------+
+| N         | Unmapped (either originally unmapped or failed liftover).    |
++-----------+--------------------------------------------------------------+
+| M         | Multiple mapped (can be lifted over to multiple locations).  |
++-----------+--------------------------------------------------------------+
+| U         | Unique mapped (lifted over to a single location).            |
++-----------+--------------------------------------------------------------+
+
+**Paired-End Tags**
+
+- QF — QC failed  
+- NN — both reads unmapped  
+- NU — read1 unmapped, read2 uniquely mapped  
+- NM — read1 unmapped, read2 multiply mapped  
+- UN — read1 uniquely mapped, read2 unmapped  
+- UU — both reads uniquely mapped  
+- UM — read1 uniquely mapped, read2 multiply mapped  
+- MN — read1 multiply mapped, read2 unmapped  
+- MU — read1 multiply mapped, read2 uniquely mapped  
+- MM — both reads multiply mapped  
+
+**Single-End Tags**
+
+- QF — QC failed  
+- SN — unmapped  
+- SM — multiply mapped  
+- SU — uniquely mapped  
 
 
 .. note::
 
-   1. All alignments (mapped, partial mapped, unmapped, QC failed) will write to one file. Users can filter them by tags.
-   2. The header section will be updated to the target assembly.
-   3. Genome coordinates and all SAM flags in the alignment section will be updated to the target assembly.
-   4. If the input is a CRAM file, pysam version should >= 0.8.2
-   5. Optional fields in the alignment section will not update.
+   1. All alignments (mapped, partially mapped, unmapped, or QC failed) are written to a single output file.  
+      Users can filter alignments using the assigned tags.  
+   2. The header section is updated to reflect the target assembly, CrossMap version, and chain file used.  
+   3. Genome coordinates and all SAM flags in the alignment section are updated accordingly.  
+   4. When using CRAM input, ensure ``pysam >= 0.8.2``.  
+   5. Optional fields in the alignment section are not modified.
 
 
-Convert Wiggle format files
+Convert Wiggle Format Files
 ---------------------------
-`Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`_ (WIG) format is useful in
-displaying continuous data such as GC content and the reads intensity of high-throughput sequencing data.
-BigWig is a self-indexed binary-format Wiggle file and has the advantage of supporting random access.
-Input wiggle data can be in variableStep (for data with irregular intervals) or fixedStep
-(for data with regular intervals). Regardless of the input, the output files are always in bedGraph
-format.
+
+The `Wiggle <http://genome.ucsc.edu/goldenPath/help/wiggle.html>`_ (WIG) format is used to display
+continuous, quantitative data along the genome — for example, GC content or read coverage
+from high-throughput sequencing experiments.
+
+`BigWig <http://genome.ucsc.edu/goldenPath/help/bigWig.html>`_ is the binary, indexed version of
+Wiggle, providing faster random access and efficient storage.
+
+CrossMap supports both **variableStep** (irregular intervals) and **fixedStep** (regular intervals)
+Wiggle files as input. Regardless of the input format, the **output is always a bedGraph file**.
+
+Command Help
+~~~~~~~~~~~~
+
+To display the help message for Wiggle file conversion, run :code:`CrossMap wig -h`
 
 
-Typing :code:`CrossMap wig -h` will print help message::
+.. code-block:: text
 
- $ CrossMap  wig -h
+   usage: CrossMap wig [-h] [--chromid {a,s,l}] input.chain input.wig out_wig
 
- usage: CrossMap wig [-h] [--chromid {a,s,l}] input.chain input.wig out_wig
+   positional arguments:
+     input.chain        Chain file
+                        (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                        Describes pairwise alignments between two genomes.
+                        Can be a plain text file or compressed
+                        (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.wig          Input Wiggle or bedGraph file
+                        (http://genome.ucsc.edu/goldenPath/help/wiggle.html).
+                        Supports both “variableStep” and “fixedStep” formats.
+                        May be plain text, compressed (.gz, .bz2, etc.),
+                        or a URL (http://, https://, ftp://).
+                        *Compressed remote files are not supported.*
+     out_wig            Output bedGraph file.
+                        Regardless of input (Wiggle or bedGraph),
+                        the output is always in bedGraph format.
 
- positional arguments:
-   input.chain        Chain file
-                      (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                      describes pairwise alignments between two genomes. The
-                      input chain file can be a plain text file or compressed
-                      (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.wig          The input wiggle/bedGraph format file
-                      (http://genome.ucsc.edu/goldenPath/help/wiggle.html).
-                      Both "variableStep" and "fixedStep" wiggle lines are
-                      supported. The input wiggle/bedGraph file can be plain
-                      text file, compressed file with extension of .gz, .Z, .z,
-                      .bz, .bz2 and .bzip2, or even a URL pointing to
-                      accessible remote files (http://, https:// and ftp://).
-                      Compressed remote files are not supported.
-   out_wig            Output bedGraph file. Regardless of the input is wiggle
-                      or bedGraph, the output file is always in bedGraph
-                      format.
-
- options:
-   -h, --help         show this help message and exit
-   --chromid {a,s,l}  The style of chromosome IDs. "a" = "as-is"; "l" = "long
-                      style" (eg. "chr1", "chrX"); "s" = "short style" (eg.
-                      "1", "X").
+   options:
+     -h, --help         Show this help message and exit
+     --chromid {a,s,l}  Style of chromosome IDs:
+                          a = as-is  
+                          l = long style (e.g., "chr1", "chrX")  
+                          s = short style (e.g., "1", "X")
 
 .. note::
 
-   To improve performance, this script calls `GNU "sort" <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_ command internally. If the "sort" command is not callable, CrossMap will exit.
+   To improve performance, CrossMap internally calls the
+   `GNU sort <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_
+   command. If the system "sort" command is unavailable or not callable,
+   CrossMap will terminate with an error.
+
+Convert BigWig Format Files
+---------------------------
+
+The `BigWig <https://genome.ucsc.edu/goldenPath/help/bigWig.html>`_ format is a binary, indexed
+version of the Wiggle (WIG) format that allows for efficient random access and visualization
+of continuous genomic data such as read depth or coverage.
+
+CrossMap can lift over BigWig files between assemblies using a chain file.
+
+Command Help
+~~~~~~~~~~~~
+
+To display the help message for BigWig file conversion, run :code:`CrossMap bigwig -h`
 
 
-Convert BigWig format files
-----------------------------
-If an input file is in BigWig format, the output is BigWig format if UCSC’s
-'`wigToBigWig <http://hgdownload.cse.ucsc.edu/admin/exe/>`_' executable can be found;
-otherwise, the output file will be in bedGraph format.
+.. code-block:: text
 
-Typing :code:`CrossMap bigwig -h` will print help message.::
+   usage: CrossMap bigwig [-h] [--chromid {a,s,l}] input.chain input.bw output.bw
 
+   positional arguments:
+     input.chain        Chain file
+                        (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                        Describes pairwise alignments between two genomes.
+                        Can be a plain text file or compressed
+                        (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.bw           Input BigWig file
+                        (https://genome.ucsc.edu/goldenPath/help/bigWig.html).
+     output.bw          Output BigWig file.
 
- $ CrossMap bigwig -h
-
- usage: CrossMap bigwig [-h] [--chromid {a,s,l}] input.chain input.bw output.bw
-
- positional arguments:
-   input.chain        Chain file
-                      (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                      describes pairwise alignments between two genomes. The
-                      input chain file can be a plain text file or compressed
-                      (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.bw           The input bigWig format file
-                      (https://genome.ucsc.edu/goldenPath/help/bigWig.html).
-   output.bw          Output bigWig file.
-
- options:
-   -h, --help         show this help message and exit
-   --chromid {a,s,l}  The style of chromosome IDs. "a" = "as-is"; "l" = "long
-                      style" (eg. "chr1", "chrX"); "s" = "short style" (eg.
-                      "1", "X").
+   options:
+     -h, --help         Show this help message and exit
+     --chromid {a,s,l}  Style of chromosome IDs:
+                          a = as-is  
+                          l = long style (e.g., "chr1", "chrX")  
+                          s = short style (e.g., "1", "X")
 
 Example
+~~~~~~~
 
-.. code:: text
+.. code-block:: bash
 
- $ CrossMap bigwig GRCh37_to_GRCh38.chain.gz Test6.hg19.bw output.hg38
- 2024-01-12 09:37:32 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
- 2024-01-12 09:37:33 [INFO]  Liftover bigwig file Test6.hg19.bw to bedGraph file output.hg38.bgr:
- 2024-01-12 09:37:33 [INFO]  Merging overlapped entries in bedGraph file
- 2024-01-12 09:37:33 [INFO]  Sorting bedGraph file: output.hg38.bgr
- 2024-01-12 09:37:33 [INFO]  Writing header to "output.hg38.bw" ...
- 2024-01-12 09:37:33 [INFO]  Writing entries to "output.hg38.bw" ...
-
-.. note::
-
-   To improve performance, this script calls `GNU "sort" <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_ command internally. If "sort" command does not exist, CrossMap will exit.
-
-
-Convert GFF/GTF format files
-----------------------------
-`GFF <http://genome.ucsc.edu/FAQ/FAQformat.html#format3>`_ (General Feature Format) is another
-plain text file used to describe gene structure. `GTF <http://genome.ucsc.edu/FAQ/FAQformat.html#format4>`_
-(Gene Transfer Format) is a refined version of GTF. The first eight fields are the same as
-GFF. Plain text, compressed plain text, and URLs pointing to remote files are all supported.
-Only chromosome and genome coordinates are updated. The format of the output is determined from
-the input.
-
-Typing :code:`CrossMap gff -h` will print help message::
-
- $ CrossMap  gff -h
-
-usage: CrossMap gff [-h] [--chromid {a,s,l}] input.chain input.gff [out_gff]
-
- positional arguments:
-   input.chain        Chain file
-                      (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                      describes pairwise alignments between two genomes. The
-                      input chain file can be a plain text file or compressed
-                      (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.gff          The input GFF (General Feature Format,
-                      http://genome.ucsc.edu/FAQ/FAQformat.html#format3) or GTF
-                      (Gene Transfer Format,
-                      http://genome.ucsc.edu/FAQ/FAQformat.html#format4) file.
-                      The input GFF/GTF file can be plain text file, compressed
-                      file with extension of .gz, .Z, .z, .bz, .bz2 and .bzip2,
-                      or even a URL pointing to accessible remote files
-                      (http://, https:// and ftp://). Compressed remote files
-                      are not supported.
-   out_gff            Output GFF/GTF file. if argument is missing, CrossMap
-                      will write GFF/GTF file to the STDOUT.
-
- options:
-   -h, --help         show this help message and exit
-   --chromid {a,s,l}  The style of chromosome IDs. "a" = "as-is"; "l" = "long
-                      style" (eg. "chr1", "chrX"); "s" = "short style" (eg.
-                      "1", "X").
-
-Example
-
-.. code:: text
-
- $ CrossMap gff  GRCh37_to_GRCh38.chain.gz Test7.hg19.gtf output.hg38
- 2024-01-12 09:43:53 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   $ CrossMap bigwig GRCh37_to_GRCh38.chain.gz Test6.hg19.bw output.hg38
+   2024-01-12 09:37:32 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
+   2024-01-12 09:37:33 [INFO]  Liftover BigWig file "Test6.hg19.bw" to bedGraph file "output.hg38.bgr"
+   2024-01-12 09:37:33 [INFO]  Merging overlapped entries in bedGraph file
+   2024-01-12 09:37:33 [INFO]  Sorting bedGraph file: output.hg38.bgr
+   2024-01-12 09:37:33 [INFO]  Writing header to "output.hg38.bw" ...
+   2024-01-12 09:37:33 [INFO]  Writing entries to "output.hg38.bw" ...
 
 .. note::
 
-   1. Each feature  (exon, intron, UTR, etc) is processed separately and independently, and we do NOT check if features originally belonging to the same gene were converted into the same gene.
-   2. If a user wants to lift over gene annotation files, use BED12 format.
-   3. If no output file was specified, the output will be printed to screen (console). In this case, items that failed to convert are also printed out.
+   CrossMap internally calls the
+   `GNU sort <http://www.gnu.org/software/coreutils/manual/html_node/sort-invocation.html>`_
+   command to improve performance during sorting and merging.
+   If the system "sort" command is not available, CrossMap will terminate with an error.
 
 
-Convert VCF format files
--------------------------
-`VCF <http://www.1000genomes.org/wiki/Analysis/Variant%20Call%20Format/vcf-variant-call-format-version-41>`_
-(variant call format) is a flexible and extendable line-oriented text format developed by
-the `1000 Genome Project <http://www.1000genomes.org/>`_. It is useful for representing single
-nucleotide variants, indels, copy number variants, and structural variants. Chromosomes,
-coordinates, and reference alleles are updated to a new assembly, and all the other fields
-are not changed.
-
-Typing :code:`CrossMap vcf -h` will print help message::
-
- $ CrossMap vcf -h
-
- usage: CrossMap vcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
-                     input.chain input.vcf refgenome.fa out_vcf
-
- positional arguments:
-   input.chain        Chain file
-                      (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                      describes pairwise alignments between two genomes. The
-                      input chain file can be a plain text file or compressed
-                      (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.vcf          Input VCF (variant call format,
-                      https://samtools.github.io/hts-specs/VCFv4.2.pdf). The
-                      VCF file can be plain text file, compressed file with
-                      extension of .gz, .Z, .z, .bz, .bz2 and .bzip2, or even a
-                      URL pointing to accessible remote files (http://,
-                      https:// and ftp://). Compressed remote files are not
-                      supported.
-   refgenome.fa       Chromosome sequences of target assembly in FASTA
-                      (https://en.wikipedia.org/wiki/FASTA_format) format.
-   out_vcf            Output VCF file.
-
- options:
-   -h, --help         show this help message and exit
-   --chromid {a,s,l}  The style of chromosome IDs. "a" = "as-is"; "l" = "long
-                      style" (eg. "chr1", "chrX"); "s" = "short style" (eg.
-                      "1", "X").
-   --no-comp-alleles  If set, CrossMap does NOT check if the reference allele
-                      is different from the alternate allele.
-   --compress         If set, compress the output VCF file by calling the
-                      system "gzip".
-
-.. note::
-
-   1. Genome coordinates and reference alleles will be updated to target assembly.
-   2. The reference genome is the genome sequences of target assembly.
-   3. If the reference genome sequence file (../database/genome/hg18.fa) was not indexed, CrossMap will automatically index it (only the first time you run CrossMap).
-   4. Output files: *output_file* and *output_file.unmap*.
-   5. In the output VCF file, whether the chromosome IDs contain "chr" or not depends on the format of the input VCF file.
-
-
-**Interpretation of Failed tags**:
-
-* Fail(Multiple_hits) : This genomic location was mapped to two or more locations to the target assembly.
-* Fail(REF==ALT) : After liftover, the reference allele is the same as the alternative allele (i.e. this is NOT an SNP/variant after liftover). In version 0.5.2, this checking can be turned off by setting '--no-comp-alleles'.
-* Fail(Unmap) : Unable to map this location to the target assembly.
-* Fail(KeyError) : Unable to find the contig ID (or chromosome ID) from the reference genome sequence (of the target assembly).
-
-
-Convert MAF format files
--------------------------
-`MAF <https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format/>`_
-(mutation annotation format) files are tab-delimited
-files that contain somatic and/or germline mutation annotations. Please do not confuse
-with the `Multiple Alignment Format <https://genome.ucsc.edu/FAQ/FAQformat.html#format5>`_.
-
-
-Typing :code:`CrossMap maf -h` will print help message::
-
- $ CrossMap  maf -h
-
- usage: CrossMap maf [-h] [--chromid {a,s,l}]
-                     input.chain input.maf refgenome.fa build_name out_maf
-
- positional arguments:
-   input.chain        Chain file
-                      (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                      describes pairwise alignments between two genomes. The
-                      input chain file can be a plain text file or compressed
-                      (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.maf          Input MAF (https://docs.gdc.cancer.gov/Data/File_Formats/
-                      MAF_Format/) format file. The MAF file can be plain text
-                      file, compressed file with extension of .gz, .Z, .z, .bz,
-                      .bz2 and .bzip2, or even a URL pointing to accessible
-                      remote files (http://, https:// and ftp://). Compressed
-                      remote files are not supported.
-   refgenome.fa       Chromosome sequences of target assembly in FASTA
-                      (https://en.wikipedia.org/wiki/FASTA_format) format.
-   build_name         the name of the *target_assembly* (eg "GRCh38").
-   out_maf            Output MAF file.
-
- options:
-   -h, --help         show this help message and exit
-   --chromid {a,s,l}  The style of chromosome IDs. "a" = "as-is"; "l" = "long
-                      style" (eg. "chr1", "chrX"); "s" = "short style" (eg.
-                      "1", "X").
-
-Convert GVCF format files
--------------------------
-
-GVCF file format is described in `here <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`_.
-
-Typing :code:`CrossMap gvcf -h` will print help message::
-
- $ CrossMap  gvcf -h
-
- usage: CrossMap gvcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
-                      input.chain input.gvcf refgenome.fa out_gvcf
-
- positional arguments:
-   input.chain        Chain file
-                      (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                      describes pairwise alignments between two genomes. The
-                      input chain file can be a plain text file or compressed
-                      (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.gvcf         Input gVCF (genomic variant call format,
-                      https://samtools.github.io/hts-specs/VCFv4.2.pdf). The
-                      gVCF file can be plain text file, compressed file with
-                      extension of .gz, .Z, .z, .bz, .bz2 and .bzip2, or even a
-                      URL pointing to accessible remote files (http://,
-                      https:// and ftp://). Compressed remote files are not
-                      supported.
-   refgenome.fa       Chromosome sequences of target assembly in FASTA
-                      (https://en.wikipedia.org/wiki/FASTA_format) format.
-   out_gvcf           Output gVCF file.
-
- options:
-   -h, --help         show this help message and exit
-   --chromid {a,s,l}  The style of chromosome IDs. "a" = "as-is"; "l" = "long
-                      style" (eg. "chr1", "chrX"); "s" = "short style" (eg.
-                      "1", "X").
-   --no-comp-alleles  If set, CrossMap does NOT check if the reference allele
-                      is different from the alternate allele.
-   --compress         If set, compress the output VCF file by calling the
-                      system "gzip".
-
-
-Convert large genomic regions
+Convert GFF / GTF Format Files
 ------------------------------
 
+The `GFF <http://genome.ucsc.edu/FAQ/FAQformat.html#format3>`_ (General Feature Format) and
+`GTF <http://genome.ucsc.edu/FAQ/FAQformat.html#format4>`_ (Gene Transfer Format) are
+text-based formats used to describe genomic features such as genes, exons, introns,
+and regulatory elements.
 
-For **large genomic regions** such as CNV blocks, the :code:`CrossMap bed` will split each large region into smaller blocks that are 100% matched to the target assembly.
-:code:`CrossMap region` will NOT split large regions, instead, it will calculate the **map ratio** (i.e. {bases mapped to target genome} / {total bases in query region}). If the
-**map ratio** is larger than the threshold specified by :code:`-r`, the coordinates will be converted to the target genome, otherwise, it fails.
+GTF is a refined version of GFF, and both share the same first eight fields.
+CrossMap supports **plain text**, **compressed files**, and **URLs** pointing to remote
+resources as input (``http://``, ``https://``, or ``ftp://``).  
+*Note: compressed remote files are not supported.*
 
-Typing :code:`CrossMap region -h` will print help message::
+During liftover, CrossMap updates only the **chromosome names** and **genome coordinates**.
+The output format (GFF or GTF) matches the format of the input file.
 
- usage: CrossMap region [-h] [--chromid {a,s,l}] [-r MIN_MAP_RATIO]
-                        input.chain input.bed [out_bed]
+Command Help
+~~~~~~~~~~~~
 
- positional arguments:
-   input.chain           Chain file
-                         (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                         describes pairwise alignments between two genomes. The
-                         input chain file can be a plain text file or
-                         compressed (.gz, .Z, .z, .bz, .bz2, .bzip2) file.
-   input.bed             The input BED file. The first 3 columns must be
-                         “chrom”, “start”, and “end”. The input BED file can be
-                         plain text file, compressed file with extension of
-                         .gz, .Z, .z, .bz, .bz2 and .bzip2, or even a URL
-                         pointing to accessible remote files (http://, https://
-                         and ftp://). Compressed remote files are not
-                         supported.
-   out_bed               Output BED file. if argument is missing, CrossMap will
-                         write BED file to the STDOUT.
+To display the help message for GFF/GTF conversion, run :code:`CrossMap gff -h`
 
- options:
-   -h, --help            show this help message and exit
-   --chromid {a,s,l}     The style of chromosome IDs. "a" = "as-is"; "l" =
-                         "long style" (eg. "chr1", "chrX"); "s" = "short style"
-                         (eg. "1", "X").
-   -r MIN_MAP_RATIO, --ratio MIN_MAP_RATIO
-                         Minimum ratio of bases that must remap.
+
+.. code-block:: text
+
+   usage: CrossMap gff [-h] [--chromid {a,s,l}] input.chain input.gff [out_gff]
+
+   positional arguments:
+     input.chain        Chain file
+                        (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                        Describes pairwise alignments between two genomes.
+                        Can be plain text or compressed (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.gff          Input GFF (General Feature Format) or GTF (Gene Transfer Format) file.
+                        Supports plain text, compressed (.gz, .bz2, etc.), or URLs
+                        (http://, https://, ftp://). Compressed remote files are not supported.
+     out_gff            Output GFF/GTF file. If omitted, CrossMap writes the result to STDOUT.
+
+   options:
+     -h, --help         Show this help message and exit
+     --chromid {a,s,l}  Style of chromosome IDs:
+                          a = as-is  
+                          l = long style (e.g., "chr1", "chrX")  
+                          s = short style (e.g., "1", "X")
+
+Example
+~~~~~~~~
+
+.. code-block:: bash
+
+   $ CrossMap gff GRCh37_to_GRCh38.chain.gz Test7.hg19.gtf output.hg38
+   2024-01-12 09:43:53 [INFO]  Read the chain file "GRCh37_to_GRCh38.chain.gz"
 
 .. note::
 
-   1. Input BED file should have at least 3 columns (chrom, start, end). Additional columns will be kept as is.
+   1. Each genomic feature (exon, intron, UTR, etc.) is processed **independently**.  
+      CrossMap does **not** verify whether features that originally belonged to the same gene  
+      still map to the same gene after conversion.  
+   2. To lift over complete **gene annotation files**, use the **BED12** format instead.  
+   3. If no output file is specified, the converted results are printed to the console.  
+      In this case, entries that fail to convert are also displayed.
 
 
-View chain file
--------------------
+Convert VCF Format Files
+------------------------
 
-Typing :code:`CrossMap viewchain -h` will print help message::
+The `VCF <https://samtools.github.io/hts-specs/VCFv4.2.pdf>`_ (Variant Call Format)
+is a standardized, line-oriented text format developed by the
+`1000 Genomes Project <https://www.internationalgenome.org/>`_.
+It is widely used for representing **single nucleotide variants (SNVs)**,
+**insertions/deletions (indels)**, **copy number variations (CNVs)**, and
+**structural variants**.
 
- usage: CrossMap viewchain [-h] input.chain
+CrossMap updates **chromosome names**, **genome coordinates**, and **reference alleles**
+to match a new assembly.  
+All other fields in the VCF record remain unchanged.
 
- positional arguments:
-   input.chain  Chain file (https://genome.ucsc.edu/goldenPath/help/chain.html)
-                describes pairwise alignments between two genomes. The input
-                chain file can be a plain text file or compressed (.gz, .Z, .z,
-                .bz, .bz2, .bzip2) file.
+Command Help
+~~~~~~~~~~~~
 
- options:
-   -h, --help   show this help message and exit
+To display the help message for VCF conversion:
+
+.. code-block:: bash
+
+   CrossMap vcf -h
+
+**Example output:**
+
+.. code-block:: text
+
+   usage: CrossMap vcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
+                       input.chain input.vcf refgenome.fa out_vcf
+
+   positional arguments:
+     input.chain        Chain file
+                        (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                        Describes pairwise alignments between two genomes.
+                        Can be plain text or compressed
+                        (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.vcf          Input VCF file
+                        (https://samtools.github.io/hts-specs/VCFv4.2.pdf).
+                        Supports plain text, compressed (.gz, .bz2, etc.), or URLs
+                        (http://, https://, ftp://). *Compressed remote files are not supported.*
+     refgenome.fa       Reference genome sequence of the **target assembly**
+                        in FASTA format.
+     out_vcf            Output VCF file.
+
+   options:
+     -h, --help         Show this help message and exit
+     --chromid {a,s,l}  Style of chromosome IDs:
+                          a = as-is  
+                          l = long style (e.g., "chr1", "chrX")  
+                          s = short style (e.g., "1", "X")
+     --no-comp-alleles  Skip checking whether the reference allele differs
+                        from the alternate allele.
+     --compress         Compress the output VCF file using the system "gzip" utility.
+
+Notes
+~~~~~
+
+.. note::
+
+   1. Genome coordinates and reference alleles are updated to match the **target assembly**.  
+   2. The **reference genome file** provided must correspond to the target assembly.  
+   3. If the reference FASTA file (e.g., ``../database/genome/hg18.fa``) is not indexed,
+      CrossMap will automatically index it during the first run.  
+   4. CrossMap produces two output files:
+         * ``output_file`` — the converted VCF  
+         * ``output_file.unmap`` — variants that could not be mapped  
+   5. Chromosome ID style in the output (e.g., ``chr1`` vs. ``1``) matches the input format.
+
+Interpretation of "Fail" Tags
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+During conversion, CrossMap may label unconverted records with **Fail** tags to indicate the cause of failure.
+
++----------------------+------------------------------------------------------------------------------------------------------------+
+| **Fail Tag**         | **Meaning**                                                                                                |
++======================+============================================================================================================+
+| Fail(Multiple_hits)  | The variant maps to two or more locations in the target assembly.                                          |
++----------------------+------------------------------------------------------------------------------------------------------------+
+| Fail(REF==ALT)       | After liftover, the reference allele is identical to the alternate allele.                                 |
+|                      | This variant is therefore no longer a valid SNP/variant.                                                   |
+|                      | This check can be disabled using the ``--no-comp-alleles`` option (available since v0.5.2).                |
++----------------------+------------------------------------------------------------------------------------------------------------+
+| Fail(Unmap)          | The variant could not be mapped to the target assembly.                                                    |
++----------------------+------------------------------------------------------------------------------------------------------------+
+| Fail(KeyError)       | The contig or chromosome ID from the variant record was not found in the target assembly FASTA reference.  |
++----------------------+------------------------------------------------------------------------------------------------------------+
+
+Convert MAF Format Files
+------------------------
+
+The `MAF <https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format/>`_
+(**Mutation Annotation Format**) is a tab-delimited text format used to describe
+somatic and/or germline mutation annotations.  
+Please do **not** confuse it with the
+`Multiple Alignment Format (MAF) <https://genome.ucsc.edu/FAQ/FAQformat.html#format5>`_,
+which is unrelated.
+
+CrossMap supports MAF files in plain text, compressed form, or accessible via URLs
+(``http://``, ``https://``, ``ftp://``).  
+*Note: compressed remote files are not supported.*
+
+Command Help
+~~~~~~~~~~~~
+
+To display the help message for MAF file conversion, run :code:`CrossMap maf -h`
+
+.. code-block:: text
+
+   usage: CrossMap maf [-h] [--chromid {a,s,l}]
+                       input.chain input.maf refgenome.fa build_name out_maf
+
+   positional arguments:
+     input.chain        Chain file
+                        (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                        Describes pairwise alignments between two genomes.
+                        May be plain text or compressed
+                        (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.maf          Input MAF file
+                        (https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/).
+                        Can be plain text, compressed (.gz, .bz2, etc.), or a URL
+                        (http://, https://, ftp://). *Compressed remote files are not supported.*
+     refgenome.fa       Reference genome sequences of the **target assembly**
+                        in FASTA format.
+     build_name         Name of the **target assembly** (e.g., "GRCh38").
+     out_maf            Output MAF file.
+
+   options:
+     -h, --help         Show this help message and exit
+     --chromid {a,s,l}  Style of chromosome IDs:
+                          a = as-is  
+                          l = long style (e.g., "chr1", "chrX")  
+                          s = short style (e.g., "1", "X")
+
+.. note::
+
+   - CrossMap updates **chromosome names**, **coordinates**, and **reference alleles**
+     in the MAF file to match the target assembly.  
+   - The **reference genome FASTA file** must correspond to the target build name provided.  
+   - Output files:
+       * ``output_file`` — converted MAF file  
+       * ``output_file.unmap`` — entries that failed to map  
 
 
-Example::
+Convert GVCF Format Files
+-------------------------
 
- $ CrossMap viewchain GRCh37_to_GRCh38.chain.gz >chain.tab
- $ head chain.tab
- 1  10000 177417   +  1  10000 177417   +
- 1  227417   267719   +  1  257666   297968   +
- 1  317719   471368   +  1  347968   501617   -
- 1  521368   1566075  +  1  585988   1630695  +
- 1  1566075  1569784  +  1  1630696  1634405  +
- 1  1569784  1570918  +  1  1634408  1635542  +
- 1  1570918  1570922  +  1  1635546  1635550  +
- 1  1570922  1574299  +  1  1635560  1638937  +
- 1  1574299  1583669  +  1  1638938  1648308  +
- 1  1583669  1583878  +  1  1648309  1648518  +
+A `GVCF (Genomic Variant Call Format) <https://gatk.broadinstitute.org/hc/en-us/articles/360035531812-GVCF-Genomic-Variant-Call-Format>`_
+is an extension of the standard VCF format used by tools such as GATK to store both variant
+and non-variant regions.
+
+CrossMap can lift over GVCF files by updating **chromosome names**, **coordinates**, and
+**reference alleles** while keeping all other fields unchanged.
+
+Command Help
+~~~~~~~~~~~~
+
+To display the help message for GVCF conversion, run :code:`CrossMap gvcf -h`
 
 
-Compare to UCSC liftover tool
-==============================
+.. code-block:: text
 
-To assess the accuracy of CrossMap, we randomly generated 10,000 genome intervals (download from `here <https://sourceforge.net/projects/crossmap/files/hg19.rand.bed.gz/download>`_) with the
-fixed interval size of 200 bp from hg19. Then we converted them into hg18 using CrossMap
-and `UCSC liftover tool <http://genome.ucsc.edu/cgi-bin/hgLiftOver>`_ with default configurations. We compare CrossMap
-to `UCSC liftover tool <http://genome.ucsc.edu/cgi-bin/hgLiftOver>`_ because it is the most widely
-used tool to convert genome coordinates.
+   usage: CrossMap gvcf [-h] [--chromid {a,s,l}] [--no-comp-alleles] [--compress]
+                        input.chain input.gvcf refgenome.fa out_gvcf
 
-CrossMap failed to convert 613 intervals, and the UCSC liftover tool failed to convert 614
-intervals. All failed intervals are exactly the same except for one region (chr2 90542908 90543108).
-UCSC failed to convert it because this region needs to be split twice:
+   positional arguments:
+     input.chain        Chain file
+                        (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                        Describes pairwise alignments between two genomes.
+                        May be plain text or compressed
+                        (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.gvcf         Input GVCF file
+                        (https://samtools.github.io/hts-specs/VCFv4.2.pdf).
+                        Supports plain text, compressed (.gz, .bz2, etc.), or URLs
+                        (http://, https://, ftp://). *Compressed remote files are not supported.*
+     refgenome.fa       Reference genome sequences of the **target assembly**
+                        in FASTA format.
+     out_gvcf           Output GVCF file.
 
-==========================   ===========================   ====================================
-Original (hg19)              Split (hg19)                  Target (hg18)
-==========================   ===========================   ====================================
-chr2 90542908  90543108 -    chr2 90542908 90542933 -      chr2    89906445        89906470 -
-chr2 90542908  90543108 -    chr2 90542933 90543001 -      chr2    87414583        87414651 -
-chr2 90542908  90543108 -    chr2 90543010 90543108 -      chr2    87414276        87414374 -
-==========================   ===========================   ====================================
+   options:
+     -h, --help         Show this help message and exit
+     --chromid {a,s,l}  Style of chromosome IDs:
+                          a = as-is  
+                          l = long style (e.g., "chr1", "chrX")  
+                          s = short style (e.g., "1", "X")
+     --no-comp-alleles  Skip checking whether the reference allele differs
+                        from the alternate allele.
+     --compress         Compress the output GVCF file using the system "gzip".
 
-For genome intervals that were successfully converted to hg18, the start and end coordinates are
-exactly the same between UCSC conversion and CrossMap conversion.
+.. note::
+
+   - Genome coordinates and reference alleles are updated to the target assembly.  
+   - The reference FASTA file must correspond to the target assembly.  
+   - If the reference genome is not indexed, CrossMap will automatically index it.  
+   - Output files:
+       * ``output_file`` — converted GVCF file  
+       * ``output_file.unmap`` — entries that failed to map  
+   - The chromosome ID format in the output (e.g., ``chr1`` vs. ``1``) matches the input format.
+
+Convert Large Genomic Regions
+-----------------------------
+
+For **large genomic regions** (such as CNV blocks), the default
+:code:`CrossMap bed` command splits each large region into smaller segments
+that can be **100% mapped** to the target assembly.
+
+In contrast, :code:`CrossMap region` does **not** split regions.  
+Instead, it calculates the **mapping ratio** — defined as:
+
+
+.. math::
+
+   \text{map ratio} = \frac{\text{bases mapped to target genome}}{\text{total bases in query region}}
+
+
+If the computed **map ratio** exceeds the threshold specified by the
+:code:`-r` (or :code:`--ratio`) option, the region is considered successfully mapped
+and its coordinates are converted to the target assembly.  
+Otherwise, the conversion fails and the region is recorded as unmapped.
+
+Command Help
+~~~~~~~~~~~~
+
+To view the help message for converting large genomic regions, run :code:`CrossMap region -h`
+
+
+.. code-block:: text
+
+   usage: CrossMap region [-h] [--chromid {a,s,l}] [-r MIN_MAP_RATIO]
+                          input.chain input.bed [out_bed]
+
+   positional arguments:
+     input.chain           Chain file
+                           (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                           Describes pairwise alignments between two genomes.
+                           Can be a plain text file or compressed
+                           (.gz, .Z, .z, .bz, .bz2, .bzip2).
+     input.bed             Input BED file.
+                           The first three columns must be “chrom”, “start”, and “end”.
+                           Supports plain text, compressed (.gz, .bz2, etc.), or URLs
+                           (http://, https://, ftp://). *Compressed remote files are not supported.*
+     out_bed               Output BED file.
+                           If omitted, CrossMap writes results to STDOUT.
+
+   options:
+     -h, --help            Show this help message and exit
+     --chromid {a,s,l}     Style of chromosome IDs:
+                              a = as-is  
+                              l = long style (e.g., "chr1", "chrX")  
+                              s = short style (e.g., "1", "X")
+     -r, --ratio MIN_MAP_RATIO
+                           Minimum ratio of bases that must successfully remap.
+                           Regions with a lower ratio will be reported as unmapped.
+
+Notes
+~~~~~
+
+.. note::
+
+   1. The default minimum mapping ratio (:code:`-r`) is **0.85** (i.e., 85% of bases must map).  
+   2. This command is ideal for converting large genomic blocks such as  
+      **copy number variation (CNV) regions**, **segmental duplications**,  
+      or **long structural variants**.  
+   3. If an output file is not specified, results are printed to the console.  
+   4. Unmapped or partially mapped regions are written to the ``*.unmap`` file.
+
+
+View Chain File
+---------------
+
+The :code:`CrossMap viewchain` command converts a UCSC
+`chain file <https://genome.ucsc.edu/goldenPath/help/chain.html>`_
+into a simple, tab-delimited format that is easier to read and interpret.
+Each line in the output represents a **block-to-block alignment**
+between two genome assemblies.
+
+This function is useful for inspecting or debugging chain files, visualizing
+how source and target regions align, or verifying liftover results.
+
+Command Help
+~~~~~~~~~~~~
+
+To display the help message for the :code:`viewchain` command:
+
+.. code-block:: bash
+
+   CrossMap viewchain -h
+
+**Example output:**
+
+.. code-block:: text
+
+   usage: CrossMap viewchain [-h] input.chain
+
+   positional arguments:
+     input.chain   Chain file
+                   (https://genome.ucsc.edu/goldenPath/help/chain.html)
+                   Describes pairwise alignments between two genomes.
+                   May be a plain text file or compressed
+                   (.gz, .Z, .z, .bz, .bz2, .bzip2).
+
+   options:
+     -h, --help    Show this help message and exit
+
+Example
+~~~~~~~
+
+.. code-block:: bash
+
+   $ CrossMap viewchain GRCh37_to_GRCh38.chain.gz > chain.tab
+   $ head chain.tab
+
+.. code-block:: text
+
+   1  10000   177417   +   1  10000   177417   +
+   1  227417  267719   +   1  257666  297968   +
+   1  317719  471368   +   1  347968  501617   -
+   1  521368  1566075  +   1  585988  1630695  +
+   1  1566075 1569784  +   1  1630696 1634405  +
+   1  1569784 1570918  +   1  1634408 1635542  +
+   1  1570918 1570922  +   1  1635546 1635550  +
+   1  1570922 1574299  +   1  1635560 1638937  +
+   1  1574299 1583669  +   1  1638938 1648308  +
+   1  1583669 1583878  +   1  1648309 1648518  +
+
+.. note::
+
+   - Each line represents an alignment block between the **source** and **target** assemblies.  
+   - Columns correspond to:
+       1. Source chromosome, start, end, and strand  
+       2. Target chromosome, start, end, and strand  
+   - The output file is plain text and can be easily parsed for further analysis.
+
+Comparison to UCSC LiftOver Tool
+================================
+
+To evaluate the **accuracy of CrossMap**, we randomly generated **10,000 genomic intervals**
+(each 200 bp in length) from the **hg19** assembly.  
+The dataset can be downloaded from  
+`here <https://sourceforge.net/projects/crossmap/files/hg19.rand.bed.gz/download>`_.
+
+We then converted these intervals to **hg18** coordinates using both **CrossMap**
+and the `UCSC LiftOver tool <http://genome.ucsc.edu/cgi-bin/hgLiftOver>`_,
+under default configuration settings.
+
+The UCSC LiftOver tool was chosen for comparison because it is the **most widely used**
+method for genome coordinate conversion.
+
+Results Summary
+---------------
+
+- **CrossMap failed to convert:** 613 intervals  
+- **UCSC LiftOver failed to convert:** 614 intervals  
+- All failed intervals were **identical** between the two tools,
+  except for **one region** (``chr2:90542908–90543108``).
+
+For that single region, UCSC failed because the interval needed to be split twice during liftover,
+while CrossMap successfully handled the multi-split mapping.
+
+.. table:: Comparison of the mismatched interval between CrossMap and UCSC LiftOver
+   :widths: auto
+
+   ==========================  ==========================  ====================================
+   **Original (hg19)**         **Split (hg19)**            **Target (hg18)**
+   ==========================  ==========================  ====================================
+   chr2  90542908  90543108 -  chr2  90542908  90542933 -  chr2  89906445  89906470  -
+   chr2  90542908  90543108 -  chr2  90542933  90543001 -  chr2  87414583  87414651  -
+   chr2  90542908  90543108 -  chr2  90543010  90543108 -  chr2  87414276  87414374  -
+   ==========================  ==========================  ====================================
+
+For all other successfully converted regions, the **start and end coordinates**
+were **identical** between CrossMap and UCSC LiftOver.
 
 .. image:: _static/CrossMap_vs_UCSC.png
-   :height: 400 px
-   :width: 700 px
-   :scale: 100 %
    :alt: CrossMap_vs_UCSC_liftover.png
+   :width: 700 px
+   :height: 400 px
+   :align: center
 
+Figure: *Comparison of CrossMap and UCSC LiftOver conversions between hg19 and hg18 assemblies.*
 
 Citation
-=========
-`Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., & Wang, L. (2013). CrossMap: a versatile tool for coordinate conversion between genome assemblies. Bioinformatics (Oxford, England), btt730 <https://pubmed.ncbi.nlm.nih.gov/24351709/>`_
+========
+
+If you use **CrossMap** in your research or publications, please cite:
+
+.. epigraph::
+
+   Zhao, H., Sun, Z., Wang, J., Huang, H., Kocher, J.-P., & Wang, L. (2013).  
+   **CrossMap: a versatile tool for coordinate conversion between genome assemblies.**  
+   *Bioinformatics (Oxford, England)*, btt730.  
+   `https://pubmed.ncbi.nlm.nih.gov/24351709/ <https://pubmed.ncbi.nlm.nih.gov/24351709/>`_
+
 
 LICENSE
-==========
-CrossMap is distributed under `GNU General Public License <http://www.gnu.org/copyleft/gpl.html>`_
-
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2 of the
-License, or (at your option) any later version. This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details. You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
-02110-1301 USA
-
-
-Contact
 =======
 
-* Wang.Liguo AT mayo.edu
+CrossMap is distributed under the  
+`GNU General Public License <http://www.gnu.org/copyleft/gpl.html>`_ (GPL).
+
+This program is **free software**: you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation — either version 2 of the
+License, or (at your option) any later version.
+
+CrossMap is distributed in the hope that it will be useful,  
+but **without any warranty** — without even the implied warranty of  
+**merchantability or fitness for a particular purpose**.
+
+See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.  
+If not, write to:
+
+::
+
+   Free Software Foundation, Inc.  
+   51 Franklin Street, Fifth Floor  
+   Boston, MA 02110-1301 USA
+
+
 
