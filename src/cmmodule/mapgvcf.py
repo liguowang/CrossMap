@@ -11,7 +11,7 @@ from cmmodule.meta_data import __version__
 
 
 def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
-                       refgenome, noCompAllele=False,
+                       refgenome, refconsistent=False, noCompAllele=False,
                        compress=False, cstyle='a'):
     '''
     Convert genome coordinates in GVCF format.
@@ -37,6 +37,11 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
 
     refgenome : file
         The genome sequence file of 'target' assembly in FASTA format.
+
+    refconsistent : bool
+        A logical value controls reference allele consistency checking during liftover.
+        If True, variants where the reference allele differs between source and target
+        assemblies are marked as "unmap".
 
     noCompAllele : bool
         A logical value indicates whether to compare ref_allele to alt_allele
@@ -258,8 +263,16 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                     target_chr = update_chromID(
                         refFasta.references[0], target_chr)
                     try:
-                        fields[3] = refFasta.fetch(
-                            target_chr, ref_allele_start, ref_allele_end).upper()
+                        if refconsistent:
+                            new_ref = refFasta.fetch(
+                                target_chr, target_start, target_end).upper()
+                            if fields[3] != new_ref:
+                                print(line + f"\tFail(RefInconsistent, {fields[3]}>{new_ref})", file=UNMAP)
+                                fail += 1
+                                continue
+                        else:
+                            fields[3] = refFasta.fetch(
+                                target_chr, target_start, target_end).upper()
                     except:
                         print(line + "\tFail(KeyError)", file=UNMAP)
                         failed_var += 1
