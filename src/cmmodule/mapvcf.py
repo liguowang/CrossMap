@@ -261,6 +261,10 @@ def crossmap_vcf_file(mapping, infile, outfile,
                         alt_alleles_updated.append(alt_allele)
                 # remove alt_allele if it is equal to ref_allele
                 alt_alleles_updated = [i for i in alt_alleles_updated if i != ref_allele]
+                if len(alt_alleles_updated) == 0:
+                    print(line + "\tFail(REF==ALT)", file=UNMAP)
+                    fail += 1
+                    continue
                 fields[4] = ','.join(alt_alleles_updated)
 
                 # update END if any
