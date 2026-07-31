@@ -1,45 +1,54 @@
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "CrossMap"
 version = "0.7.4"
-authors = [
-  {name = "Liguo Wang", email = "wangliguo78@gmail.com"},
-]
-maintainers = [
-  {name = "Liguo Wang", email = "wangliguo78@gmail.com"}
-]
-description = "CrossMap -- Lift over genomics coordinates between assemblies."
+
+description = "Convert genomic coordinates, annotations, and alignments between genome assemblies."
 readme = "README.rst"
 license = {file = "LICENSE.txt"}
+
 requires-python = ">=3.8"
-#[tool.setuptools.packages.find]
-#where = ["src"]
-#include = ["dmc"]
-dependencies = [
-  'pysam',
-  'bx-python',
-  'pyBigWig',
-]
-classifiers=[
-	"Programming Language :: Python :: 3",
-	'Development Status :: 4 - Beta',
-	"License :: OSI Approved :: MIT License",
-	'Environment :: Console',
-	'Intended Audience :: Science/Research',
-	'Operating System :: MacOS :: MacOS X',
-	'Operating System :: POSIX',
-	'Topic :: Scientific/Engineering :: Bio-Informatics',
+
+authors = [
+    {name = "Liguo Wang", email = "wangliguo78@gmail.com"},
 ]
 
-keywords = ["liftover", "genome", "coordinates"]
+dependencies = [
+    "pysam>=0.22",
+    "bx-python>=0.11",
+    "pyBigWig>=0.3.22",
+]
+
+keywords = [
+    "genome",
+    "genomics",
+    "liftover",
+    "bioinformatics",
+    "assembly",
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: POSIX",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+[project.optional-dependencies]
+docs = [
+    "sphinx>=7.2",
+    "sphinx_rtd_theme>=2.0",
+]
 
 [project.scripts]
 CrossMap = "cmmodule:crossmap"
 
 [project.urls]
-Documentation = "https://crossmap.readthedocs.io/en/latest/"
-Repository = "https://github.com/liguowang/CrossMap.git"
+Homepage = "https://github.com/liguowang/CrossMap"
+Documentation = "https://crossmap.readthedocs.io/"
+Repository = "https://github.com/liguowang/CrossMap"
 Issues = "https://github.com/liguowang/CrossMap/issues"
