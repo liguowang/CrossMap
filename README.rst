@@ -9,19 +9,18 @@ chain files.
 
 CrossMap supports many commonly used genomics file formats, including
 
-* BED/BigBed
+* `BED <https://en.wikipedia.org/wiki/BED_(file_format)>`_/`BigBed <https://pmc.ncbi.nlm.nih.gov/articles/PMC2922891/>`_
 * GFF/GTF
-* VCF/gVCF
-* BAM/CRAM
-* BigWig
+* `VCF/gVCF <https://en.wikipedia.org/wiki/Variant_Call_Format>`_ 
+* `BAM/CRAM <https://en.wikipedia.org/wiki/BAM_(file_format)>`_
+* `BigWig <https://pmc.ncbi.nlm.nih.gov/articles/PMC2922891/>`_
 * Wiggle
 * BeDGraph
-* BAM
 
 Installation
 ============
 
-Install the latest release from PyPI:
+Install the latest release from `PyPI <https://pypi.org/project/CrossMap/>`_:
 
 ::
 
@@ -66,7 +65,7 @@ Citation
 If you use CrossMap in your research, please cite:
 
 Zhao H, Sun Z, Wang J, Huang H, Kocher J-P, Wang L.
-CrossMap: a versatile tool for coordinate conversion between genome assemblies.
+`CrossMap: a versatile tool for coordinate conversion between genome assemblies <https://pmc.ncbi.nlm.nih.gov/articles/PMC3967108/>`_
 Bioinformatics. 2014;30(7):1006–1007.
 
 .. |python| image:: https://img.shields.io/pypi/pyversions/CrossMap.svg
