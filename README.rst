@@ -57,7 +57,7 @@ Convert a BED file from hg19 to hg38:
 License
 =======
 
-CrossMap is distributed under the GNU General Public License v3.0 or later (GPL-3.0-or-later).
+CrossMap is distributed under the `GNU General Public License v3.0 <https://choosealicense.com/licenses/gpl-3.0/>`_ or later (GPL-3.0-or-later).
 
 Citation
 ========
