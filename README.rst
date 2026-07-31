@@ -10,12 +10,12 @@ chain files.
 CrossMap supports many commonly used genomics file formats, including
 
 * `BED <https://en.wikipedia.org/wiki/BED_(file_format)>`_/`BigBed <https://pmc.ncbi.nlm.nih.gov/articles/PMC2922891/>`_
-* GFF/GTF
+* `GFF/GTF <https://en.wikipedia.org/wiki/General_feature_format>`_
 * `VCF/gVCF <https://en.wikipedia.org/wiki/Variant_Call_Format>`_ 
 * `BAM/CRAM <https://en.wikipedia.org/wiki/BAM_(file_format)>`_
 * `BigWig <https://pmc.ncbi.nlm.nih.gov/articles/PMC2922891/>`_
-* Wiggle
-* BeDGraph
+* `Wiggle <https://genome.ucsc.edu/goldenpath/help/wiggle.html>`_
+* `BeDGraph <https://genome.ucsc.edu/goldenpath/help/bedgraph.html>`_
 
 Installation
 ============
