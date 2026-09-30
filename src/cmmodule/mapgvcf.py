@@ -268,7 +268,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                                 target_chr, ref_allele_start, ref_allele_end).upper()
                             if fields[3] != new_ref:
                                 print(line + f"\tFail(RefInconsistent, {fields[3]}>{new_ref})", file=UNMAP)
-                                fail += 1
+                                failed_var += 1
                                 continue
                         else:
                             fields[3] = refFasta.fetch(
@@ -315,7 +315,7 @@ def crossmap_gvcf_file(mapping, infile, outfile, liftoverfile,
                     alt_alleles_updated = [i for i in alt_alleles_updated if i != ref_allele]
                     if len(alt_alleles_updated) == 0:
                         print(line + "\tFail(REF==ALT)", file=UNMAP)
-                        fail += 1
+                        failed_var += 1
                         continue
                     fields[4] = ','.join(alt_alleles_updated)
 
